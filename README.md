@@ -15,3 +15,25 @@ BekasBerkelas lahir dari kisah inspiratif para pejuang yang datang ke ibukota un
 Di sisi lain, Jakarta sebagai pusat ekonomi Indonesia memiliki dinamika tersendiri dalam penjualan mobil. Kultur konsumtif di kalangan masyarakat mengakibatkan munculnya pandangan kepemilikan mobil sebagai simbol status sosial. Hal ini menyebabkan banyaknya pemilik mobil yang cenderung mengganti kendaraan mereka dengan model terbaru hanya untuk mengikuti tren sosial yang ada. Akibatnya, sebagian besar dari mereka memilih untuk menjual mobil bekas yang masih dalam kondisi baik dan menciptakan ekosistem unik dengan pasokan mobil bekas yang berlimpah. Hal ini tentunya membuka peluang besar bagi para pencari mobil bekas berkualitas, termasuk para pendatang baru.
 
 Melihat tantangan yang dihadapi para pendatang baru serta fenomena unik di kalangan pemilik mobil di ibukota, BekasBerkelas tercipta sebagai solusi komprehensif. Platform ini hadir sebagai jembatan penghubung antara pendatang baru yang mencari kendaraan terjangkau dengan pemilik mobil yang kerap berganti kendaraan untuk mengikuti tren terbaru. Dengan kombinasi fitur-fitur yang menarik, BekasBerkelas akan menjadi teman setia bagi pendatang dalam perjalanan membangun kehidupan di kota baru, sambil memfasilitasi gaya hidup dinamis pemilik mobil di ibukota. 
+
+### Daftar Modul
+Berikut adalah daftar modul yang akan kami implementasikan.
+| Modul | Penjelasan | Pengembang |
+| -- | -- | -- |
+| **Authentication** | Modul ini berfungsi agar pengguna dapat melakukan tindakan registrasi, login, dan logout | Steven |
+| **User Dashboard** | Modul ini berfungsi untuk menampilkan data pribadi pengguna. Pengguna dapat mengubah data pribadi mereka serta melakukan tindakan sesuai peran yang mereka miliki | Naufal | 
+| **Product Catalog**  | Modul ini berfungsi untuk membuat serta menampilkan produk mobil bekas | Ramy |
+| **Forum** | Modul ini berfungsi sebagai tempat berdiskusi para pengguna. Setiap pengguna dapat membuat atau bergabung dalam satu forum atau lebih | Steven |
+| **Wishlist** | Modul ini berfungsi untuk membuat sistem wishlist bagi para pembeli | Deanita |
+| **Review & Rating** | Modul ini berfungsi agar pengguna dapat memberikan review dan rating terhadap penjual mobil | Wida |
+
+### Role pengguna
+Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
+| Modul | Pembeli | Penjual | Admin |
+| -- | -- | -- | -- |
+| **Authentication** | Pembeli dapat melakukan tindakan registrasi, login, dan logout | Penjual dapat melakukan tindakan registrasi, login, dan logout | Admin dapat melakukan tindakan registrasi, login, dan logout |
+| **User Dashboard** | Pembeli dapat mengubah data dirinya | Penjual dapat mengubah data dirinya serta melihat daftar rating yang mereka miliki | Admin dapat mengubah data diri serta melakukan tindakan seperti verifikasi penjual baru |
+| **Product Catalog** | Pembeli dapat melihat katalog mobil bekas yang ada | Penjual dapat menambahkan mobil bekas yang ingin dijualnya atau menghapus mobil bekas yang sudah terjual | Admin dapat menghapus produk mobil bekas yang ada pada katalog |
+| **Forum** | Pembeli dapat memulai dan melakukan diskusi dalam forum | Penjual dapat memulai dan melakukan diskusi dalam forum | Admin dapat memulai dan melakukan diskusi dalam forum serta menghapus forum yang ada | 
+| **Wishlist** | Pembeli dapat menambahkan mobil bekas yang mereka inginkan ke dalam _wishlist_ | - | - |
+| **Review & Rating** | Pembeli dapat menambahkan review dan rating pada penjual mobil yang telah mereka beli | - | Admin dapat menghapus review dan rating yang ada |
