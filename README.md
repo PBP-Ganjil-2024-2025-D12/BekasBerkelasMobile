@@ -58,3 +58,19 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 7. Setelahnya, kami juga akan mengimplementasikan state management menggunakan Provider, sehingga state aplikasi kami dapat diolah secara efisien dan data yang diterima dari backend dapat diakses oleh berbagai widget dalam aplikasi dengan mudah.
 
 8. Kami juga akan mengimplementasikan sistem error handling yang komprehensif pada sisi Flutter untuk menangani berbagai kemungkinan response dari backend Django.
+
+Dengan integrasi di atas, alur penggunaan dapat dijabarkan sebagai berikut:
+
+1. Pengguna menginisiasi HTTP request ke salah satu endpoint yang terdapat di Django melalui Flutter
+
+2. Django menerima request tersebut melalui views.py yang bertugas untuk memproses request tersebut
+
+3. Jika permintaan memerlukan akses data dari database, Django akan memanggil models.py untuk mendapatkan data tersebut
+
+4. Setelah data diproses pada models.py, Django mengembalikan data dalam format JSON
+
+5. Django mengirimkan HTTP response ke Flutter yang berisi JSON data
+
+6. Flutter menerima response dan melakukan parsing data dengan model yang sesuai
+
+7. Flutter kemudian memproses data tersebut untuk ditampilkan di antarmuka pengguna
