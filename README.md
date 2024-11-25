@@ -16,6 +16,8 @@ Di sisi lain, Jakarta sebagai pusat ekonomi Indonesia memiliki dinamika tersendi
 
 Melihat tantangan yang dihadapi para pendatang baru serta fenomena unik di kalangan pemilik mobil di ibukota, BekasBerkelas tercipta sebagai solusi komprehensif. Platform ini hadir sebagai jembatan penghubung antara pendatang baru yang mencari kendaraan terjangkau dengan pemilik mobil yang kerap berganti kendaraan untuk mengikuti tren terbaru. Dengan kombinasi fitur-fitur yang menarik, BekasBerkelas akan menjadi teman setia bagi pendatang dalam perjalanan membangun kehidupan di kota baru, sambil memfasilitasi gaya hidup dinamis pemilik mobil di ibukota. 
 
+Kesuksesan BekasBerkelas dalam membantu para pendatang dan penjual melalui platform website mendorong pengembangan lebih lanjut untuk peningkatan kualitas pelayanan. Kini, BekasBerkelas hadir dalam aplikasi mobile dengan akses yang lebih cepat dan mudah melalui genggaman tangan. Melalui inovasi ini, BekasBerkelas berkomitmen penuh untuk terus memahami dan menjawab kebutuhan kedua belah pihak, menciptakan ekosistem jual-beli mobil bekas yang saling menguntungkan bagi semua penggunanya.
+
 ### Daftar Modul
 Berikut adalah daftar modul yang akan kami implementasikan.
 | Modul | Penjelasan | Pengembang |
@@ -43,33 +45,31 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 
 ### Alur Pengintegrasian dengan _web service_
 ![](answer/AlurIntegrasi.jpg)
-1. Dalam melakukan integrasi antara Django pada Proyek Tengah Semester dengan Flutter pada Proyek Akhir Semester ini, kami terlebih dahulu melakukan konfigurasi pada setiap endpoint API yang akan menerima request dari Flutter melalui views.py dan mengirimkan data kembali dalam format JSON.
+1. Dalam melakukan integrasi antara Django pada Proyek Tengah Semester dengan Flutter pada Proyek Akhir Semester ini, kami terlebih dahulu melakukan konfigurasi pada setiap endpoint API yang akan menerima _request_ dari Flutter melalui `views.py` dan mengirimkan data kembali dalam format JSON.
 
 2. Selanjutnya, untuk mengolah data JSON tersebut, kami akan membuat models baru pada Flutter yang sesuai dengan struktur data dari Django models yang telah ada, sehingga data JSON yang diterima dari Backend Django dapat dengan mudah diolah sebagai objek Dart yang dapat digunakan dalam aplikasi.
 
-3. Kemudian, dengan memanfaatkan package http, kita dapat melakukan HTTP requests ke endpoint Django yang telah dikonfigurasi, di mana setiap request akan menyertakan header dan parameter yang diperlukan untuk pengolahan data.
+3. Kemudian, dengan memanfaatkan package `http`, kita dapat melakukan HTTP _request_ ke endpoint Django yang telah dikonfigurasi, di mana setiap _request_ akan menyertakan header dan parameter yang diperlukan untuk pengolahan data.
 
-4. Lalu, kami juga akan mengimplementasikan  sistem autentikasi yang memanfaatkan Cookie dari package pbp_django_auth, sehingga pengolahan session dari setiap pengguna/User dapat dilakukan dengan mudah dan benar serta setiap request ke Backend Django telah terautentikasi dengan benar.
+4. Lalu, kami juga akan mengimplementasikan sistem autentikasi yang memanfaatkan Cookie dari package `pbp_django_auth`, sehingga pengolahan _session_ dari setiap pengguna dapat dilakukan dengan mudah dan efisien serta setiap _request_ ke Backend Django telah terautentikasi dengan benar.
 
-5. Setelah itu, kami akan membuat service layer pada Flutter untuk mengelola seluruh komunikasi dengan backend, termasuk implementasi fungsi-fungsi untuk setiap modul yang disesuaikan dengan role masing-masing pengguna.
+5. Untuk menampilkan data secara _asynchronous_, kami akan menggunakan widget `FutureBuilder` yang akan menangani berbagai _state_ selama proses pengambilan data.
 
-6. Untuk menampilkan data secara asynchronous, kami akan menggunakan widget FutureBuilder yang akan menangani berbagai state selama proses pengambilan data.
-
-7. Setelah itu, kami juga akan mengimplementasikan state management menggunakan Provider agar state aplikasi kami dapat diolah secara efisien dan data yang diterima dari backend dapat diakses oleh berbagai widget dalam aplikasi dengan mudah.
+6. Setelah itu, kami juga akan mengimplementasikan _state management_ menggunakan Provider agar _state_ aplikasi kami dapat diolah secara efisien dan data yang diterima dari Backend dapat diakses oleh berbagai widget dalam aplikasi dengan mudah.
 
 Dengan integrasi di atas, alur penggunaan dapat dijabarkan sebagai berikut:
 
-1. Pengiriman HTTP Request dari Flutter:
-   - Pengguna mengirimkan HTTP Request ke salah satu endpoint di Django
+1. Pengiriman HTTP _Request_ dari Flutter:
+   - Pengguna mengirimkan HTTP _Request_ ke salah satu endpoint di Django.
 
-2. Pemrosesan HTTP Request di Django:
-   - Django menggunakan urls.py untuk menentukan fungsi pada views.py yang sesuai dengan permintaan
-   - Jika permintaan memerlukan akses data dari database, Django akan menggunakan models.py untuk berinteraksi dengan database dan mendapatkan data tersebut
+2. Pemrosesan HTTP _Request_ di Django:
+   - Django menggunakan `urls.py` untuk menentukan fungsi pada `views.py` yang sesuai dengan permintaan.
+   - Jika permintaan memerlukan akses data dari database, Django akan menggunakan `models.py` untuk berinteraksi dengan database dan mendapatkan data tersebut.
 
 3. Pengiriman HTTP Response dari Django:
-   - Data yang telah diambil kemudian disusun dalam format JSON
-   - Django akan mengirimkan HTTP Response berisi JSON data tersebut ke Flutter
+   - Data yang telah diambil kemudian disusun dalam format JSON.
+   - Django akan mengirimkan HTTP _Response_ berisi JSON data tersebut ke Flutter.
 
 4. Penampilan Data pada Antarmuka di Flutter:
-   - Flutter menerima dan melakukan parsing data JSON tersebut sesuai model yang sudah ditentukan
-   - Tampilan antarmuka akan disesuaikan dengan hasil proses tersebut 
+   - Flutter menerima dan melakukan _parsing data_ JSON tersebut sesuai model yang sudah ditentukan.
+   - Tampilan antarmuka akan disesuaikan dengan hasil proses tersebut.
