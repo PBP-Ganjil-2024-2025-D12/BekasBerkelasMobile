@@ -56,5 +56,3 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 6. Untuk menampilkan data secara asynchronous, kami akan menggunakan widget FutureBuilder yang akan menangani berbagai state selama proses pengambilan data.
 
 7. Setelahnya, kami juga akan mengimplementasikan state management menggunakan Provider, sehingga state aplikasi kami dapat diolah secara efisien dan data yang diterima dari backend dapat diakses oleh berbagai widget dalam aplikasi dengan mudah.
-
-8. Kami juga akan mengimplementasikan sistem error handling yang komprehensif pada sisi Flutter untuk menangani berbagai kemungkinan response dari backend Django.
