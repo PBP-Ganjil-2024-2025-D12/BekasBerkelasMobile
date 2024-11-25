@@ -37,3 +37,20 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 | **Forum** | Pembeli dapat memulai dan melakukan diskusi dalam forum | Penjual dapat memulai dan melakukan diskusi dalam forum | Admin dapat memulai dan melakukan diskusi dalam forum serta menghapus forum yang ada | 
 | **Wishlist** | Pembeli dapat menambahkan mobil bekas yang mereka inginkan ke dalam _wishlist_ | Penjual dapat menambahkan mobil bekas (selain milik mereka) yang mereka inginkan ke dalam _wishlist_ | - |
 | **Review & Rating** | Pembeli dapat menambahkan review dan rating pada penjual mobil yang telah mereka beli | - | Admin dapat menghapus review dan rating yang ada |
+
+### Alur Pengintegrasian dengan _web service_
+1. Dalam melakukan integrasi antara Django pada Proyek Tengah Semester dengan Flutter pada Proyek Akhir Semester ini, kami terlebih dahulu melakukan konfigurasi pada setiap endpoint API yang akan menerima request dari Flutter melalui views.py dan mengirimkan data kembali dalam format JSON.
+
+2. Selanjutnya, untuk mengolah data JSON tersebut, kami akan membuat models baru pada Flutter yang sesuai dengan struktur data dari Django models yang telah ada, sehingga data JSON yang diterima dari Backend Django dapat dengan mudah diolah sebagai objek Dart yang dapat digunakan dalam aplikasi.
+
+3. Kemudian, dengan memanfaatkan package http, kita dapat melakukan HTTP requests ke endpoint Django yang telah dikonfigurasi, di mana setiap request akan menyertakan header dan parameter yang diperlukan untuk pengolahan data.
+
+4. Lalu, kami juga akan mengimplementasikan  sistem autentikasi yang memanfaatkan Cookie dari package pbp_django_auth, sehingga pengolahan session dari setiap pengguna/User dapat dilakukan dengan mudah dan benar serta setiap request ke Backend Django telah terautentikasi dengan benar.
+
+5. Setelah itu, kami akan membuat service layer pada Flutter untuk mengelola seluruh komunikasi dengan backend, termasuk implementasi fungsi-fungsi untuk setiap modul yang disesuaikan dengan role masing-masing pengguna.
+
+6. Untuk menampilkan data secara asynchronous, kami akan menggunakan widget FutureBuilder yang akan menangani berbagai state selama proses pengambilan data.
+
+7. Setelahnya, kami juga akan mengimplementasikan state management menggunakan Provider, sehingga state aplikasi kami dapat diolah secara efisien dan data yang diterima dari backend dapat diakses oleh berbagai widget dalam aplikasi dengan mudah.
+
+8. Kami juga akan mengimplementasikan sistem error handling yang komprehensif pada sisi Flutter untuk menangani berbagai kemungkinan response dari backend Django.
