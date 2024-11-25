@@ -38,6 +38,9 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 | **Wishlist** | Pembeli dapat menambahkan mobil bekas yang mereka inginkan ke dalam _wishlist_ | Penjual dapat menambahkan mobil bekas (selain milik mereka) yang mereka inginkan ke dalam _wishlist_ | - |
 | **Review & Rating** | Pembeli dapat menambahkan review dan rating pada penjual mobil yang telah mereka beli | - | Admin dapat menghapus review dan rating yang ada |
 
+### Sumber Inisial Dataset
+[Dataset](https://www.kaggle.com/datasets/indraputra21/used-car-listings-in-indonesia?select=used_car.csv)
+
 ### Alur Pengintegrasian dengan _web service_
 ![](answer/AlurIntegrasi.jpg)
 1. Dalam melakukan integrasi antara Django pada Proyek Tengah Semester dengan Flutter pada Proyek Akhir Semester ini, kami terlebih dahulu melakukan konfigurasi pada setiap endpoint API yang akan menerima request dari Flutter melalui views.py dan mengirimkan data kembali dalam format JSON.
