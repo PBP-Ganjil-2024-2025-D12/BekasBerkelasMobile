@@ -14,9 +14,9 @@ BekasBerkelas lahir dari kisah inspiratif para pejuang yang datang ke ibukota un
 
 Di sisi lain, Jakarta sebagai pusat ekonomi Indonesia memiliki dinamika tersendiri dalam penjualan mobil. Kultur konsumtif di kalangan masyarakat mengakibatkan munculnya pandangan kepemilikan mobil sebagai simbol status sosial. Hal ini menyebabkan banyaknya pemilik mobil yang cenderung mengganti kendaraan mereka dengan model terbaru hanya untuk mengikuti tren sosial yang ada. Akibatnya, sebagian besar dari mereka memilih untuk menjual mobil bekas yang masih dalam kondisi baik dan menciptakan ekosistem unik dengan pasokan mobil bekas yang berlimpah. Hal ini tentunya membuka peluang besar bagi para pencari mobil bekas berkualitas, termasuk para pendatang baru.
 
-Melihat tantangan yang dihadapi para pendatang baru serta fenomena unik di kalangan pemilik mobil di ibukota, BekasBerkelas tercipta sebagai solusi komprehensif. Aplikasi ini hadir sebagai jembatan penghubung antara pendatang baru yang mencari kendaraan terjangkau dengan pemilik mobil yang kerap berganti kendaraan untuk mengikuti tren terbaru. Dengan kombinasi fitur-fitur yang menarik, BekasBerkelas akan menjadi teman setia bagi pendatang dalam perjalanan membangun kehidupan di kota baru, sambil memfasilitasi gaya hidup dinamis pemilik mobil di ibukota. 
+Melihat tantangan yang dihadapi para pendatang baru serta fenomena unik di kalangan pemilik mobil di ibukota, BekasBerkelas tercipta sebagai solusi komprehensif. Aplikasi ini hadir sebagai jembatan penghubung antara pendatang baru yang mencari kendaraan terjangkau dengan pemilik mobil yang kerap berganti kendaraan untuk mengikuti tren terbaru. Dengan kombinasi fitur-fitur yang menarik, BekasBerkelas akan menjadi teman setia bagi pendatang dalam perjalanan membangun kehidupan di kota baru sambil memfasilitasi gaya hidup dinamis pemilik mobil di ibukota. 
 
-Kesuksesan BekasBerkelas dalam membantu para pendatang dan penjual melalui aplikasi website mendorong pengembangan lebih lanjut untuk peningkatan kualitas pelayanan. Kini, BekasBerkelas hadir dalam aplikasi mobile dengan akses yang lebih cepat dan mudah melalui genggaman tangan. Melalui inovasi ini, BekasBerkelas berkomitmen penuh untuk terus memahami dan menjawab kebutuhan kedua belah pihak, menciptakan ekosistem jual-beli mobil bekas yang saling menguntungkan bagi semua penggunanya.
+Kesuksesan BekasBerkelas dalam membantu para pendatang dan penjual melalui aplikasi website mendorong pengembangan lebih lanjut untuk peningkatan kualitas pelayanan. Kini, BekasBerkelas hadir dalam aplikasi mobile dengan akses yang lebih cepat dan mudah melalui genggaman tangan. Melalui inovasi ini, BekasBerkelas berkomitmen penuh untuk terus memahami dan menjawab kebutuhan kedua belah pihak serta menciptakan ekosistem jual-beli mobil bekas yang saling menguntungkan bagi semua penggunanya.
 
 ### Daftar Modul
 Berikut adalah daftar modul yang akan kami implementasikan.
@@ -29,7 +29,7 @@ Berikut adalah daftar modul yang akan kami implementasikan.
 | **Wishlist** | Modul ini berfungsi untuk membuat sistem wishlist bagi para pembeli | Deanita |
 | **Review & Rating** | Modul ini berfungsi agar pengguna dapat memberikan review dan rating terhadap penjual mobil | Wida |
 
-### Role pengguna
+### Role Pengguna
 Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 | Modul | Pembeli | Penjual | Admin |
 | -- | -- | -- | -- |
@@ -43,7 +43,7 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 ### Sumber Inisial Dataset
 [Dataset](https://www.kaggle.com/datasets/indraputra21/used-car-listings-in-indonesia?select=used_car.csv)
 
-### Alur Pengintegrasian dengan _web service_
+### Alur Pengintegrasian dengan _Web Service_
 ![](answer/AlurIntegrasi.jpg)
 1. Dalam melakukan integrasi antara Django pada Proyek Tengah Semester dengan Flutter pada Proyek Akhir Semester ini, kami melakukan konfigurasi terlebih dahulu pada setiap endpoint API yang akan menerima _request_ dari Flutter melalui `views.py` dan mengirimkan data kembali dalam format JSON.
 
@@ -59,17 +59,17 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 
 Dengan integrasi di atas, alur penggunaan dapat dijabarkan sebagai berikut:
 
-1. Pengiriman HTTP _Request_ dari Flutter:
+1. Pengiriman HTTP _Request_ dari Flutter
    - Pengguna mengirimkan HTTP _Request_ ke salah satu endpoint di Django.
 
-2. Pemrosesan HTTP _Request_ di Django:
+2. Pemrosesan HTTP _Request_ di Django
    - Django menggunakan `urls.py` untuk menentukan fungsi pada `views.py` yang sesuai dengan permintaan.
    - Jika permintaan memerlukan akses data dari database, Django akan menggunakan `models.py` untuk berinteraksi dengan database dan mendapatkan data tersebut.
 
-3. Pengiriman HTTP _Response_ dari Django:
+3. Pengiriman HTTP _Response_ dari Django
    - Data yang telah diambil kemudian disusun dalam format JSON.
    - Django akan mengirimkan HTTP _Response_ berisi JSON data tersebut ke Flutter.
 
-4. Penampilan Data pada Antarmuka di Flutter:
+4. Penampilan Data pada Antarmuka di Flutter
    - Flutter menerima dan melakukan _parsing data_ JSON tersebut sesuai model yang sudah ditentukan.
    - Tampilan antarmuka akan disesuaikan dengan hasil proses tersebut.
