@@ -47,11 +47,11 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 ![](answer/AlurIntegrasi.jpg)
 1. Dalam melakukan integrasi antara Django pada Proyek Tengah Semester dengan Flutter pada Proyek Akhir Semester ini, kami melakukan konfigurasi terlebih dahulu pada setiap endpoint API yang akan menerima _request_ dari Flutter melalui `views.py` dan mengirimkan data kembali dalam format JSON.
 
-2. Selanjutnya, untuk mengolah data JSON tersebut, kami akan membuat models baru pada Flutter yang sesuai dengan struktur data dari Django models yang telah ada, sehingga data JSON yang diterima dari Backend Django dapat dengan mudah diolah sebagai objek Dart yang dapat digunakan dalam aplikasi.
+2. Selanjutnya, untuk mengolah data JSON tersebut, kami akan membuat models baru pada Flutter yang sesuai dengan struktur data dari Django models yang telah ada sehingga data JSON yang diterima dari Backend Django dapat dengan mudah diolah sebagai objek Dart yang dapat digunakan dalam aplikasi.
 
 3. Kemudian, dengan memanfaatkan package `http`, kami akan melakukan HTTP _request_ ke endpoint Django yang telah dikonfigurasi, dimana setiap _request_ akan menyertakan header dan parameter yang diperlukan untuk pengolahan data.
 
-4. Lalu, kami juga akan mengimplementasikan sistem autentikasi yang memanfaatkan Cookie dari package `pbp_django_auth`, sehingga pengolahan _session_ dari setiap pengguna dapat dilakukan dengan mudah dan efisien serta setiap _request_ ke Backend Django telah terautentikasi dengan benar.
+4. Lalu, kami juga akan mengimplementasikan sistem autentikasi yang memanfaatkan Cookie dari package `pbp_django_auth` sehingga pengolahan _session_ dari setiap pengguna dapat dilakukan dengan mudah dan efisien serta setiap _request_ ke Backend Django telah terautentikasi dengan benar.
 
 5. Untuk menampilkan data secara _asynchronous_, kami akan menggunakan widget `FutureBuilder` yang menangani berbagai _state_ selama proses pengambilan data.
 
