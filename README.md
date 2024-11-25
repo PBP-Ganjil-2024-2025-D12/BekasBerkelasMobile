@@ -16,6 +16,8 @@ Di sisi lain, Jakarta sebagai pusat ekonomi Indonesia memiliki dinamika tersendi
 
 Melihat tantangan yang dihadapi para pendatang baru serta fenomena unik di kalangan pemilik mobil di ibukota, BekasBerkelas tercipta sebagai solusi komprehensif. Platform ini hadir sebagai jembatan penghubung antara pendatang baru yang mencari kendaraan terjangkau dengan pemilik mobil yang kerap berganti kendaraan untuk mengikuti tren terbaru. Dengan kombinasi fitur-fitur yang menarik, BekasBerkelas akan menjadi teman setia bagi pendatang dalam perjalanan membangun kehidupan di kota baru, sambil memfasilitasi gaya hidup dinamis pemilik mobil di ibukota. 
 
+Kesuksesan BekasBerkelas dalam membantu para pendatang dan penjual melalui platform website mendorong pengembangan lebih lanjut untuk peningkatan kualitas pelayanan. Kini, BekasBerkelas hadir dalam aplikasi mobile dengan akses yang lebih cepat dan mudah melalui genggaman tangan. Melalui inovasi ini, BekasBerkelas berkomitmen penuh untuk terus memahami dan menjawab kebutuhan kedua belah pihak, menciptakan ekosistem jual-beli mobil bekas yang saling menguntungkan bagi semua penggunanya.
+
 ### Daftar Modul
 Berikut adalah daftar modul yang akan kami implementasikan.
 | Modul | Penjelasan | Pengembang |
