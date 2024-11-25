@@ -14,9 +14,9 @@ BekasBerkelas lahir dari kisah inspiratif para pejuang yang datang ke ibukota un
 
 Di sisi lain, Jakarta sebagai pusat ekonomi Indonesia memiliki dinamika tersendiri dalam penjualan mobil. Kultur konsumtif di kalangan masyarakat mengakibatkan munculnya pandangan kepemilikan mobil sebagai simbol status sosial. Hal ini menyebabkan banyaknya pemilik mobil yang cenderung mengganti kendaraan mereka dengan model terbaru hanya untuk mengikuti tren sosial yang ada. Akibatnya, sebagian besar dari mereka memilih untuk menjual mobil bekas yang masih dalam kondisi baik dan menciptakan ekosistem unik dengan pasokan mobil bekas yang berlimpah. Hal ini tentunya membuka peluang besar bagi para pencari mobil bekas berkualitas, termasuk para pendatang baru.
 
-Melihat tantangan yang dihadapi para pendatang baru serta fenomena unik di kalangan pemilik mobil di ibukota, BekasBerkelas tercipta sebagai solusi komprehensif. Platform ini hadir sebagai jembatan penghubung antara pendatang baru yang mencari kendaraan terjangkau dengan pemilik mobil yang kerap berganti kendaraan untuk mengikuti tren terbaru. Dengan kombinasi fitur-fitur yang menarik, BekasBerkelas akan menjadi teman setia bagi pendatang dalam perjalanan membangun kehidupan di kota baru, sambil memfasilitasi gaya hidup dinamis pemilik mobil di ibukota. 
+Melihat tantangan yang dihadapi para pendatang baru serta fenomena unik di kalangan pemilik mobil di ibukota, BekasBerkelas tercipta sebagai solusi komprehensif. Aplikasi ini hadir sebagai jembatan penghubung antara pendatang baru yang mencari kendaraan terjangkau dengan pemilik mobil yang kerap berganti kendaraan untuk mengikuti tren terbaru. Dengan kombinasi fitur-fitur yang menarik, BekasBerkelas akan menjadi teman setia bagi pendatang dalam perjalanan membangun kehidupan di kota baru, sambil memfasilitasi gaya hidup dinamis pemilik mobil di ibukota. 
 
-Kesuksesan BekasBerkelas dalam membantu para pendatang dan penjual melalui platform website mendorong pengembangan lebih lanjut untuk peningkatan kualitas pelayanan. Kini, BekasBerkelas hadir dalam aplikasi mobile dengan akses yang lebih cepat dan mudah melalui genggaman tangan. Melalui inovasi ini, BekasBerkelas berkomitmen penuh untuk terus memahami dan menjawab kebutuhan kedua belah pihak, menciptakan ekosistem jual-beli mobil bekas yang saling menguntungkan bagi semua penggunanya.
+Kesuksesan BekasBerkelas dalam membantu para pendatang dan penjual melalui aplikasi website mendorong pengembangan lebih lanjut untuk peningkatan kualitas pelayanan. Kini, BekasBerkelas hadir dalam aplikasi mobile dengan akses yang lebih cepat dan mudah melalui genggaman tangan. Melalui inovasi ini, BekasBerkelas berkomitmen penuh untuk terus memahami dan menjawab kebutuhan kedua belah pihak, menciptakan ekosistem jual-beli mobil bekas yang saling menguntungkan bagi semua penggunanya.
 
 ### Daftar Modul
 Berikut adalah daftar modul yang akan kami implementasikan.
@@ -45,17 +45,17 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 
 ### Alur Pengintegrasian dengan _web service_
 ![](answer/AlurIntegrasi.jpg)
-1. Dalam melakukan integrasi antara Django pada Proyek Tengah Semester dengan Flutter pada Proyek Akhir Semester ini, kami terlebih dahulu melakukan konfigurasi pada setiap endpoint API yang akan menerima _request_ dari Flutter melalui `views.py` dan mengirimkan data kembali dalam format JSON.
+1. Dalam melakukan integrasi antara Django pada Proyek Tengah Semester dengan Flutter pada Proyek Akhir Semester ini, kami melakukan konfigurasi terlebih dahulu pada setiap endpoint API yang akan menerima _request_ dari Flutter melalui `views.py` dan mengirimkan data kembali dalam format JSON.
 
 2. Selanjutnya, untuk mengolah data JSON tersebut, kami akan membuat models baru pada Flutter yang sesuai dengan struktur data dari Django models yang telah ada, sehingga data JSON yang diterima dari Backend Django dapat dengan mudah diolah sebagai objek Dart yang dapat digunakan dalam aplikasi.
 
-3. Kemudian, dengan memanfaatkan package `http`, kita dapat melakukan HTTP _request_ ke endpoint Django yang telah dikonfigurasi, di mana setiap _request_ akan menyertakan header dan parameter yang diperlukan untuk pengolahan data.
+3. Kemudian, dengan memanfaatkan package `http`, kami akan melakukan HTTP _request_ ke endpoint Django yang telah dikonfigurasi, dimana setiap _request_ akan menyertakan header dan parameter yang diperlukan untuk pengolahan data.
 
 4. Lalu, kami juga akan mengimplementasikan sistem autentikasi yang memanfaatkan Cookie dari package `pbp_django_auth`, sehingga pengolahan _session_ dari setiap pengguna dapat dilakukan dengan mudah dan efisien serta setiap _request_ ke Backend Django telah terautentikasi dengan benar.
 
-5. Untuk menampilkan data secara _asynchronous_, kami akan menggunakan widget `FutureBuilder` yang akan menangani berbagai _state_ selama proses pengambilan data.
+5. Untuk menampilkan data secara _asynchronous_, kami akan menggunakan widget `FutureBuilder` yang menangani berbagai _state_ selama proses pengambilan data.
 
-6. Setelah itu, kami juga akan mengimplementasikan _state management_ menggunakan Provider agar _state_ aplikasi kami dapat diolah secara efisien dan data yang diterima dari Backend dapat diakses oleh berbagai widget dalam aplikasi dengan mudah.
+6. Setelah itu, kami juga akan mengimplementasikan _state management_ menggunakan Provider agar _state_ aplikasi dapat diolah secara efisien dan data yang diterima dari Backend dapat diakses oleh berbagai widget dalam aplikasi dengan mudah.
 
 Dengan integrasi di atas, alur penggunaan dapat dijabarkan sebagai berikut:
 
