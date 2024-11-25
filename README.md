@@ -55,22 +55,23 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 
 6. Untuk menampilkan data secara asynchronous, kami akan menggunakan widget FutureBuilder yang akan menangani berbagai state selama proses pengambilan data.
 
-7. Setelahnya, kami juga akan mengimplementasikan state management menggunakan Provider, sehingga state aplikasi kami dapat diolah secara efisien dan data yang diterima dari backend dapat diakses oleh berbagai widget dalam aplikasi dengan mudah.
+7. Setelah itu, kami juga akan mengimplementasikan state management menggunakan Provider agar state aplikasi kami dapat diolah secara efisien dan data yang diterima dari backend dapat diakses oleh berbagai widget dalam aplikasi dengan mudah.
 
-8. Kami juga akan mengimplementasikan sistem error handling yang komprehensif pada sisi Flutter untuk menangani berbagai kemungkinan response dari backend Django.
+8. Kami juga akan mengimplementasikan beberapa error handling yang diperlukan pada Flutter untuk menangani berbagai kemungkinan response dari backend Django.
 
 Dengan integrasi di atas, alur penggunaan dapat dijabarkan sebagai berikut:
 
-1. Pengguna menginisiasi HTTP request ke salah satu endpoint yang terdapat di Django melalui Flutter
+1. Pengiriman HTTP Request dari Flutter:
+   - Pengguna mengirimkan HTTP Request ke salah satu endpoint di Django
 
-2. Django menerima request tersebut melalui views.py yang bertugas untuk memproses request tersebut
+2. Pemrosesan HTTP Request di Django:
+   - Django menggunakan urls.py untuk menentukan fungsi pada views.py yang sesuai dengan permintaan
+   - Jika permintaan memerlukan akses data dari database, Django akan menggunakan models.py untuk berinteraksi dengan database dan mendapatkan data tersebut
 
-3. Jika permintaan memerlukan akses data dari database, Django akan memanggil models.py untuk mendapatkan data tersebut
+3. Pengiriman HTTP Response dari Django:
+   - Data yang telah diambil kemudian disusun dalam format JSON
+   - Django akan mengirimkan HTTP Response berisi JSON data tersebut ke Flutter
 
-4. Setelah data diproses pada models.py, Django mengembalikan data dalam format JSON
-
-5. Django mengirimkan HTTP response ke Flutter yang berisi JSON data
-
-6. Flutter menerima response dan melakukan parsing data dengan model yang sesuai
-
-7. Flutter kemudian memproses data tersebut untuk ditampilkan di antarmuka pengguna
+4. Penampilan Data pada Antarmuka di Flutter:
+   - Flutter menerima dan melakukan parsing data JSON tersebut sesuai model yang sudah ditentukan
+   - Tampilan antarmuka akan disesuaikan dengan hasil proses tersebut 
