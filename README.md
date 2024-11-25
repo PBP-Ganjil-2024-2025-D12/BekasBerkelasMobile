@@ -66,7 +66,7 @@ Dengan integrasi di atas, alur penggunaan dapat dijabarkan sebagai berikut:
    - Django menggunakan `urls.py` untuk menentukan fungsi pada `views.py` yang sesuai dengan permintaan.
    - Jika permintaan memerlukan akses data dari database, Django akan menggunakan `models.py` untuk berinteraksi dengan database dan mendapatkan data tersebut.
 
-3. Pengiriman HTTP Response dari Django:
+3. Pengiriman HTTP _Response_ dari Django:
    - Data yang telah diambil kemudian disusun dalam format JSON.
    - Django akan mengirimkan HTTP _Response_ berisi JSON data tersebut ke Flutter.
 
