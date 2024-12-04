@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ListWishlistEntry extends StatelessWidget {
-  ListWishlistEntry({super.key});
+class WishlistPage extends StatelessWidget {
+  WishlistPage({super.key});
 
+  // Data statis untuk wishlist
   final List<Wishlist> wishlist = [
     Wishlist(name: 'Item 1', description: 'Deskripsi untuk Item 1'),
     Wishlist(name: 'Item 2', description: 'Deskripsi untuk Item 2'),
@@ -42,10 +43,7 @@ class ListWishlistEntry extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       wishlist[index].description,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ],
                 ),
