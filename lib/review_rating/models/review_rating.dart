@@ -9,25 +9,17 @@ List<ReviewRating> reviewRatingFromJson(String str) => List<ReviewRating>.from(j
 String reviewRatingToJson(List<ReviewRating> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class ReviewRating {
-    String model;
-    String pk;
     Fields fields;
 
     ReviewRating({
-        required this.model,
-        required this.pk,
         required this.fields,
     });
 
     factory ReviewRating.fromJson(Map<String, dynamic> json) => ReviewRating(
-        model: json["model"],
-        pk: json["pk"],
         fields: Fields.fromJson(json["fields"]),
     );
 
     Map<String, dynamic> toJson() => {
-        "model": model,
-        "pk": pk,
         "fields": fields.toJson(),
     };
 }
@@ -35,12 +27,14 @@ class ReviewRating {
 class Fields {
     int rating;
     String review;
+    String id;
     bool canDelete;
     Reviewer reviewer;
 
     Fields({
         required this.rating,
         required this.review,
+        required this.id,
         required this.canDelete,
         required this.reviewer,
     });
@@ -48,6 +42,7 @@ class Fields {
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
         rating: json["rating"],
         review: json["review"],
+        id: json["id"],
         canDelete: json["can_delete"],
         reviewer: Reviewer.fromJson(json["reviewer"]),
     );
@@ -55,6 +50,7 @@ class Fields {
     Map<String, dynamic> toJson() => {
         "rating": rating,
         "review": review,
+        "id": id,
         "can_delete": canDelete,
         "reviewer": reviewer.toJson(),
     };
