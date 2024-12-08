@@ -19,11 +19,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // Lakukan sesuatu dengan password baru, misalnya simpan ke database
       String newPassword = _passwordController.text;
-      // Contoh: simpan password baru ke database atau backend
       print('Password baru: $newPassword');
-      // Kembali ke halaman sebelumnya
       Navigator.pop(context);
     }
   }

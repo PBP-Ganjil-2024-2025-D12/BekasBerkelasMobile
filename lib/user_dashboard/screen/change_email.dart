@@ -17,11 +17,8 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // Lakukan sesuatu dengan email baru, misalnya simpan ke database
       String newEmail = _emailController.text;
-      // Contoh: simpan email baru ke database atau backend
       print('Email baru: $newEmail');
-      // Kembali ke halaman sebelumnya
       Navigator.pop(context);
     }
   }

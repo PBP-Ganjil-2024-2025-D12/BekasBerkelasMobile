@@ -34,14 +34,14 @@ class DashboardPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   Center(
                     child: SizedBox(
-                      width: 300, // Atur lebar sesuai kebutuhan
+                      width: 300,
                       child: Row(
                         children: [
                           const Text(
                             'Name',
                             style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),
-                          const SizedBox(width: 10), // Memberikan jarak seperti tab
+                          const SizedBox(width: 10),
                           Text(
                             ': $name',
                             style: const TextStyle(fontSize: 18, color: Colors.black),
@@ -53,14 +53,14 @@ class DashboardPage extends StatelessWidget {
                   const SizedBox(height: 10),
                   Center(
                     child: SizedBox(
-                      width: 300, // Atur lebar sesuai kebutuhan
+                      width: 300,
                       child: Row(
                         children: [
                           const Text(
                             'Email',
                             style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),
-                          const SizedBox(width: 10), // Memberikan jarak seperti tab
+                          const SizedBox(width: 10),
                           Text(
                             ': $email',
                             style: const TextStyle(fontSize: 18, color: Colors.black),
@@ -72,14 +72,14 @@ class DashboardPage extends StatelessWidget {
                   const SizedBox(height: 10),
                   Center(
                     child: SizedBox(
-                      width: 300, // Atur lebar sesuai kebutuhan
+                      width: 300,
                       child: Row(
                         children: [
                           const Text(
                             'Phone Number',
                             style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),
-                          SizedBox(width: 10), // Memberikan jarak seperti tab
+                          SizedBox(width: 10),
                           Text(
                             ': $phoneNumber',
                             style: TextStyle(fontSize: 18, color: Colors.black),
@@ -100,9 +100,9 @@ class DashboardPage extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, 50), // Lebar penuh dan tinggi 50
+                            minimumSize: Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8), // Sudut membulat sedikit
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           icon: Icon(Icons.person),
@@ -117,9 +117,9 @@ class DashboardPage extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, 50), // Lebar penuh dan tinggi 50
+                            minimumSize: Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8), // Sudut membulat sedikit
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           icon: Icon(Icons.email),
@@ -134,9 +134,9 @@ class DashboardPage extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, 50), // Lebar penuh dan tinggi 50
+                            minimumSize: Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8), // Sudut membulat sedikit
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           icon: Icon(Icons.phone),
@@ -151,9 +151,9 @@ class DashboardPage extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, 50), // Lebar penuh dan tinggi 50
+                            minimumSize: Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8), // Sudut membulat sedikit
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           icon: Icon(Icons.lock),
@@ -178,11 +178,11 @@ class DashboardPage extends StatelessWidget {
                     },
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,
-                      minimumSize: Size(double.infinity, double.infinity), // Mengisi seluruh lebar dan tinggi
+                      minimumSize: Size(double.infinity, double.infinity),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       alignment: Alignment.center,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Sudut membulat sedikit
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: Text('Dashboard'),
@@ -195,11 +195,11 @@ class DashboardPage extends StatelessWidget {
                     },
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,
-                      minimumSize: Size(double.infinity, double.infinity), // Mengisi seluruh lebar dan tinggi
+                      minimumSize: Size(double.infinity, double.infinity),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       alignment: Alignment.center,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Sudut membulat sedikit
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: Text('Home'),

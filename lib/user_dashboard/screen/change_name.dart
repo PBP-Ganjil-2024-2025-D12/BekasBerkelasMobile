@@ -17,11 +17,8 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // Lakukan sesuatu dengan nama baru, misalnya simpan ke database
       String newName = _nameController.text;
-      // Contoh: simpan nama baru ke database atau backend
       print('Nama baru: $newName');
-      // Kembali ke halaman sebelumnya
       Navigator.pop(context);
     }
   }
@@ -57,12 +54,6 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
                 child: ElevatedButton(
                   onPressed: _submitForm,
                   child: Text('Simpan'),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 50), // Lebar penuh dan tinggi 50
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8), // Sudut membulat sedikit
-                    )
-                  )
                 ),
               ),
             ],

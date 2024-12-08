@@ -17,11 +17,8 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // Lakukan sesuatu dengan nomor telepon baru, misalnya simpan ke database
       String newPhone = _phoneController.text;
-      // Contoh: simpan nomor telepon baru ke database atau backend
       print('Nomor telepon baru: $newPhone');
-      // Kembali ke halaman sebelumnya
       Navigator.pop(context);
     }
   }
