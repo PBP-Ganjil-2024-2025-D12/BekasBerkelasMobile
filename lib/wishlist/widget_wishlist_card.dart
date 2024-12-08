@@ -1,67 +1,63 @@
+// wishlist/widget_wishlist_card.dart
 import 'package:flutter/material.dart';
+import 'package:bekas_berkelas_mobile/wishlist/model_wishlist.dart';
 
-class WishlistPage extends StatelessWidget {
-  WishlistPage({super.key});
+class WishlistCard extends StatelessWidget {
+  final WishlistEntry wishlist;
 
-  // Data statis untuk wishlist
-  final List<Wishlist> wishlist = [
-    Wishlist(name: 'Item 1', description: 'Deskripsi untuk Item 1'),
-    Wishlist(name: 'Item 2', description: 'Deskripsi untuk Item 2'),
-    Wishlist(name: 'Item 3', description: 'Deskripsi untuk Item 3'),
-    Wishlist(name: 'Item 4', description: 'Deskripsi untuk Item 4'),
-  ];
+  const WishlistCard({required this.wishlist, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Wishlist'),
-        centerTitle: true,
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      body: ListView.builder(
-        itemCount: wishlist.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      wishlist[index].name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      wishlist[index].description,
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ],
-                ),
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              wishlist.fields.car.carName,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff0728bb),
               ),
             ),
-          );
-        },
+            const SizedBox(height: 8),
+            // Brand Mobil
+            Text(
+              "Brand: ${wishlist.fields.car.brand}",
+              style: const TextStyle(
+                fontSize: 16,
+                color: Color(0xff174ff3),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Harga Mobil
+            Text(
+              "Price: Rp${wishlist.fields.car.price}",
+              style: const TextStyle(
+                fontSize: 16,
+                color: Color(0xff174ff3),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Priority
+            Text(
+              "Priority: ${wishlist.fields.priority}",
+              style: const TextStyle(
+                fontSize: 16,
+                color: Color(0xff1eac9e),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-}
-
-class Wishlist {
-  final String name;
-  final String description;
-
-  Wishlist({
-    required this.name,
-    required this.description,
-  });
 }

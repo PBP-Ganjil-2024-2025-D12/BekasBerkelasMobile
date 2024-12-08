@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final productEntry = productEntryFromJson(jsonString);
-
 import 'package:bekas_berkelas_mobile/katalog_produk/model_katalog_produk.dart';
 import 'dart:convert';
 
