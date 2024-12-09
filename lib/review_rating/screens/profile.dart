@@ -23,7 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<User> fetchUser(CookieRequest request) async {
     try {
       final response = await request.get(
-        'http://localhost:8000/profile/${widget.username}/show_user_json',
+        'http://localhost:8000/profile/${widget.username}/show_user_json/',
       );
 
       var data = response;
@@ -37,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<SellerProfile> fetchSellerProfile(CookieRequest request) async {
     try {
       final response = await request.get(
-        'http://localhost:8000/profile/${widget.username}/show_user_json',
+        'http://localhost:8000/profile/${widget.username}/show_user_json/',
       );
       
       var data = response;
@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<BuyerProfile> fetchBuyerProfile(CookieRequest request) async {
     try {
       final response = await request.get(
-        'http://localhost:8000/profile/${widget.username}/show_user_json',
+        'http://localhost:8000/profile/${widget.username}/show_user_json/',
       );
       
       var data = response;
