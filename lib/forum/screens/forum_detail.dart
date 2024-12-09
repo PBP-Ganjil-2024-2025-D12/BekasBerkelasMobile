@@ -183,10 +183,11 @@ class _ForumDetailState extends State<ForumDetail> {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF4C8BF5),
+                          foregroundColor: Colors.white,
                         ),
                         onPressed: () => _submitReply(request),
                         child: const Text('Kirim'),
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -225,7 +226,7 @@ class _ForumDetailState extends State<ForumDetail> {
             const SnackBar(content: Text('Balasan berhasil ditambahkan')),
           );
           _replyController.clear();
-          setState(() {}); 
+          setState(() {});
         }
       } else {
         throw Exception(response['message'] ?? 'Unknown error');
