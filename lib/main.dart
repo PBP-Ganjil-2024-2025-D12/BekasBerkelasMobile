@@ -1,5 +1,7 @@
+import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 import 'package:flutter/material.dart';
 import 'authentication/screen/login_screen.dart';
+import 'package:bekas_berkelas_mobile/review_rating/screens/profile.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,6 +60,17 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => ProfileScreen(username: "buyer"), // Passing username
+            //       ),
+            //     );
+            //   },
+            //   child: const Text('Go to seller profile'),
+            // ),
           ],
         ),
       ),
