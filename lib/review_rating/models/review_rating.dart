@@ -26,7 +26,7 @@ class ReviewRating {
 }
 
 class Fields {
-    double rating;
+    int rating;
     String review;
     String id;
     bool canDelete;
