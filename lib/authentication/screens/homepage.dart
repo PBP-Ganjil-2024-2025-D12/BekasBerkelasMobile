@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -6,6 +7,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bekas Berkelas'),
+        backgroundColor: Colors.white,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -191,6 +196,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+      drawer: const LeftDrawer(),
     );
   }
 }

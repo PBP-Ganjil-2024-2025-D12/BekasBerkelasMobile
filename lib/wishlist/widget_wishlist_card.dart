@@ -1,6 +1,5 @@
-// wishlist/widget_wishlist_card.dart
 import 'package:flutter/material.dart';
-import 'package:bekas_berkelas_mobile/wishlist/model_wishlist.dart';
+import 'package:bekas_berkelas_mobile/wishlist/model_wishlist_entry.dart';
 
 class WishlistCard extends StatelessWidget {
   final WishlistEntry wishlist;
@@ -21,7 +20,7 @@ class WishlistCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              wishlist.fields.car.carName,
+              wishlist.fields.car.fields.carName,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -31,7 +30,7 @@ class WishlistCard extends StatelessWidget {
             const SizedBox(height: 8),
             // Brand Mobil
             Text(
-              "Brand: ${wishlist.fields.car.brand}",
+              "Brand: ${wishlist.fields.car.fields.brand}",
               style: const TextStyle(
                 fontSize: 16,
                 color: Color(0xff174ff3),
@@ -40,7 +39,7 @@ class WishlistCard extends StatelessWidget {
             const SizedBox(height: 8),
             // Harga Mobil
             Text(
-              "Price: Rp${wishlist.fields.car.price}",
+              "Price: Rp${wishlist.fields.car.fields.price}",
               style: const TextStyle(
                 fontSize: 16,
                 color: Color(0xff174ff3),

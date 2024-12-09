@@ -1,4 +1,4 @@
-import 'package:bekas_berkelas_mobile/katalog_produk/model_katalog_produk.dart';
+import 'package:bekas_berkelas_mobile/katalog_produk/Car_entry.dart';
 import 'dart:convert';
 
 List<WishlistEntry> wishlistEntryFromJson(String str) => List<WishlistEntry>.from(
@@ -33,7 +33,7 @@ class WishlistEntry {
 
 class WishlistFields {
   String user;
-  Car car;
+  CarEntry car;
   int priority;
 
   WishlistFields({
@@ -44,7 +44,7 @@ class WishlistFields {
 
   factory WishlistFields.fromJson(Map<String, dynamic> json) => WishlistFields(
         user: json["user"].toString(),
-        car: Car.fromJson(json["car"]), 
+        car: CarEntry.fromJson(json["car"]), 
         priority: json["priority"],
       );
 
