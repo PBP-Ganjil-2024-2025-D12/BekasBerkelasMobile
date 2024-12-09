@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Home Page'),
+      home: const LoginScreen(),
     );
   }
 }
@@ -60,17 +60,17 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(username: "seller"), // Passing username
-                  ),
-                );
-              },
-              child: const Text('Go to seller profile'),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => ProfileScreen(username: "buyer"), // Passing username
+            //       ),
+            //     );
+            //   },
+            //   child: const Text('Go to seller profile'),
+            // ),
           ],
         ),
       ),
