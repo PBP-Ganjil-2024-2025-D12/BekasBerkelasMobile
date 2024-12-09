@@ -3,6 +3,7 @@
 //     final reviewRating = reviewRatingFromJson(jsonString);
 
 import 'dart:convert';
+import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 
 List<ReviewRating> reviewRatingFromJson(String str) => List<ReviewRating>.from(json.decode(str).map((x) => ReviewRating.fromJson(x)));
 
@@ -69,41 +70,5 @@ class Reviewer {
 
     Map<String, dynamic> toJson() => {
         "user_profile": userProfile.toJson(),
-    };
-}
-
-class UserProfile {
-    String profilePicture;
-    User user;
-
-    UserProfile({
-        required this.profilePicture,
-        required this.user,
-    });
-
-    factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
-        profilePicture: json["profile_picture"],
-        user: User.fromJson(json["user"]),
-    );
-
-    Map<String, dynamic> toJson() => {
-        "profile_picture": profilePicture,
-        "user": user.toJson(),
-    };
-}
-
-class User {
-    String username;
-
-    User({
-        required this.username,
-    });
-
-    factory User.fromJson(Map<String, dynamic> json) => User(
-        username: json["username"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "username": username,
     };
 }
