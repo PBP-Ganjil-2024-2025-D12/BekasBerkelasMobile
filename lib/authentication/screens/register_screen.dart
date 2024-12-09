@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../auth_service.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -11,8 +12,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _authService = AuthService();
-  
+
   String _username = '';
   String _name = '';
   String _email = '';
@@ -21,33 +21,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _password = '';
   String _confirmPassword = '';
 
-  Future<void> _register() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      
-      if (_password != _confirmPassword) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Passwords do not match')),
-        );
-        return;
-      }
-
-      final success = await _authService.register(_username, _name, _email, _phone, _role, _password, _confirmPassword);
-      if (success) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration failed')),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFEEF1FF),
       body: SafeArea(
@@ -66,7 +43,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       width: 120,
                     ),
                     const SizedBox(height: 40),
-                    
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -84,14 +60,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                         ),
-                        validator: (value) => value?.isEmpty ?? true ? 'Please enter username' : null,
+                        validator: (value) => value?.isEmpty ?? true
+                            ? 'Please enter username'
+                            : null,
                         onSaved: (value) => _username = value ?? '',
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -109,14 +87,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                         ),
-                        validator: (value) => value?.isEmpty ?? true ? 'Please enter name' : null,
+                        validator: (value) =>
+                            value?.isEmpty ?? true ? 'Please enter name' : null,
                         onSaved: (value) => _name = value ?? '',
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -134,14 +113,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                         ),
-                        validator: (value) => value?.isEmpty ?? true ? 'Please enter email' : null,
+                        validator: (value) => value?.isEmpty ?? true
+                            ? 'Please enter email'
+                            : null,
                         onSaved: (value) => _email = value ?? '',
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -159,14 +140,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                         ),
-                        validator: (value) => value?.isEmpty ?? true ? 'Please enter phone number' : null,
+                        validator: (value) => value?.isEmpty ?? true
+                            ? 'Please enter phone number'
+                            : null,
                         onSaved: (value) => _phone = value ?? '',
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -174,6 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       child: DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
+                          isDense: true,
                           hintText: 'Choose role',
                           border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
@@ -184,18 +168,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                         ),
                         items: const [
-                          DropdownMenuItem(value: 'buyer', child: Text('Buyer')),
-                          DropdownMenuItem(value: 'seller', child: Text('Seller')),
+                          DropdownMenuItem(
+                              value: 'BUY',
+                              child: Text(
+                                  'Buyer')), 
+                          DropdownMenuItem(
+                              value: 'SEL',
+                              child: Text(
+                                  'Seller')),
                         ],
-                        onChanged: (value) => setState(() => _role = value ?? ''),
-                        validator: (value) => value == null ? 'Please select a role' : null,
+                        onChanged: (value) =>
+                            setState(() => _role = value ?? ''),
+                        validator: (value) =>
+                            value == null ? 'Please select a role' : null,
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -213,15 +205,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                         ),
                         obscureText: true,
-                        validator: (value) => value?.isEmpty ?? true ? 'Please enter password' : null,
+                        validator: (value) => value?.isEmpty ?? true
+                            ? 'Please enter password'
+                            : null,
                         onSaved: (value) => _password = value ?? '',
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -239,19 +233,66 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                         ),
                         obscureText: true,
-                        validator: (value) => value?.isEmpty ?? true ? 'Please confirm password' : null,
+                        validator: (value) => value?.isEmpty ?? true
+                            ? 'Please confirm password'
+                            : null,
                         onSaved: (value) => _confirmPassword = value ?? '',
                       ),
                     ),
                     const SizedBox(height: 24),
-
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _register,
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+
+                            if (_password != _confirmPassword) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Passwords do not match')),
+                              );
+                              return;
+                            }
+
+                            final response = await request.post(
+                              'http://127.0.0.1:8000/auth/register/', 
+                              {
+                                'username': _username,
+                                'name': _name,
+                                'email': _email,
+                                'no_telp': _phone,
+                                'role': _role,
+                                'password1': _password,
+                                'password2': _confirmPassword,
+                              },
+                            );
+
+                            if (response['status'] == 'success') {
+                              if (context.mounted) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const LoginScreen()),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(response['message'])),
+                                );
+                              }
+                            } else {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(response['message'])),
+                                );
+                              }
+                            }
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF4C8BF5),
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -270,21 +311,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
                           "Already have an account? ",
-                          style: TextStyle(
-                            color: Colors.black87,
-                          ),
+                          style: TextStyle(color: Colors.black87),
                         ),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginScreen()),
                             );
                           },
                           child: const Text(
