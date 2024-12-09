@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:bekas_berkelas_mobile/main.dart';
-import '../auth_service.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 import 'register_screen.dart';
+import 'homepage.dart';
+import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -12,31 +14,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _authService = AuthService();
   String _username = '';
   String _password = '';
 
-  Future<void> _login() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      final success = await _authService.login(_username, _password);
-      if (success) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const MyHomePage(title: 'Home')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid username or password')),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+    
     return Scaffold(
       backgroundColor: const Color(0xFFEEF1FF),
       body: SafeArea(
@@ -50,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/logo-text.png',  
+                      'assets/logo-text.png',
                       height: 120,
                       width: 120,
                     ),
@@ -73,12 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
-                        validator: (value) => value?.isEmpty ?? true
-                            ? 'Please enter phone number'
-                            : null,
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter username' : null,
                         onSaved: (value) => _username = value ?? '',
                       ),
                     ),
@@ -101,13 +82,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
                         obscureText: true,
-                        validator: (value) => value?.isEmpty ?? true
-                            ? 'Please enter password'
-                            : null,
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter password' : null,
                         onSaved: (value) => _password = value ?? '',
                       ),
                     ),
@@ -116,10 +94,45 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _login,
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            
+                            final response = await request.login(
+                              "http://127.0.0.1:8000/auth/login/",  
+                              {
+                                'username': _username,
+                                'password': _password,
+                              },
+                            );
+
+                            if (request.loggedIn) {
+                              String message = response['message'];
+                              String uname = response['username'];
+                              if (context.mounted) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const ShowForum()),
+                                );
+                                ScaffoldMessenger.of(context)
+                                  ..hideCurrentSnackBar()
+                                  ..showSnackBar(SnackBar(
+                                    content: Text("$message Welcome, $uname."),
+                                  ));
+                              }
+                            } else {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Invalid username or password"),
+                                  ),
+                                );
+                              }
+                            }
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color(0xFF4C8BF5), 
+                          backgroundColor: const Color(0xFF4C8BF5),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -142,16 +155,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         const Text(
                           "Don't have an account yet? ",
-                          style: TextStyle(
-                            color: Colors.black87,
-                          ),
+                          style: TextStyle(color: Colors.black87),
                         ),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => const RegisterScreen()),
+                              MaterialPageRoute(builder: (context) => const RegisterScreen()),
                             );
                           },
                           child: const Text(
