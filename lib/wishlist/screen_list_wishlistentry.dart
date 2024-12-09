@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/wishlist/model_wishlist.dart';
-import 'package:bekas_berkelas_mobile/wishlist/widget_wishlist_card.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});
@@ -13,26 +12,17 @@ class WishlistScreen extends StatefulWidget {
 }
 
 class _WishlistScreenState extends State<WishlistScreen> {
-  // Function untuk fetch data wishlist
   Future<List<WishlistEntry>> fetchWishlist(CookieRequest request) async {
-    try {
-      // Ganti dengan alamat IP yang sesuai
-      final response = await request.get('http://10.0.2.2:8000/wishlist/show_wishlist/');
-      print('Response: $response'); // Logging response
+    final response = await request.get('http://localhost:8000/wishlist/show_wishlist/');
 
-      // Mengkonversi data JSON menjadi object WishlistEntry
-      List<WishlistEntry> wishlist = [];
-      for (var d in response) {
-        if (d != null) {
-          wishlist.add(WishlistEntry.fromJson(d));
-        }
+    List<WishlistEntry> wishlist = [];
+    for (var d in response) {
+      if (d != null) {
+        wishlist.add(WishlistEntry.fromJson(d));
       }
-
-      return wishlist;
-    } catch (e) {
-      print('Error fetching wishlist: $e'); // Logging error
-      return [];
     }
+
+    return wishlist;
   }
 
   @override
@@ -42,7 +32,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wishlist'),
-        centerTitle: true,
       ),
       body: FutureBuilder<List<WishlistEntry>>(
         future: fetchWishlist(request),
@@ -58,14 +47,44 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 ),
               );
             } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (_, index) {
-                var wishlistEntry = snapshot.data![index];
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (_, index) {
+                  var wishlistEntry = snapshot.data![index];
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: WishlistCard(wishlist: wishlistEntry),
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.all(20.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${wishlistEntry.fields.car.carName}",
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text("Brand: ${wishlistEntry.fields.car.brand}"),
+                        const SizedBox(height: 10),
+                        Text("Price: Rp${wishlistEntry.fields.car.price}"),
+                        const SizedBox(height: 10),
+                        Text("Priority: ${wishlistEntry.fields.priority}"),
+                      ],
+                    ),
                   );
                 },
               );

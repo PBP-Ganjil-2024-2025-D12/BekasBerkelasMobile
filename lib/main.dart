@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'authentication/login_screen.dart';
-import 'wishlist/model_wishlist_entry.dart';
 
 
 void main() {
