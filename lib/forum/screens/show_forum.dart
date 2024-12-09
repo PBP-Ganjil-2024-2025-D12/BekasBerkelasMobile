@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import '../models/question.dart';
 import 'forum_detail.dart';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
 class ShowForum extends StatefulWidget {
   const ShowForum({Key? key}) : super(key: key);
@@ -19,17 +20,18 @@ class _ShowForumState extends State<ShowForum> {
   int _currentPage = 1;
   final TextEditingController _searchController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFEEF1FF),
       appBar: AppBar(
         title: const Text('Forum'),
         backgroundColor: Colors.white,
       ),
+      drawer: const LeftDrawer(),
       body: Column(
         children: [
           Padding(
@@ -68,10 +70,13 @@ class _ShowForumState extends State<ShowForum> {
                           fillColor: Colors.white,
                         ),
                         items: const [
-                          DropdownMenuItem(value: '', child: Text('Semua Kategori')),
+                          DropdownMenuItem(
+                              value: '', child: Text('Semua Kategori')),
                           DropdownMenuItem(value: 'UM', child: Text('Umum')),
-                          DropdownMenuItem(value: 'JB', child: Text('Jual Beli')),
-                          DropdownMenuItem(value: 'TT', child: Text('Tips & Trik')),
+                          DropdownMenuItem(
+                              value: 'JB', child: Text('Jual Beli')),
+                          DropdownMenuItem(
+                              value: 'TT', child: Text('Tips & Trik')),
                           DropdownMenuItem(value: 'SA', child: Text('Santai')),
                         ],
                         onChanged: (value) {
@@ -94,8 +99,10 @@ class _ShowForumState extends State<ShowForum> {
                           fillColor: Colors.white,
                         ),
                         items: const [
-                          DropdownMenuItem(value: 'terbaru', child: Text('Terbaru')),
-                          DropdownMenuItem(value: 'populer', child: Text('Populer')),
+                          DropdownMenuItem(
+                              value: 'terbaru', child: Text('Terbaru')),
+                          DropdownMenuItem(
+                              value: 'populer', child: Text('Populer')),
                         ],
                         onChanged: (value) {
                           setState(() {
@@ -120,21 +127,21 @@ class _ShowForumState extends State<ShowForum> {
                 if (!snapshot.hasData || snapshot.data['questions'].isEmpty) {
                   return const Center(child: Text('Tidak ada diskusi.'));
                 }
-                
-                var questions = snapshot.data['questions'].map((item) => 
-                  Question(
-                    model: item['model'],
-                    pk: item['pk'],
-                    fields: Fields.fromJson(item['fields'])
-                  )
-                ).toList();
-                
+
+                var questions = snapshot.data['questions']
+                    .map((item) => Question(
+                        model: item['model'],
+                        pk: item['pk'],
+                        fields: Fields.fromJson(item['fields'])))
+                    .toList();
+
                 return ListView.builder(
                   itemCount: questions.length,
                   itemBuilder: (context, index) {
                     var question = questions[index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       child: ListTile(
                         title: Text(
                           question.fields.title,
@@ -150,7 +157,8 @@ class _ShowForumState extends State<ShowForum> {
                                 Text(question.fields.createdAt.toString()),
                                 const Spacer(),
                                 Text('${question.fields.category} • '),
-                                Text('${question.fields.replyCount ?? 0} balasan'),
+                                Text(
+                                    '${question.fields.replyCount ?? 0} balasan'),
                               ],
                             ),
                           ],
@@ -159,7 +167,8 @@ class _ShowForumState extends State<ShowForum> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ForumDetail(questionId: question.pk),
+                              builder: (context) =>
+                                  ForumDetail(questionId: question.pk),
                             ),
                           );
                         },
@@ -184,8 +193,7 @@ class _ShowForumState extends State<ShowForum> {
 
   Future<Map<String, dynamic>> fetchQuestions(CookieRequest request) async {
     final response = await request.get(
-      'http://127.0.0.1:8000/forum/get_questions_json/?page=$_currentPage&sort=$_sortBy&category=$_category&search=$_searchQuery'
-    );
+        'http://127.0.0.1:8000/forum/get_questions_json/?page=$_currentPage&sort=$_sortBy&category=$_category&search=$_searchQuery');
     return response;
   }
 
@@ -193,7 +201,7 @@ class _ShowForumState extends State<ShowForum> {
     String title = '';
     String content = '';
     String category = 'UM';
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -206,13 +214,17 @@ class _ShowForumState extends State<ShowForum> {
               children: [
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Judul'),
-                  validator: (value) => value?.isEmpty ?? true ? 'Judul tidak boleh kosong' : null,
+                  validator: (value) => value?.isEmpty ?? true
+                      ? 'Judul tidak boleh kosong'
+                      : null,
                   onSaved: (value) => title = value ?? '',
                 ),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Konten'),
                   maxLines: 3,
-                  validator: (value) => value?.isEmpty ?? true ? 'Konten tidak boleh kosong' : null,
+                  validator: (value) => value?.isEmpty ?? true
+                      ? 'Konten tidak boleh kosong'
+                      : null,
                   onSaved: (value) => content = value ?? '',
                 ),
                 DropdownButtonFormField<String>(
@@ -239,19 +251,37 @@ class _ShowForumState extends State<ShowForum> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  
-                  final response = await request.post(
-                    'http://127.0.0.1:8000/forum/create_question/',
-                    {
-                      'title': title,
-                      'content': content,
-                      'category': category,
-                    },
-                  );
-                  
-                  if (response['status'] == 'success') {
-                    Navigator.of(context).pop();
-                    setState(() {});
+
+                  try {
+                    final response = await request.post(
+                      'http://127.0.0.1:8000/forum/create_question/',
+                      {
+                        'title': title,
+                        'content': content,
+                        'category': category,
+                      },
+                    );
+
+                    if (response['status'] == 'success') {
+                      Navigator.pop(context);
+                      setState(() {});
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Diskusi berhasil dibuat')),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                response['message'] ?? 'Terjadi kesalahan')),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('Terjadi kesalahan saat membuat diskusi')),
+                    );
                   }
                 }
               },
