@@ -1,3 +1,4 @@
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'authentication/screen/login_screen.dart';
 
@@ -47,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
+      drawer: const LeftDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

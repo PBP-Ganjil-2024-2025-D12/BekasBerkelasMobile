@@ -1,3 +1,4 @@
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'change_name.dart';
 import 'change_email.dart';
@@ -16,6 +17,7 @@ class DashboardPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Dashboard'),
       ),
+      drawer: const LeftDrawer(),
       body: Column(
         children: [
           Expanded(
