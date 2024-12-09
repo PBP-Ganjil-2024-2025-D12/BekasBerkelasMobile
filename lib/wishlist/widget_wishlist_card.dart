@@ -9,11 +9,11 @@ class WishlistCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      color: Colors.white,
+      color: const Color(0xFFF9FAFB),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -22,36 +22,35 @@ class WishlistCard extends StatelessWidget {
             Text(
               wishlist.fields.car.fields.carName,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(0xff0728bb),
+                color: Color(0xFF000000),
               ),
             ),
             const SizedBox(height: 8),
-            // Brand Mobil
             Text(
               "Brand: ${wishlist.fields.car.fields.brand}",
               style: const TextStyle(
-                fontSize: 16,
-                color: Color(0xff174ff3),
+                fontSize: 14,
+                color: Color(0xFF0A39C4),
               ),
             ),
             const SizedBox(height: 8),
-            // Harga Mobil
             Text(
               "Price: Rp${wishlist.fields.car.fields.price}",
               style: const TextStyle(
-                fontSize: 16,
-                color: Color(0xff174ff3),
+                fontSize: 14,
+                fontWeight: FontWeight.w100,
+                color: Color(0xFF000000),
               ),
             ),
             const SizedBox(height: 8),
-            // Priority
             Text(
               "Priority: ${wishlist.fields.priority}",
               style: const TextStyle(
-                fontSize: 16,
-                color: Color(0xff1eac9e),
+                fontSize: 14,
+                fontWeight: FontWeight.w100,
+                color: Color(0xFF1EAC9E),
               ),
             ),
           ],

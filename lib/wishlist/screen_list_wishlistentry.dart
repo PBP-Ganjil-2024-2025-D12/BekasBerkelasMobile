@@ -5,7 +5,9 @@ import 'package:bekas_berkelas_mobile/wishlist/model_wishlist_entry.dart';
 import 'package:bekas_berkelas_mobile/wishlist/widget_wishlist_card.dart';
 
 class WishlistScreen extends StatefulWidget {
-  const WishlistScreen({super.key});
+  final int carId;
+
+  const WishlistScreen({Key? key, required this.carId}) : super(key: key);
 
   @override
   State<WishlistScreen> createState() => _WishlistScreenState();
@@ -13,15 +15,13 @@ class WishlistScreen extends StatefulWidget {
 
 class _WishlistScreenState extends State<WishlistScreen> {
   Future<List<WishlistEntry>> fetchWishlist(CookieRequest request) async {
-    final response = await request.get('http://localhost:8000/wishlist/show_json/');
-
+    final response = await request.get('http://localhost:8000/wishlist/json/${widget.carId}');
     List<WishlistEntry> wishlist = [];
     for (var d in response) {
       if (d != null) {
         wishlist.add(WishlistEntry.fromJson(d));
       }
     }
-
     return wishlist;
   }
 
@@ -31,7 +31,15 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wishlist'),
+        title: const Text(
+          'Wishlist',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold, 
+            color:  Color(0xFF0A39C4),
+          ),
+        ),
+        centerTitle: true,
       ),
       body: FutureBuilder<List<WishlistEntry>>(
         future: fetchWishlist(request),
@@ -43,7 +51,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
               return const Center(
                 child: Text(
                   'Belum ada data wishlist',
-                  style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
+                  style: TextStyle(fontSize: 20, color: Color(0xFF07288B)),
                 ),
               );
             } else {

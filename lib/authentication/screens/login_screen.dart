@@ -1,3 +1,4 @@
+import 'package:bekas_berkelas_mobile/katalog_produk/list_Carentry.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -112,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (context.mounted) {
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const ShowForum()),
+                                  MaterialPageRoute(builder: (context) => const CarEntryPage()),
                                 );
                                 ScaffoldMessenger.of(context)
                                   ..hideCurrentSnackBar()
