@@ -1,6 +1,7 @@
 import 'package:bekas_berkelas_mobile/main.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/screen/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:bekas_berkelas_mobile/authentication/screens/homepage.dart';
 
 
 class LeftDrawer extends StatelessWidget {
@@ -47,7 +48,7 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MyHomePage(title: 'Home'),
+                  builder: (context) => const HomePage(),
                 ));
             },
           ),

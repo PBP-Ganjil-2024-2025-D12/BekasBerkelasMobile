@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'authentication/screens/login_screen.dart';
-import 'authentication/screen/login_screen.dart';
 import 'package:bekas_berkelas_mobile/review_rating/screens/profile.dart';
 
 

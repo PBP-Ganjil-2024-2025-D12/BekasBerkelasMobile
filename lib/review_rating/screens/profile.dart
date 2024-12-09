@@ -1,7 +1,6 @@
 import 'package:bekas_berkelas_mobile/review_rating/models/review_rating.dart';
 import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 import 'package:flutter/material.dart';
-import 'package:bekas_berkelas_mobile/katalog_produk/model_katalog_produk.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'dart:convert';
 
