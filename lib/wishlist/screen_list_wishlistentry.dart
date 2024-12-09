@@ -1,4 +1,3 @@
-// wishlist/screen_list_wishlist.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -14,7 +13,7 @@ class WishlistScreen extends StatefulWidget {
 
 class _WishlistScreenState extends State<WishlistScreen> {
   Future<List<WishlistEntry>> fetchWishlist(CookieRequest request) async {
-    final response = await request.get('http://localhost:8000/wishlist/show_wishlist/');
+    final response = await request.get('http://localhost:8000/wishlist/show_json/');
 
     List<WishlistEntry> wishlist = [];
     for (var d in response) {
