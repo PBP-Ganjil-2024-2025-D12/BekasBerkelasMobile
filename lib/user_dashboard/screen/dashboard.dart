@@ -21,7 +21,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Future<Map<String, dynamic>> fetchData(CookieRequest request) async {
     try {
-      final response = await request.post('http://localhost:8000/dashboard/get_user_flutter/', {});
+      final response = await request.post('http://127.0.0.1:8000/dashboard/get_user_flutter/', {});
       if (response['status'] == 'success') {
         return response;  
       } else {
