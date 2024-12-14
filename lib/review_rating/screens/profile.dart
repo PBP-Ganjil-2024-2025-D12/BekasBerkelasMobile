@@ -2,7 +2,6 @@ import 'package:bekas_berkelas_mobile/review_rating/models/review_rating.dart';
 import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'dart:convert';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/review_card.dart';
 import 'package:bekas_berkelas_mobile/review_rating/screens/reviews_page.dart';
 
