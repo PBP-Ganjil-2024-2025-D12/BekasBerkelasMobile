@@ -58,17 +58,37 @@ class Fields {
 }
 
 class Reviewer {
-    UserProfile userProfile;
+    UserProfileForReview userProfile;
 
     Reviewer({
         required this.userProfile,
     });
 
     factory Reviewer.fromJson(Map<String, dynamic> json) => Reviewer(
-        userProfile: UserProfile.fromJson(json["user_profile"]),
+        userProfile: UserProfileForReview.fromJson(json["user_profile"]),
     );
 
     Map<String, dynamic> toJson() => {
         "user_profile": userProfile.toJson(),
+    };
+}
+
+class UserProfileForReview {
+    String name;
+    String? profilePicture;
+
+    UserProfileForReview({
+        required this.name,
+        this.profilePicture,
+    });
+
+    factory UserProfileForReview.fromJson(Map<String, dynamic> json) => UserProfileForReview(
+        name: json["name"],
+        profilePicture: json["profile_picture"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "name": name,
+        "profile_picture": profilePicture,
     };
 }

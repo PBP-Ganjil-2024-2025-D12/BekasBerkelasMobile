@@ -111,7 +111,6 @@ class AdminProfile {
     };
   }
 }
-
 class UserProfile {
   String name;
   String email;
@@ -132,14 +131,19 @@ class UserProfile {
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
+    String profilePicture = json['profile_picture'] ?? '';
+    if (profilePicture == 'None') {
+      profilePicture = 'assets/default_profile_picture.png';
+    }
+
     return UserProfile(
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       noTelp: json['no_telp'] ?? '',
       role: json['role'] ?? '',
-      profilePicture: json['profile_picture'] ?? '',
+      profilePicture: profilePicture,
       profilePictureId: json['profile_picture_id'] ?? '',
-      isVerified: json['is_verified'] ?? false,  // Assuming false as default
+      isVerified: json['is_verified'] ?? false,
     );
   }
 

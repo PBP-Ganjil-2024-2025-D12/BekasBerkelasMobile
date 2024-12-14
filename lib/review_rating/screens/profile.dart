@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'dart:convert';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/review_card.dart';
+import 'package:bekas_berkelas_mobile/review_rating/screens/reviews_page.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String username; // Accepting username as a parameter
@@ -59,16 +60,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<List<ReviewRating>> fetchReviews(CookieRequest request) async {
     try {
       final response = await request.get(
-        'http://localhost:8000/profile/${widget.username}/show_json/',
+        'http://127.0.0.1:8000/profile/${widget.username}/show_json/',
       );
       var data = response;
-      List<ReviewRating> reviews = [];
-      for (var review in data) {
-        if (review != null) {
-          reviews.add(ReviewRating.fromJson(review));
+
+      List<ReviewRating> listReview = [];
+      for (var d in data) {
+        if (d != null) {
+          listReview.add(ReviewRating.fromJson(d));
         }
       }
-      return reviews;
+      return listReview;
     } catch (e) {
       throw Exception('Error fetching reviews: $e');
     }
@@ -91,198 +93,195 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Profile Section
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 4,
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    FutureBuilder<User>(
-                      future: userFuture,
-                      builder: (context, snapshot) {
-                        User user = snapshot.data!;
-                        UserProfile profile = user.userProfile;
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircleAvatar(
-                            radius: 48,
-                            backgroundImage: AssetImage(
-                                'assets/default_profile_picture.png'),
-                          );
-                        } else if (snapshot.hasError) {
-                          return const CircleAvatar(
-                            radius: 48,
-                            backgroundImage: AssetImage(
-                                'assets/default_profile_picture.png'),
-                          );
-                        } else if (snapshot.hasData &&
-                            profile.profilePicture != '') {
-                          return CircleAvatar(
-                            radius: 48,
-                            backgroundImage:
-                                NetworkImage(profile.profilePicture),
-                          );
-                        } else {
-                          return const CircleAvatar(
-                            radius: 48,
-                            backgroundImage: AssetImage(
-                                'assets/default_profile_picture.png'),
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    Text(widget.username,
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-
-                    // Display Rating for Seller Role
-                    FutureBuilder<User>(
-                      future: userFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.star, color: Colors.yellow),
-                              Text('Loading...',
-                                  style: TextStyle(fontSize: 16)),
-                            ],
-                          );
-                        } else if (snapshot.hasError) {
-                          return const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.star, color: Colors.yellow),
-                              Text('Error', style: TextStyle(fontSize: 16)),
-                            ],
-                          );
-                        } else if (snapshot.hasData) {
-                          User user = snapshot.data!;
-                          if (user.role == 'SEL') {
-                            sellerFuture = fetchSellerProfile(CookieRequest());
-                            return FutureBuilder<SellerProfile>(
-                              future: sellerFuture,
-                              builder: (context, sellerSnapshot) {
-                                if (sellerSnapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                } else if (sellerSnapshot.hasError) {
-                                  return const Text(
-                                      'Error fetching seller profile');
-                                } else if (sellerSnapshot.hasData) {
-                                  SellerProfile sellerProfile =
-                                      sellerSnapshot.data!;
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(Icons.star,
-                                          color: Colors.yellow),
-                                      Text(
-                                        sellerProfile.rating.toString(),
-                                        style: const TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  return const Text(
-                                      'No seller profile available');
-                                }
-                              },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Profile Section
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      FutureBuilder<User>(
+                        future: userFuture,
+                        builder: (context, snapshot) {
+                          // Check if snapshot has data
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircleAvatar(
+                              radius: 48,
+                              backgroundImage: AssetImage(
+                                  'assets/default_profile_picture.png'),
                             );
+                          } else if (snapshot.hasError) {
+                            return const CircleAvatar(
+                              radius: 48,
+                              backgroundImage: AssetImage(
+                                  'assets/default_profile_picture.png'),
+                            );
+                          } else if (snapshot.hasData) {
+                            User user = snapshot
+                                .data!; // Accessing data safely after checking hasData
+                            UserProfile profile = user.userProfile;
+                            if (profile.profilePicture != '') {
+                              return CircleAvatar(
+                                radius: 48,
+                                backgroundImage:
+                                    NetworkImage(profile.profilePicture),
+                              );
+                            } else {
+                              return const CircleAvatar(
+                                radius: 48,
+                                backgroundImage: AssetImage(
+                                    'assets/default_profile_picture.png'),
+                              );
+                            }
                           } else {
-                            return const SizedBox.shrink();
+                            // Handle case where there is no data yet
+                            return const CircleAvatar(
+                              radius: 48,
+                              backgroundImage: AssetImage(
+                                  'assets/default_profile_picture.png'),
+                            );
                           }
-                        } else {
-                          return const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.star, color: Colors.yellow),
-                              Text('No data', style: TextStyle(fontSize: 16)),
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                    //  Reviews Section
-                    FutureBuilder<List<ReviewRating>>(
-                      future: fetchReviews(CookieRequest()),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return const Text('Error loading reviews');
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Text('No reviews available.');
-                        } else {
-                          // Display first 3 reviews
-                          List<ReviewRating> reviews = snapshot.data!.take(3).toList();
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      Text(widget.username,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
 
-                          return Column(
-                            children: [
-                              ...reviews.map((review) {
-                                return ReviewCard(
-                                  name: review.fields.reviewer.userProfile.name,
-                                  profilePicture: review.fields.reviewer.userProfile.profilePicture,
-                                  review: review.fields.review,
-                                  rating: review.fields.rating.toDouble(),
-                                );
-                              }).toList(),
-                              // "More" button to navigate to reviews page
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ReviewsPage(username: widget.username),
-                                    ),
-                                  );
+                      // Display Rating for Seller Role
+                      FutureBuilder<User>(
+                        future: userFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.star, color: Colors.yellow),
+                                Text('Loading...',
+                                    style: TextStyle(fontSize: 16)),
+                              ],
+                            );
+                          } else if (snapshot.hasError) {
+                            return const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.star, color: Colors.yellow),
+                                Text('Error', style: TextStyle(fontSize: 16)),
+                              ],
+                            );
+                          } else if (snapshot.hasData) {
+                            User user = snapshot.data!;
+                            if (user.role == 'SEL') {
+                              sellerFuture =
+                                  fetchSellerProfile(CookieRequest());
+                              return FutureBuilder<SellerProfile>(
+                                future: sellerFuture,
+                                builder: (context, sellerSnapshot) {
+                                  if (sellerSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const CircularProgressIndicator();
+                                  } else if (sellerSnapshot.hasError) {
+                                    return const Text(
+                                        'Error fetching seller profile');
+                                  } else if (sellerSnapshot.hasData) {
+                                    SellerProfile sellerProfile =
+                                        sellerSnapshot.data!;
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.star,
+                                            color: Colors.yellow),
+                                        Text(
+                                          sellerProfile.rating.toString(),
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return const Text(
+                                        'No seller profile available');
+                                  }
                                 },
-                                child: const Text('More Reviews'),
-                              ),
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                  ],
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          } else {
+                            return const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.star, color: Colors.yellow),
+                                Text('No data', style: TextStyle(fontSize: 16)),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-            ],
+                const SizedBox(height: 24),
+                //  Reviews Section
+                Text('Reviews', style: TextStyle(fontSize: 24)),
+                FutureBuilder<List<ReviewRating>>(
+                  future: fetchReviews(CookieRequest()),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error loading reviews: ${snapshot.error}');
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text('No reviews available.');
+                    } else {
+                      List<ReviewRating> reviews =
+                          snapshot.data!.take(3).toList();
+
+                      return Column(
+                        children: [
+                          ...reviews.map((review) {
+                            return ReviewCard(
+                              name: review.fields.reviewer.userProfile.name,
+                              profilePicture: review
+                                  .fields.reviewer.userProfile.profilePicture,
+                              review: review.fields.review,
+                              rating: review.fields.rating.toDouble(),
+                            );
+                          }).toList(),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ReviewsPage(username: widget.username),
+                                ),
+                              );
+                            },
+                            child: const Text('More Reviews'),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ReviewsPage extends StatelessWidget {
-  final String username;
-
-  const ReviewsPage({Key? key, required this.username}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('All Reviews'),
-        backgroundColor: const Color(0xFF4C8BF5),
-      ),
-      body: Center(
-        child: Text('All reviews for $username will be shown here.'),
       ),
     );
   }
