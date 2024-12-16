@@ -3,7 +3,6 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'register_screen.dart';
 import 'homepage.dart';
-import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -116,15 +115,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                                 ScaffoldMessenger.of(context)
                                   ..hideCurrentSnackBar()
-                                  ..showSnackBar(SnackBar(
-                                    content: Text("$message Welcome, $uname."),
-                                  ));
+                                  ..showSnackBar(
+                                    SnackBar(
+                                      content: Text("$message Welcome, $uname."),
+                                    ),
+                                  );
                               }
                             } else {
                               if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Invalid username or password"),
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Login Failed'),
+                                    content: Text(response['message'] ?? "Invalid username or password"),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text('OK'),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 );
                               }
