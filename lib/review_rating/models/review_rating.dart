@@ -3,7 +3,6 @@
 //     final reviewRating = reviewRatingFromJson(jsonString);
 
 import 'dart:convert';
-import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 
 List<ReviewRating> reviewRatingFromJson(String str) => List<ReviewRating>.from(json.decode(str).map((x) => ReviewRating.fromJson(x)));
 
