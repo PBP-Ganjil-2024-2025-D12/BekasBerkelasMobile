@@ -3,6 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'register_screen.dart';
 import 'homepage.dart';
+import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final authService = AuthService();
     
     return Scaffold(
       backgroundColor: const Color(0xFFEEF1FF),
@@ -106,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
 
                             if (request.loggedIn) {
+                              await authService.storeUserLoggedIn(response);
                               String message = response['message'];
                               String uname = response['username'];
                               if (context.mounted) {
