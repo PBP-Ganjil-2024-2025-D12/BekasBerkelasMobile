@@ -3,7 +3,9 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '../models/question.dart';
 import '../models/reply.dart';
+import 'show_forum.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
+import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
 
 class ForumDetail extends StatefulWidget {
   final String questionId;
@@ -17,6 +19,21 @@ class ForumDetail extends StatefulWidget {
 class _ForumDetailState extends State<ForumDetail> {
   final _replyController = TextEditingController();
 
+  String formatDateTime(String dateTimeStr) {
+    try {
+      DateTime dateTime = DateTime.parse(dateTimeStr).toLocal();
+      String year = dateTime.year.toString();
+      String month = dateTime.month.toString().padLeft(2, '0');
+      String day = dateTime.day.toString().padLeft(2, '0');
+      String hour = dateTime.hour.toString().padLeft(2, '0');
+      String minute = dateTime.minute.toString().padLeft(2, '0');
+
+      return "$day-$month-$year $hour:$minute";
+    } catch (e) {
+      return dateTimeStr;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
@@ -28,7 +45,12 @@ class _ForumDetailState extends State<ForumDetail> {
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ShowForum(),
+            ),
+          ),
         ),
       ),
       drawer: const LeftDrawer(),
@@ -86,21 +108,33 @@ class _ForumDetailState extends State<ForumDetail> {
                                     ),
                                   ),
                                 ),
-                                if (request.loggedIn &&
-                                    (question.fields.user ==
-                                            request.jsonData['user_id'] ||
-                                        request.jsonData['is_admin'] == true))
-                                  IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                    onPressed: () => _deleteQuestion(
-                                        request, widget.questionId),
+                                if (request.loggedIn)
+                                  FutureBuilder<Map<String, String?>>(
+                                    future: AuthService().getUserData(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData &&
+                                          (question.fields.user.toString() ==
+                                                  snapshot.data?['user_id'] ||
+                                              snapshot.data?['role'] ==
+                                                  'ADM')) {
+                                        return IconButton(
+                                          padding: EdgeInsets.zero,
+                                          constraints:
+                                              const BoxConstraints(),
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                          onPressed: () =>
+                                              _deleteQuestion(request),
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    },
                                   ),
                               ],
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Oleh ${question.fields.username} • ${question.fields.createdAt}',
+                              'Oleh ${question.fields.username} • ${formatDateTime(question.fields.createdAt)}',
                               style: TextStyle(color: Colors.grey[600]),
                             ),
                             const SizedBox(height: 16),
@@ -132,25 +166,38 @@ class _ForumDetailState extends State<ForumDetail> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Oleh ${reply.fields.username} • ${reply.fields.createdAt}',
+                                            'Oleh ${reply.fields.username} • ${formatDateTime(reply.fields.createdAt)}',
                                             style: TextStyle(
                                                 color: Colors.grey[600]),
                                           ),
                                         ),
-                                        if (request.loggedIn &&
-                                            (reply.fields.user ==
-                                                    request
-                                                        .jsonData['user_id'] ||
-                                                question.fields.user ==
-                                                    request
-                                                        .jsonData['user_id'] ||
-                                                request.jsonData['is_admin'] ==
-                                                    true))
-                                          IconButton(
-                                            icon: const Icon(Icons.delete,
-                                                color: Colors.red),
-                                            onPressed: () =>
-                                                _deleteReply(request, reply.pk),
+                                        if (request.loggedIn)
+                                          FutureBuilder<Map<String, String?>>(
+                                            future: AuthService().getUserData(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData &&
+                                                  (reply.fields.user
+                                                              .toString() ==
+                                                          snapshot.data?[
+                                                              'user_id'] ||
+                                                      question.fields.user
+                                                              .toString() ==
+                                                          snapshot.data?[
+                                                              'user_id'] ||
+                                                      snapshot.data?['role'] ==
+                                                          'ADM')) {
+                                                return IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  constraints:
+                                                      const BoxConstraints(),
+                                                  icon: const Icon(Icons.delete,
+                                                      color: Colors.red),
+                                                  onPressed: () => _deleteReply(
+                                                      request, reply.pk),
+                                                );
+                                              }
+                                              return const SizedBox.shrink();
+                                            },
                                           ),
                                       ],
                                     ),
@@ -202,12 +249,104 @@ class _ForumDetailState extends State<ForumDetail> {
       CookieRequest request) async {
     try {
       final response = await request
-          .get('http://127.0.0.1:8000/forum/${widget.questionId}/?format=json');
-      print('API Response: $response');
+          .get('http://127.0.0.1:8000/forum/${widget.questionId}/');
       return response;
     } catch (e) {
       print('Error fetching question detail: $e');
       rethrow;
+    }
+  }
+
+  Future<void> _deleteQuestion(CookieRequest request) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Hapus Diskusi'),
+        content: const Text('Apakah Anda yakin ingin menghapus diskusi ini?'),
+        actions: [
+          TextButton(
+            child: const Text('Batal'),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          TextButton(
+            child: const Text('Hapus'),
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed ?? false) {
+      try {
+        final response = await request.post(
+          'http://127.0.0.1:8000/forum/${widget.questionId}/delete_question/',
+          {},
+        );
+
+        if (response['status'] == 'success') {
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ShowForum(),
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Diskusi berhasil dihapus')),
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Gagal menghapus diskusi')),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _deleteReply(CookieRequest request, String replyId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Hapus Balasan'),
+        content: const Text('Apakah Anda yakin ingin menghapus balasan ini?'),
+        actions: [
+          TextButton(
+            child: const Text('Batal'),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          TextButton(
+            child: const Text('Hapus'),
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed ?? false) {
+      try {
+        final response = await request.post(
+          'http://127.0.0.1:8000/forum/${widget.questionId}/delete_reply/$replyId/',
+          {},
+        );
+
+        if (response['status'] == 'success') {
+          if (context.mounted) {
+            setState(() {});
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Balasan berhasil dihapus')),
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Gagal menghapus balasan')),
+          );
+        }
+      }
     }
   }
 
@@ -236,94 +375,6 @@ class _ForumDetailState extends State<ForumDetail> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Gagal menambahkan balasan: ${e.toString()}')),
         );
-      }
-    }
-  }
-
-  Future<void> _deleteReply(CookieRequest request, String replyId) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Hapus Balasan'),
-          content: const Text('Apakah Anda yakin ingin menghapus balasan ini?'),
-          actions: [
-            TextButton(
-              child: const Text('Batal'),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            TextButton(
-              child: const Text('Hapus'),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirmed ?? false) {
-      try {
-        await request.post(
-          'http://127.0.0.1:8000/forum/${widget.questionId}/delete_reply/$replyId/',
-          {},
-        );
-
-        if (context.mounted) {
-          setState(() {});
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Balasan berhasil dihapus')),
-          );
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Gagal menghapus balasan')),
-          );
-        }
-      }
-    }
-  }
-
-  Future<void> _deleteQuestion(CookieRequest request, String questionId) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Hapus Diskusi'),
-          content: const Text('Apakah Anda yakin ingin menghapus diskusi ini?'),
-          actions: [
-            TextButton(
-              child: const Text('Batal'),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            TextButton(
-              child: const Text('Hapus'),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirmed ?? false) {
-      try {
-        await request.post(
-          'http://127.0.0.1:8000/forum/$questionId/delete_question/',
-          {},
-        );
-
-        if (context.mounted) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Diskusi berhasil dihapus')),
-          );
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Gagal menghapus diskusi')),
-          );
-        }
       }
     }
   }
