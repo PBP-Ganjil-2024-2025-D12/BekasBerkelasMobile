@@ -94,18 +94,6 @@ class LeftDrawer extends StatelessWidget {
 
             },
           ),
-
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(username: "seller2"),
-                ),
-              );
-            },
-            child: const Text("Profile Seller"),
-          ),
         ],
       ),
     );
