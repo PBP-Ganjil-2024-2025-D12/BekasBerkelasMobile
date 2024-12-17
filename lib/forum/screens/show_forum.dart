@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
 import '../models/question.dart';
 import 'forum_detail.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
@@ -164,7 +163,7 @@ class _ShowForumState extends State<ShowForum> {
                           ],
                         ),
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
