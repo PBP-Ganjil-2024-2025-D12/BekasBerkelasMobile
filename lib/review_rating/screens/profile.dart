@@ -27,12 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final request = context.read<CookieRequest>();
-      setState(() {
-        profileUserFuture = fetchProfileUser(request);
-      });
-    });
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    profileUserFuture = fetchProfileUser(request);
   }
 
   Future<User> fetchProfileUser(CookieRequest request) async {
@@ -137,8 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.of(context).pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Review submitted successfully!'),
-                          ),
+                              content: Text('Review submitted successfully!')),
                         );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -167,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String reviewText,
   }) async {
     await request.post(
-      '$baseUrl/profile/${widget.username}/add_review_flutter/',
+      '$baseUrl/profile/$reviewedUsername/add_review/',
       {
         'reviewee_username': reviewedUsername,
         'reviewer_username': reviewerUsername,
