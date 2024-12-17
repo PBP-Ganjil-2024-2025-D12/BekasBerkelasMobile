@@ -4,7 +4,6 @@ import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/review_card.dart';
-import 'package:bekas_berkelas_mobile/review_rating/screens/reviews_page.dart';
 import 'package:bekas_berkelas_mobile/review_rating/services/user_services.dart';
 import 'package:provider/provider.dart';
 
@@ -14,21 +13,28 @@ class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.username});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  ProfileScreenState createState() => ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<User> profileUserFuture;
+class ProfileScreenState extends State<ProfileScreen> {
   late Future<SellerProfile> sellerFuture;
   late Future<BuyerProfile> buyerFuture;
+  late Future<List<ReviewRating>> reviewsFuture;
   final authService = AuthService();
   String baseUrl = "http://localhost:8000";
 
   @override
   void initState() {
     super.initState();
+    refreshData();
+  }
+
+  Future<void> refreshData() async {
     final request = Provider.of<CookieRequest>(context, listen: false);
-    profileUserFuture = fetchProfileUser(request);
+    setState(() {
+      sellerFuture = fetchSellerProfile(request);
+      reviewsFuture = fetchReviews(request);
+    });
   }
 
   Future<User> fetchProfileUser(CookieRequest request) async {
@@ -64,7 +70,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showReviewModal(BuildContext context, CookieRequest request) {
     final TextEditingController reviewController = TextEditingController();
-    int _rating = 3;
+    int _rating = 0;
+    String? errorMessage;
 
     showModalBottomSheet(
       context: context,
@@ -110,14 +117,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   TextField(
                     controller: reviewController,
                     maxLines: 4,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Write your review here...',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
+                      errorText: errorMessage, // Show error message
                     ),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () async {
+                      modalSetState(() {
+                        errorMessage = null; // Clear previous error
+                      });
+
+                      // Validate inputs
+                      if (_rating == 0) {
+                        modalSetState(() {
+                          errorMessage = 'Please select a rating.';
+                        });
+                        return;
+                      }
+
+                      if (reviewController.text.trim().isEmpty) {
+                        modalSetState(() {
+                          errorMessage = 'Review text cannot be empty.';
+                        });
+                        return;
+                      }
+
                       try {
                         String? currentUsername =
                             (await authService.getUserData())['username'];
@@ -127,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           reviewedUsername: widget.username,
                           reviewerUsername: currentUsername!,
                           rating: _rating,
-                          reviewText: reviewController.text,
+                          reviewText: reviewController.text.trim(),
                         );
 
                         Navigator.of(context).pop();
@@ -136,6 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               content: Text('Review submitted successfully!')),
                         );
                       } catch (e) {
+                        Navigator.of(context).pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               content: Text('Failed to submit review: $e')),
@@ -162,12 +190,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String reviewText,
   }) async {
     await request.post(
-      '$baseUrl/profile/$reviewedUsername/add_review/',
+      '$baseUrl/profile/$reviewedUsername/add_review_flutter/',
       {
         'reviewee_username': reviewedUsername,
         'reviewer_username': reviewerUsername,
         'rating': rating.toString(),
         'review': reviewText,
+      },
+    );
+    refreshData();
+  }
+
+  void _deleteReview(
+      BuildContext context, CookieRequest request, String reviewId) async {
+    try {
+      final response = await request
+          .post('$baseUrl/profile/delete_review_flutter/$reviewId/', {});
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response['message'] ?? 'Review deleted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        refreshData();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete review: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void showDeleteConfirmationDialog(
+      String reviewId, BuildContext context, CookieRequest request) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete Review'),
+          content: const Text('Are you sure you want to delete this review?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(dialogContext).pop();
+
+                // Trigger review deletion
+                _deleteReview(context, request, reviewId);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
       },
     );
   }
@@ -203,7 +297,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       FutureBuilder<User>(
-                        future: profileUserFuture,
+                        future: fetchProfileUser(request),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -248,7 +342,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                       FutureBuilder<User>(
-                        future: profileUserFuture,
+                        future: fetchProfileUser(request),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -291,7 +385,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         const Icon(Icons.star,
                                             color: Colors.yellow),
                                         Text(
-                                          sellerProfile.rating.toString(),
+                                          sellerProfile.rating
+                                              .toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 16),
                                         ),
                                       ],
@@ -320,60 +415,122 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text('Reviews', style: TextStyle(fontSize: 24)),
-                FutureBuilder<Map<String, String?>>(
-                  future: authService.getUserData(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data!["role"] == 'BUY') {
-                      return ElevatedButton(
-                        onPressed: () {
-                          _showReviewModal(context, request);
-                        },
-                        child: const Text('Review Seller'),
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                ),
-                FutureBuilder<List<ReviewRating>>(
-                  future: fetchReviews(request),
+                FutureBuilder<User>(
+                  future: fetchProfileUser(request),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
-                      return Text('Error loading reviews: ${snapshot.error}');
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Text('No reviews available.');
-                    } else {
-                      List<ReviewRating> reviews =
-                          snapshot.data!.take(3).toList();
-
-                      return Column(
-                        children: [
-                          ...reviews.map((review) {
-                            return ReviewCard(
-                              name: review.fields.reviewer.userProfile.name,
-                              profilePicture: review
-                                  .fields.reviewer.userProfile.profilePicture,
-                              review: review.fields.review,
-                              rating: review.fields.rating.toDouble(),
-                            );
-                          }).toList(),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ReviewsPage(username: widget.username),
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      User user = snapshot.data!;
+                      if (user.role == 'SEL') {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Reviews',
+                                  style: TextStyle(fontSize: 24),
                                 ),
-                              );
-                            },
-                            child: const Text('More Reviews'),
-                          ),
-                        ],
-                      );
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _showReviewModal(context, request);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 105, 153, 225),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Review Seller',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            FutureBuilder<List<ReviewRating>>(
+                              key: ValueKey(DateTime.now()),
+                              future: fetchReviews(request),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  return Text(
+                                      'Error loading reviews: ${snapshot.error}');
+                                } else if (!snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return const Text('No reviews available.');
+                                } else {
+                                  List<ReviewRating> reviews =
+                                      snapshot.data!.toList();
+
+                                  return Column(
+                                    children: reviews.map((review) {
+                                      return FutureBuilder<
+                                          Map<String, String?>>(
+                                        future: authService.getUserData(),
+                                        builder: (context, userSnapshot) {
+                                          if (userSnapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const SizedBox.shrink();
+                                          }
+
+                                          if (!userSnapshot.hasData) {
+                                            return const SizedBox.shrink();
+                                          }
+
+                                          String? currentUsername =
+                                              userSnapshot.data!['username'];
+                                          String? currentUserRole =
+                                              userSnapshot.data!['role'];
+
+                                          bool canDelete = (currentUsername ==
+                                                  review.fields.reviewer
+                                                      .userProfile.name) ||
+                                              (currentUserRole == 'ADM');
+
+                                          return ReviewCard(
+                                            name: review.fields.reviewer
+                                                .userProfile.name,
+                                            profilePicture: review
+                                                .fields
+                                                .reviewer
+                                                .userProfile
+                                                .profilePicture,
+                                            review: review.fields.review,
+                                            rating: review.fields.rating,
+                                            canDelete: canDelete,
+                                            reviewId: review.fields.id,
+                                          );
+                                        },
+                                      );
+                                    }).toList(),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        );
+                      } else {
+                        // If the role is not 'SEL', display nothing or some other content
+                        return const SizedBox.shrink();
+                      }
+                    } else {
+                      return const Text('Error: Could not fetch user data.');
                     }
                   },
                 ),
