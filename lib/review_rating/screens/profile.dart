@@ -1,65 +1,45 @@
+import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
 import 'package:bekas_berkelas_mobile/review_rating/models/review_rating.dart';
 import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/review_card.dart';
 import 'package:bekas_berkelas_mobile/review_rating/screens/reviews_page.dart';
+import 'package:bekas_berkelas_mobile/review_rating/services/user_services.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String username; // Accepting username as a parameter
 
-  const ProfileScreen({Key? key, required this.username}) : super(key: key);
+  const ProfileScreen({super.key, required this.username});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<User> userFuture;
+  late Future<User> profileUserFuture;
   late Future<SellerProfile> sellerFuture;
   late Future<BuyerProfile> buyerFuture;
+  final authService = AuthService();
+  String baseUrl = "http://localhost:8000";
 
   // Fetch the user data dynamically from the API
-  Future<User> fetchUser(CookieRequest request) async {
-    try {
-      final response = await request.get(
-        'http://localhost:8000/profile/${widget.username}/show_user_json/',
-      );
-      var data = response;
-      return User.fromJson(data);
-    } catch (e) {
-      throw Exception('Error fetching user data: $e');
-    }
+  Future<User> fetchProfileUser(CookieRequest request) async {
+    return UserService().fetchUser(request, widget.username);
   }
 
   Future<SellerProfile> fetchSellerProfile(CookieRequest request) async {
-    try {
-      final response = await request.get(
-        'http://localhost:8000/profile/${widget.username}/show_user_json/',
-      );
-      var data = response;
-      return SellerProfile.fromJson(data);
-    } catch (e) {
-      throw Exception('Error fetching seller profile: $e');
-    }
+    return UserService().fetchSellerInfo(request, widget.username);
   }
 
   Future<BuyerProfile> fetchBuyerProfile(CookieRequest request) async {
-    try {
-      final response = await request.get(
-        'http://localhost:8000/profile/${widget.username}/show_user_json/',
-      );
-      var data = response;
-      return BuyerProfile.fromJson(data);
-    } catch (e) {
-      throw Exception('Error fetching buyer profile: $e');
-    }
+    return UserService().fetchBuyerInfo(request, widget.username);
   }
 
   Future<List<ReviewRating>> fetchReviews(CookieRequest request) async {
     try {
       final response = await request.get(
-        'http://127.0.0.1:8000/profile/${widget.username}/show_json/',
+        '$baseUrl/profile/${widget.username}/show_json/',
       );
       var data = response;
 
@@ -75,10 +55,110 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _showReviewModal(BuildContext context) {
+    final TextEditingController reviewController = TextEditingController();
+    int _rating = 3;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 16,
+            right: 16,
+            top: 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Write a Review',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
+              // Rating Selection
+              Text('Rating: $_rating', style: TextStyle(fontSize: 18)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  return IconButton(
+                    icon: Icon(
+                      index < _rating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                      size: 40,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _rating = index + 1;
+                      });
+                    },
+                  );
+                }),
+              ),
+              // Review Text Field
+              TextField(
+                controller: reviewController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: 'Write your review here...',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    String? currentUsername =
+                        await authService.getUserLoggedIn();
+
+                    await submitReview(
+                        reviewedUsername: widget.username,
+                        reviewerUsername: currentUsername!,
+                        rating: _rating,
+                        reviewText: reviewController.text);
+
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Review submitted successfully!')));
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to submit review: $e')));
+                  }
+                },
+                child: Text('Submit Review'),
+              ),
+              SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> submitReview({
+    required String reviewedUsername,
+    required String reviewerUsername,
+    required int rating,
+    required String reviewText,
+  }) async {
+    final request = CookieRequest();
+    await request.post('$baseUrl/profile/${widget.username}/add_review_flutter/', {
+      'reviewee_username': reviewedUsername,
+      'reviewer_username': reviewerUsername,
+      'rating': rating,
+      'review': reviewText,
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    userFuture = fetchUser(CookieRequest());
+    profileUserFuture = fetchProfileUser(CookieRequest());
   }
 
   @override
@@ -111,7 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       FutureBuilder<User>(
-                        future: userFuture,
+                        future: profileUserFuture,
                         builder: (context, snapshot) {
                           // Check if snapshot has data
                           if (snapshot.connectionState ==
@@ -161,7 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       // Display Rating for Seller Role
                       FutureBuilder<User>(
-                        future: userFuture,
+                        future: profileUserFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -236,6 +316,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 24),
                 //  Reviews Section
                 Text('Reviews', style: TextStyle(fontSize: 24)),
+                FutureBuilder<String?>(
+                  future: authService.getUserLoggedIn(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final request = CookieRequest();
+                      return FutureBuilder<User>(
+                        future: UserService().fetchUser(request, snapshot.data!),
+                        builder: (context, userSnapshot) {
+                          if (userSnapshot.hasData &&
+                              userSnapshot.data!.role == 'BUY') {
+                            return ElevatedButton(
+                              onPressed: () {
+                                _showReviewModal(context);
+                              },
+                              child: const Text('Review Seller'),
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
                 FutureBuilder<List<ReviewRating>>(
                   future: fetchReviews(CookieRequest()),
                   builder: (context, snapshot) {
