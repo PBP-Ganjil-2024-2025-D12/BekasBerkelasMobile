@@ -6,9 +6,10 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/review_card.dart';
 import 'package:bekas_berkelas_mobile/review_rating/screens/reviews_page.dart';
 import 'package:bekas_berkelas_mobile/review_rating/services/user_services.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String username; // Accepting username as a parameter
+  final String username;
 
   const ProfileScreen({super.key, required this.username});
 
@@ -23,7 +24,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final authService = AuthService();
   String baseUrl = "http://localhost:8000";
 
-  // Fetch the user data dynamically from the API
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final request = context.read<CookieRequest>();
+      setState(() {
+        profileUserFuture = fetchProfileUser(request);
+      });
+    });
+  }
+
   Future<User> fetchProfileUser(CookieRequest request) async {
     return UserService().fetchUser(request, widget.username);
   }
@@ -55,9 +66,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _showReviewModal(BuildContext context) {
+  void _showReviewModal(BuildContext context, CookieRequest request) {
     final TextEditingController reviewController = TextEditingController();
-    int _rating = 3; // Default rating
+    int _rating = 3;
 
     showModalBottomSheet(
       context: context,
@@ -83,7 +94,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  // Rating Selection
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(5, (index) {
@@ -94,7 +104,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           size: 40,
                         ),
                         onPressed: () {
-                          // Update modal state
                           modalSetState(() {
                             _rating = index + 1;
                           });
@@ -102,7 +111,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     }),
                   ),
-                  // Review Text Field
                   TextField(
                     controller: reviewController,
                     maxLines: 4,
@@ -119,6 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             (await authService.getUserData())['username'];
 
                         await submitReview(
+                          request: request,
                           reviewedUsername: widget.username,
                           reviewerUsername: currentUsername!,
                           rating: _rating,
@@ -133,7 +142,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to submit review: $e')),
+                          SnackBar(
+                              content: Text('Failed to submit review: $e')),
                         );
                       }
                     },
@@ -150,29 +160,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> submitReview({
+    required CookieRequest request,
     required String reviewedUsername,
     required String reviewerUsername,
     required int rating,
     required String reviewText,
   }) async {
-    final request = CookieRequest();
-    await request
-        .post('$baseUrl/profile/${widget.username}/add_review_flutter/', {
-      'reviewee_username': reviewedUsername,
-      'reviewer_username': reviewerUsername,
-      'rating': rating,
-      'review': reviewText,
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    profileUserFuture = fetchProfileUser(CookieRequest());
+    await request.post(
+      '$baseUrl/profile/${widget.username}/add_review_flutter/',
+      {
+        'reviewee_username': reviewedUsername,
+        'reviewer_username': reviewerUsername,
+        'rating': rating.toString(),
+        'review': reviewText,
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFD8E7FF),
       appBar: AppBar(
@@ -185,7 +193,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // Profile Section
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -203,7 +210,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       FutureBuilder<User>(
                         future: profileUserFuture,
                         builder: (context, snapshot) {
-                          // Check if snapshot has data
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const CircleAvatar(
@@ -218,8 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   'assets/default_profile_picture.png'),
                             );
                           } else if (snapshot.hasData) {
-                            User user = snapshot
-                                .data!; // Accessing data safely after checking hasData
+                            User user = snapshot.data!;
                             UserProfile profile = user.userProfile;
                             if (profile.profilePicture != '') {
                               return CircleAvatar(
@@ -235,7 +240,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               );
                             }
                           } else {
-                            // Handle case where there is no data yet
                             return const CircleAvatar(
                               radius: 48,
                               backgroundImage: AssetImage(
@@ -248,8 +252,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text(widget.username,
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
-
-                      // Display Rating for Seller Role
                       FutureBuilder<User>(
                         future: profileUserFuture,
                         builder: (context, snapshot) {
@@ -274,8 +276,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           } else if (snapshot.hasData) {
                             User user = snapshot.data!;
                             if (user.role == 'SEL') {
-                              sellerFuture =
-                                  fetchSellerProfile(CookieRequest());
+                              sellerFuture = fetchSellerProfile(request);
                               return FutureBuilder<SellerProfile>(
                                 future: sellerFuture,
                                 builder: (context, sellerSnapshot) {
@@ -324,24 +325,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                //  Reviews Section
                 const Text('Reviews', style: TextStyle(fontSize: 24)),
                 FutureBuilder<Map<String, String?>>(
-                    future: authService.getUserData(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && snapshot.data!["role"] == 'BUY') {
-                        return ElevatedButton(
-                          onPressed: () {
-                            _showReviewModal(context);
-                          },
-                          child: const Text('Review Seller'),
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    }),
+                  future: authService.getUserData(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data!["role"] == 'BUY') {
+                      return ElevatedButton(
+                        onPressed: () {
+                          _showReviewModal(context, request);
+                        },
+                        child: const Text('Review Seller'),
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
                 FutureBuilder<List<ReviewRating>>(
-                  future: fetchReviews(CookieRequest()),
+                  future: fetchReviews(request),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
