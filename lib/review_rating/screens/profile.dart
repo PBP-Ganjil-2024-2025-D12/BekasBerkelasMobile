@@ -57,84 +57,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showReviewModal(BuildContext context) {
     final TextEditingController reviewController = TextEditingController();
-    int _rating = 3;
+    int _rating = 3; // Default rating
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Write a Review',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter modalSetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 16,
               ),
-              SizedBox(height: 16),
-              // Rating Selection
-              Text('Rating: $_rating', style: TextStyle(fontSize: 18)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  return IconButton(
-                    icon: Icon(
-                      index < _rating ? Icons.star : Icons.star_border,
-                      color: Colors.amber,
-                      size: 40,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Write a Review',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  // Rating Selection
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(5, (index) {
+                      return IconButton(
+                        icon: Icon(
+                          index < _rating ? Icons.star : Icons.star_border,
+                          color: Colors.amber,
+                          size: 40,
+                        ),
+                        onPressed: () {
+                          // Update modal state
+                          modalSetState(() {
+                            _rating = index + 1;
+                          });
+                        },
+                      );
+                    }),
+                  ),
+                  // Review Text Field
+                  TextField(
+                    controller: reviewController,
+                    maxLines: 4,
+                    decoration: const InputDecoration(
+                      hintText: 'Write your review here...',
+                      border: OutlineInputBorder(),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _rating = index + 1;
-                      });
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        String? currentUsername =
+                            (await authService.getUserData())['username'];
+
+                        await submitReview(
+                          reviewedUsername: widget.username,
+                          reviewerUsername: currentUsername!,
+                          rating: _rating,
+                          reviewText: reviewController.text,
+                        );
+
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Review submitted successfully!'),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to submit review: $e')),
+                        );
+                      }
                     },
-                  );
-                }),
+                    child: const Text('Submit Review'),
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
-              // Review Text Field
-              TextField(
-                controller: reviewController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  hintText: 'Write your review here...',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    String? currentUsername =
-                        await authService.getUserLoggedIn();
-
-                    await submitReview(
-                        reviewedUsername: widget.username,
-                        reviewerUsername: currentUsername!,
-                        rating: _rating,
-                        reviewText: reviewController.text);
-
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Review submitted successfully!')));
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to submit review: $e')));
-                  }
-                },
-                child: Text('Submit Review'),
-              ),
-              SizedBox(height: 16),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -147,7 +156,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String reviewText,
   }) async {
     final request = CookieRequest();
-    await request.post('$baseUrl/profile/${widget.username}/add_review_flutter/', {
+    await request
+        .post('$baseUrl/profile/${widget.username}/add_review_flutter/', {
       'reviewee_username': reviewedUsername,
       'reviewer_username': reviewerUsername,
       'rating': rating,
@@ -315,33 +325,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 24),
                 //  Reviews Section
-                Text('Reviews', style: TextStyle(fontSize: 24)),
-                FutureBuilder<String?>(
-                  future: authService.getUserLoggedIn(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final request = CookieRequest();
-                      return FutureBuilder<User>(
-                        future: UserService().fetchUser(request, snapshot.data!),
-                        builder: (context, userSnapshot) {
-                          if (userSnapshot.hasData &&
-                              userSnapshot.data!.role == 'BUY') {
-                            return ElevatedButton(
-                              onPressed: () {
-                                _showReviewModal(context);
-                              },
-                              child: const Text('Review Seller'),
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        },
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                ),
+                const Text('Reviews', style: TextStyle(fontSize: 24)),
+                FutureBuilder<Map<String, String?>>(
+                    future: authService.getUserData(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data!["role"] == 'BUY') {
+                        return ElevatedButton(
+                          onPressed: () {
+                            _showReviewModal(context);
+                          },
+                          child: const Text('Review Seller'),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    }),
                 FutureBuilder<List<ReviewRating>>(
                   future: fetchReviews(CookieRequest()),
                   builder: (context, snapshot) {
