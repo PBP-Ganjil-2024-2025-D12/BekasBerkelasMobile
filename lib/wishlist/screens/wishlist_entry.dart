@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:bekas_berkelas_mobile/wishlist/screens/edit_wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/katalog_produk/Car_entry.dart';
 import 'package:bekas_berkelas_mobile/wishlist/models/wishlist_entry.dart';
 import 'package:bekas_berkelas_mobile/wishlist/widgets/wishlist_card.dart';
+import 'package:bekas_berkelas_mobile/wishlist/screens/edit_wishlist.dart';
 
 class WishlistPage extends StatefulWidget {
   const WishlistPage({super.key});
@@ -26,7 +28,7 @@ class _WishlistPageState extends State<WishlistPage> {
 
   Future<List<WishlistEntry>> fetchWishlist(CookieRequest request) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/wishlist/json/');
+      final response = await request.get('http://127.0.0.1:8000/wishlist/json');
       var data = response;
 
       List<WishlistEntry> listReview = [];
@@ -78,7 +80,20 @@ class _WishlistPageState extends State<WishlistPage> {
                 var wishlistEntry = snapshot.data![index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: WishlistCard(wishlist: wishlistEntry),
+                  child: WishlistCard(
+                    wishlist: wishlistEntry,
+                    onEdit: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditWishlistFormPage(wishlist: wishlistEntry),
+                        ),
+                      );
+                      if (result == true) {
+                        refreshList();
+                      }
+                    },
+                  ),
                 );
               },
             );
