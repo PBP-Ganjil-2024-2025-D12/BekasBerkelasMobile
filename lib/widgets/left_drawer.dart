@@ -2,6 +2,8 @@ import 'package:bekas_berkelas_mobile/main.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/screen/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:bekas_berkelas_mobile/authentication/screens/homepage.dart';
+import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
+import 'package:bekas_berkelas_mobile/review_rating/screens/profile.dart';
 
 
 class LeftDrawer extends StatelessWidget {
@@ -73,8 +75,11 @@ class LeftDrawer extends StatelessWidget {
             leading: const Icon(Icons.forum),
             title: const Text('Forum'),
             onTap: () {
-
-
+              Navigator.pushReplacement(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => const ShowForum(),
+                ));
             },
           ),
           ListTile(
@@ -88,6 +93,18 @@ class LeftDrawer extends StatelessWidget {
                 ));
 
             },
+          ),
+
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(username: "seller2"),
+                ),
+              );
+            },
+            child: const Text("Profile Seller"),
           ),
         ],
       ),

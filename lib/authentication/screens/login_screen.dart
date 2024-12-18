@@ -4,7 +4,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'register_screen.dart';
 import 'homepage.dart';
-import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
+import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final authService = AuthService();
     
     return Scaffold(
       backgroundColor: const Color(0xFFEEF1FF),
@@ -108,24 +109,37 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
 
                             if (request.loggedIn) {
+                              await authService.storeUserLoggedIn(response);
                               String message = response['message'];
                               String uname = response['username'];
                               if (context.mounted) {
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const CarEntryPage()),
+                                  MaterialPageRoute(builder: (context) => const HomePage()),
                                 );
                                 ScaffoldMessenger.of(context)
                                   ..hideCurrentSnackBar()
-                                  ..showSnackBar(SnackBar(
-                                    content: Text("$message Welcome, $uname."),
-                                  ));
+                                  ..showSnackBar(
+                                    SnackBar(
+                                      content: Text("$message Welcome, $uname."),
+                                    ),
+                                  );
                               }
                             } else {
                               if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Invalid username or password"),
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Login Failed'),
+                                    content: Text(response['message'] ?? "Invalid username or password"),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text('OK'),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 );
                               }
