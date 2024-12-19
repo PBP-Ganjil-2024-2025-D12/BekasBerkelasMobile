@@ -13,7 +13,7 @@ class ChangeNamePage extends StatefulWidget {
 class ChangeNamePageState extends State<ChangeNamePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final String baseUrl = 'http://127.0.0.1:8000';
+  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {
@@ -29,7 +29,7 @@ class ChangeNamePageState extends State<ChangeNamePage> {
         'name': newName,
       });
 
-      final response = await request.post('$baseUrl/dashboard/update_profile_flutter/', data);
+      final response = await request.post('$baseUrl/update_profile_flutter/', data);
 
       if (!mounted) return;
 

@@ -15,7 +15,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final String baseUrl = 'http://127.0.0.1:8000';
+  final String baseUrl = 'http://10.0.2.2:8000';
   late String name = '';
   late String email = '';
   late String phoneNumber = '';
@@ -72,7 +72,9 @@ class _DashboardPageState extends State<DashboardPage> {
                         Center(
                           child: CircleAvatar(
                             radius: 50,
-                            backgroundImage: NetworkImage(imageUrl),
+                            backgroundImage: imageUrl.isNotEmpty
+                                ? NetworkImage(imageUrl)
+                                : const AssetImage('assets/default_profile_picture.png') as ImageProvider,
                           ),
                         ),
                         const SizedBox(height: 20),

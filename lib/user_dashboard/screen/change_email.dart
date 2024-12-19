@@ -14,7 +14,7 @@ class ChangeEmailPage extends StatefulWidget {
 class ChangeEmailPageState extends State<ChangeEmailPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final String baseUrl = 'http://127.0.0.1:8000';
+  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {
@@ -30,7 +30,7 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
         'email': newEmail,
       });
 
-      final response = await request.post('$baseUrl/dashboard/update_profile_flutter/', data);
+      final response = await request.post('$baseUrl/update_profile_flutter/', data);
 
       if (!mounted) return;
 
@@ -53,7 +53,7 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     CookieRequest request = context.watch<CookieRequest>();

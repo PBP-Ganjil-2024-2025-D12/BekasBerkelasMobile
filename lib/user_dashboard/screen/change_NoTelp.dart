@@ -13,7 +13,7 @@ class ChangePhonePage extends StatefulWidget {
 class _ChangePhonePageState extends State<ChangePhonePage> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
-  final String baseUrl = 'http://127.0.0.1:8000';
+  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {
@@ -29,15 +29,13 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
         'no_telp': newPhoneNum,
       });
 
-      final response = await request.post('$baseUrl/dashboard/update_profile_flutter/', data);
+      final response = await request.post('$baseUrl/update_profile_flutter/', data);
 
       if (!mounted) return;
 
       if (response['status'] == 'success') {
-        // Berhasil mengubah nama
         _showSnackbar(context, 'Nomor Telp berhasil diubah');
       } else {
-        // Gagal mengubah nama
         _showSnackbar(context, 'Gagal mengubah Nomor Telp: ${response['message']}');
       }
 
@@ -45,7 +43,7 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
     }
   }
 
-    void _showSnackbar(BuildContext context, String message) {
+  void _showSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
