@@ -7,6 +7,7 @@ import 'change_name.dart';
 import 'change_email.dart';
 import 'change_NoTelp.dart';
 import 'change_password.dart';
+import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -14,14 +15,17 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  String name = '';
-  String email = '';
-  String phoneNumber = '';
-  String imageUrl = '';
+  final String baseUrl = 'http://127.0.0.1:8000';
+  late String name = '';
+  late String email = '';
+  late String phoneNumber = '';
+  late String imageUrl = '';
+  late String role = '';
+  late String statusAkun = '';
 
   Future<Map<String, dynamic>> fetchData(CookieRequest request) async {
     try {
-      final response = await request.post('http://127.0.0.1:8000/dashboard/get_user_flutter/', {});
+      final response = await request.post('$baseUrl/dashboard/get_user_flutter/', {});
       if (response['status'] == 'success') {
         return response;  
       } else {
@@ -37,22 +41,24 @@ class _DashboardPageState extends State<DashboardPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: const Text('Dashboard'),
       ),
       drawer: const LeftDrawer(),
       body: FutureBuilder<Map<String, dynamic>>(
         future: fetchData(request),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot}'));
+            return Center(child: Text('Error: $snapshot'));
           } else if (snapshot.hasData) {
             final data = snapshot.data!;
             name = data['nama'];
             email = data['email'];
             phoneNumber = data['no_telp'];
-            imageUrl = data['profile_picture'] ?? '';
+            imageUrl = data['profile_picture'];
+            role = data['role'];
+            statusAkun = data['status_akun'];
 
             return Column(
               children: [
@@ -76,7 +82,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             child: Row(
                               children: [
                                 const Text(
-                                  'Name',
+                                  'Nama',
                                   style: TextStyle(fontSize: 18, color: Colors.grey),
                                 ),
                                 const SizedBox(width: 10),
@@ -114,37 +120,63 @@ class _DashboardPageState extends State<DashboardPage> {
                             child: Row(
                               children: [
                                 const Text(
-                                  'Phone Number',
+                                  'No Telp',
                                   style: TextStyle(fontSize: 18, color: Colors.grey),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Text(
                                   ': $phoneNumber',
-                                  style: TextStyle(fontSize: 18, color: Colors.black),
+                                  style: const TextStyle(fontSize: 18, color: Colors.black),
                                 ),
                               ],
                             ),
                           ),
                         ),
+                        if (role == "SEL")...[
+                          const SizedBox(height: 10),
+                          Center(
+                            child: SizedBox(
+                              width: 300,
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'Status',
+                                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    ': $statusAkun',
+                                    style: const TextStyle(fontSize: 18, color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 40),
                         Center(
                           child: Column(
                             children: [
                               ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async {
+                                  final newName = await Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => ChangeNamePage()),
                                   );
+                                  if (newName != null){
+                                    setState(() {
+                                      name = newName;
+                                    });
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(double.infinity, 50),
+                                  minimumSize: const Size(double.infinity, 50),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                icon: Icon(Icons.person),
-                                label: Text('Ubah Nama'),
+                                icon: const Icon(Icons.person),
+                                label: const Text('Ubah Nama'),
                               ),
                               const SizedBox(height: 10),
                               ElevatedButton.icon(
@@ -155,13 +187,13 @@ class _DashboardPageState extends State<DashboardPage> {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(double.infinity, 50),
+                                  minimumSize: const Size(double.infinity, 50),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                icon: Icon(Icons.email),
-                                label: Text('Ubah Email'),
+                                icon: const Icon(Icons.email),
+                                label: const Text('Ubah Email'),
                               ),
                               const SizedBox(height: 10),
                               ElevatedButton.icon(
@@ -172,31 +204,33 @@ class _DashboardPageState extends State<DashboardPage> {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(double.infinity, 50),
+                                  minimumSize: const Size(double.infinity, 50),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                icon: Icon(Icons.phone),
-                                label: Text('Ubah No Telp'),
+                                icon: const Icon(Icons.phone),
+                                label: const Text('Ubah No Telp'),
                               ),
-                              const SizedBox(height: 10),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => ChangePasswordPage()),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(double.infinity, 50),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                              if (role != 'Admin')...[
+                                const SizedBox(height: 10),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(double.infinity, 50),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
                                   ),
+                                  icon: const Icon(Icons.lock),
+                                  label: const Text('Ubah Password'),
                                 ),
-                                icon: Icon(Icons.lock),
-                                label: Text('Ubah Password'),
-                              ),
+                              ]
                             ],
                           ),
                         ),
