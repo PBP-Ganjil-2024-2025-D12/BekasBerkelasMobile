@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'detail.dart';
 import 'add_car.dart';
 import 'myacc.dart';
+import 'dart:convert';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
 class CarEntryPage extends StatefulWidget {
   const CarEntryPage({super.key});
@@ -27,15 +29,42 @@ class _CarEntryPageState extends State<CarEntryPage> {
     }
     return listCar;
   }
+ 
+  Future<void> _addToWishlist(BuildContext context, String carId, String carName) async {
+    final request = context.read<CookieRequest>();
+    try {
+      final response = await request.post(
+        'http://127.0.0.1:8000/wishlist/add_wishlist/$carId/',
+        jsonEncode(<String, String>{'add': 'yes'}),
+      );
 
-  void _addToWishlist(BuildContext context, String carName) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$carName has been added to your wishlist!'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      if (response['status'] == 'success') {
+        String action = response['action'];
+        String message = response['message'];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$carName $message'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${response['message']}'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
+
 
   void _showContactSellerDialog(BuildContext context) {
     showDialog(
@@ -97,6 +126,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
             ),
         ],
       ),
+      drawer: const LeftDrawer(),
       body: Column(
         children: [
           // Search Bar
@@ -193,7 +223,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
                                 const SizedBox(width: 8),
                                 ElevatedButton(
                                   onPressed: () =>
-                                      _addToWishlist(context, CarEntry.fields.carName),
+                                      _addToWishlist(context, CarEntry.pk, CarEntry.fields.carName),
                                   child: const Text('Add to Wishlist'),
                                 ),
                                 const SizedBox(width: 8),

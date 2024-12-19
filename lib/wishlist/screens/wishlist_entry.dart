@@ -32,10 +32,11 @@ class _WishlistPageState extends State<WishlistPage> {
     });
   }
 
-  void refreshList() {
+  void refreshList() async {
     final request = context.read<CookieRequest>();
+    final newWishlists = await fetchWishlist(request);
     setState(() {
-      fetchWishlist(request);
+      wishlists = newWishlists;
     });
   }
 
@@ -139,7 +140,7 @@ class _WishlistPageState extends State<WishlistPage> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF550000),
+                          backgroundColor: const Color(0xFF4C8BF5),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0)),
                         ),
@@ -199,6 +200,7 @@ class _WishlistPageState extends State<WishlistPage> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: WishlistCard(
+                    key: ValueKey(wishlistEntry.id),
                     wishlist: wishlistEntry,
                     onEdit: () async {
                       final result = await Navigator.push(
@@ -207,9 +209,7 @@ class _WishlistPageState extends State<WishlistPage> {
                           builder: (context) => EditWishlistFormPage(wishlistId: wishlistEntry.id),
                         ),
                       );
-                      if (result == true) {
-                        refreshList();
-                      }
+                      refreshList();
                     },
                     onDelete: (wishlistId) => showRemoveWishlistDialog(context, wishlistId),
                   ),
