@@ -31,13 +31,13 @@ class _WishlistPageState extends State<WishlistPage> {
       final response = await request.get('http://127.0.0.1:8000/wishlist/json');
       var data = response;
 
-      List<WishlistEntry> listReview = [];
+      List<WishlistEntry> listWishlist = [];
       for (var d in data) {
         if (d != null) {
-          listReview.add(WishlistEntry.fromJson(d));
+          listWishlist.add(WishlistEntry.fromJson(d));
         }
       }
-      return listReview;
+      return listWishlist;
     } catch (e) {
       throw Exception('Error fetching reviews: $e');
     }
@@ -86,7 +86,7 @@ class _WishlistPageState extends State<WishlistPage> {
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditWishlistFormPage(wishlist: wishlistEntry),
+                          builder: (context) => EditWishlistFormPage(wishlistId: wishlistEntry.id),
                         ),
                       );
                       if (result == true) {
