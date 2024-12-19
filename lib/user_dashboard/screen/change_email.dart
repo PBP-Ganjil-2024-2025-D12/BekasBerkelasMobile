@@ -1,13 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class ChangeEmailPage extends StatefulWidget {
+  const ChangeEmailPage({super.key});
+
   @override
-  _ChangeEmailPageState createState() => _ChangeEmailPageState();
+  ChangeEmailPageState createState() => ChangeEmailPageState();
 }
 
-class _ChangeEmailPageState extends State<ChangeEmailPage> {
+class ChangeEmailPageState extends State<ChangeEmailPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final String baseUrl = 'http://127.0.0.1:8000';
 
   @override
   void dispose() {
@@ -15,19 +22,43 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
     super.dispose();
   }
 
-  void _submitForm() {
+  void _submitForm(CookieRequest request) async {
     if (_formKey.currentState!.validate()) {
       String newEmail = _emailController.text;
-      print('Email baru: $newEmail');
-      Navigator.pop(context);
+
+      final data = jsonEncode({
+        'email': newEmail,
+      });
+
+      final response = await request.post('$baseUrl/dashboard/update_profile_flutter/', data);
+
+      if (!mounted) return;
+
+      if (response['status'] == 'success') {
+        // Berhasil mengubah nama
+        _showSnackbar(context, 'Email berhasil diubah');
+      } else {
+        // Gagal mengubah nama
+        _showSnackbar(context, 'Gagal mengubah Email: ${response['message']}');
+      }
+
+      Navigator.pop(context, newEmail);
     }
   }
 
+  void _showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
+    CookieRequest request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ubah Email'),
+        title: const Text('Ubah Email'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -38,7 +69,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
             children: [
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email Baru',
                   border: OutlineInputBorder(),
                 ),
@@ -51,11 +82,11 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: _submitForm,
-                  child: Text('Simpan'),
+                  onPressed: () => _submitForm(request),
+                  child: const Text('Simpan'),
                 ),
               ),
             ],

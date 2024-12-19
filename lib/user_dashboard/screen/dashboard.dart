@@ -161,7 +161,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 onPressed: () async {
                                   final newName = await Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => ChangeNamePage()),
+                                    MaterialPageRoute(builder: (context) => const ChangeNamePage()),
                                   );
                                   if (newName != null){
                                     setState(() {
@@ -180,11 +180,16 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                               const SizedBox(height: 10),
                               ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async {
+                                  final newEmail = await Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => ChangeEmailPage()),
+                                    MaterialPageRoute(builder: (context) => const ChangeEmailPage()),
                                   );
+                                  if (newEmail != null){
+                                    setState(() {
+                                      email = newEmail;
+                                    });
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 50),

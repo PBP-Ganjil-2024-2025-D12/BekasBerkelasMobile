@@ -4,11 +4,13 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
 class ChangeNamePage extends StatefulWidget {
+  const ChangeNamePage({super.key});
+
   @override
-  _ChangeNamePageState createState() => _ChangeNamePageState();
+  ChangeNamePageState createState() => ChangeNamePageState();
 }
 
-class _ChangeNamePageState extends State<ChangeNamePage> {
+class ChangeNamePageState extends State<ChangeNamePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final String baseUrl = 'http://127.0.0.1:8000';
