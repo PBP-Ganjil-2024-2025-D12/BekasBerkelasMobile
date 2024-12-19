@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:bekas_berkelas_mobile/authentication/screens/homepage.dart';
 import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
 import 'package:bekas_berkelas_mobile/review_rating/screens/profile.dart';
+import 'package:bekas_berkelas_mobile/katalog_produk/list_Carentry.dart';
 
 
 class LeftDrawer extends StatelessWidget {
@@ -60,8 +61,11 @@ class LeftDrawer extends StatelessWidget {
             title: const Text('Katalog'),
             // Bagian redirection ke MoodEntryFormPage
             onTap: () {
-
-
+              Navigator.pushReplacement(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => const CarEntryPage(),
+                ));
             },
           ),
           ListTile(
