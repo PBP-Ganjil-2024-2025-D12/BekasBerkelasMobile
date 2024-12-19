@@ -4,8 +4,9 @@ import 'package:bekas_berkelas_mobile/wishlist/models/wishlist_entry.dart';
 class WishlistCard extends StatelessWidget {
   final WishlistEntry wishlist;
   final VoidCallback onEdit;
+  final Function(String) onDelete;
 
-  const WishlistCard({required this.wishlist, required this.onEdit, super.key});
+  const WishlistCard({required this.wishlist, required this.onEdit, required this.onDelete, super.key});
 
   String formatPrice(int price) {
     String priceStr = price.toString();
@@ -96,9 +97,17 @@ class WishlistCard extends StatelessWidget {
                 ],
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: onEdit,
+            Column(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: onEdit,
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () => onDelete(wishlist.id),
+                ),
+              ],
             ),
           ],
         ),
