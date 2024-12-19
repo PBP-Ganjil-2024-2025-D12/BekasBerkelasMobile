@@ -202,11 +202,16 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                               const SizedBox(height: 10),
                               ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async {
+                                  final newPhoneNum = await Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => ChangePhonePage()),
                                   );
+                                  if (newPhoneNum != null){
+                                    setState(() {
+                                      phoneNumber = newPhoneNum;
+                                    });
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 50),

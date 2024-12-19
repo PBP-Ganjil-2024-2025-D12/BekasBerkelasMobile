@@ -53,6 +53,7 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
       ),
     );
   }
+  
   @override
   Widget build(BuildContext context) {
     CookieRequest request = context.watch<CookieRequest>();
