@@ -333,6 +333,13 @@ class _AllReviewsScreenState extends State<AllReviewsScreen> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showReviewModal(context, request);
+        },
+        backgroundColor: const Color(0xFF4C8BF5),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
     );
   }
 }
