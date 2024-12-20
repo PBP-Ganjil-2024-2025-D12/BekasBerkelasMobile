@@ -16,11 +16,12 @@ class WishlistCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
+      elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Color(0xFF0A39C4), width: 1.0),
       ),
-      color: const Color(0xFFF9FAFB),
+      color: Color(0xFFF9FAFB),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -50,6 +51,7 @@ class WishlistCard extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                  color: Color(0xFF000000),
                                 ),
                               ),
                               Text(
@@ -99,11 +101,11 @@ class WishlistCard extends StatelessWidget {
             Column(
               children: [
                 IconButton(
-                  icon: Icon(Icons.edit),
+                  icon: Icon(Icons.edit, color: Color(0xFF0A39C4)),
                   onPressed: onEdit,
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: Icon(Icons.delete, color: Color(0xFF0A39C4)),
                   onPressed: () => onDelete(wishlist.id),
                 ),
               ],
