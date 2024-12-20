@@ -29,18 +29,22 @@ class ProfileScreenState extends State<ProfileScreen> {
   String baseUrl = "http://localhost:8000";
 
   @override
-  void initState() {
+  initState() {
     super.initState();
     refreshData();
   }
 
   Future<void> refreshData() async {
     final request = Provider.of<CookieRequest>(context, listen: false);
+    User user = await fetchProfileUser(request);
+
     setState(() {
-      sellerFuture = fetchSellerProfile(request);
-      reviewsFuture = fetchReviews(request);
+      if (user.role == 'SEL') {
+        sellerFuture = fetchSellerProfile(request);
+        reviewsFuture = fetchReviews(request);
+        fetchFilter();
+      }
     });
-    fetchFilter();
   }
 
   Future<User> fetchProfileUser(CookieRequest request) async {
