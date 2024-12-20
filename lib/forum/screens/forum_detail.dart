@@ -3,9 +3,12 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '../models/question.dart';
 import '../models/reply.dart';
+import 'package:bekas_berkelas_mobile/katalog_produk/Car_entry.dart';
+import 'package:bekas_berkelas_mobile/katalog_produk/detail.dart';
 import 'show_forum.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
+import 'package:flutter/foundation.dart';
 
 class ForumDetail extends StatefulWidget {
   final String questionId;
@@ -47,9 +50,7 @@ class _ForumDetailState extends State<ForumDetail> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-              builder: (context) => const ShowForum(),
-            ),
+            MaterialPageRoute(builder: (context) => const ShowForum()),
           ),
         ),
       ),
@@ -64,21 +65,11 @@ class _ForumDetailState extends State<ForumDetail> {
             return const Center(child: Text('Diskusi tidak ditemukan.'));
           }
 
-          Question question = Question.fromJson({
-            'model': 'forum.question',
-            'pk': widget.questionId,
-            'fields': {
-              'user': snapshot.data['question']['user'],
-              'car': snapshot.data['question']['car'],
-              'title': snapshot.data['question']['title'],
-              'content': snapshot.data['question']['content'],
-              'category': snapshot.data['question']['category'],
-              'created_at': snapshot.data['question']['created_at'],
-              'updated_at': snapshot.data['question']['updated_at'],
-              'username': snapshot.data['question']['username'],
-              'reply_count': snapshot.data['question']['reply_count'],
-            }
-          });
+          Question question = Question(
+            model: 'forum.question',
+            pk: widget.questionId,
+            fields: QuestionFields.fromJson(snapshot.data['question']),
+          );
 
           List<Reply> replies = (snapshot.data['replies'] as List? ?? [])
               .map((replyData) => Reply.fromJson(replyData))
@@ -119,8 +110,7 @@ class _ForumDetailState extends State<ForumDetail> {
                                                   'ADM')) {
                                         return IconButton(
                                           padding: EdgeInsets.zero,
-                                          constraints:
-                                              const BoxConstraints(),
+                                          constraints: const BoxConstraints(),
                                           icon: const Icon(Icons.delete,
                                               color: Colors.red),
                                           onPressed: () =>
@@ -139,6 +129,156 @@ class _ForumDetailState extends State<ForumDetail> {
                             ),
                             const SizedBox(height: 16),
                             Text(question.fields.content),
+                            if (question.fields.car != null) ...[
+                              const SizedBox(height: 16),
+                              FutureBuilder(
+                                future: fetchCarDetails(
+                                    request, question.fields.car!),
+                                builder: (context, AsyncSnapshot carSnapshot) {
+
+                                  if (carSnapshot.hasError) {
+                                    print(
+                                        'FutureBuilder error: ${carSnapshot.error}');
+                                    print(
+                                        'FutureBuilder stack trace: ${carSnapshot.stackTrace}');
+                                  }
+
+                                  if (carSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }
+
+                                  if (carSnapshot.hasError) {
+                                    print('Showing error state');
+                                    return Center(
+                                        child: Text(
+                                            'Error: ${carSnapshot.error}'));
+                                  }
+
+                                  try {
+                                    final carData = CarEntry.fromJson({
+                                      "model": "product_catalog.car",
+                                      "pk": question.fields.car!,
+                                      "fields": carSnapshot.data
+                                    });
+
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => CarDetailPage(
+                                                carEntry: carData),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: Colors.grey[300]!),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Mobil Terkait:',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey[600],
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Row(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  child: Image.network(
+                                                    carData.fields.imageUrl,
+                                                    width: 100,
+                                                    height: 75,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return Container(
+                                                        width: 100,
+                                                        height: 75,
+                                                        color: Colors.grey[300],
+                                                        child: const Icon(
+                                                            Icons.broken_image),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        '${carData.fields.brand} ${carData.fields.carName}',
+                                                        style: const TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        'Tahun ${carData.fields.year}',
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .grey[600]),
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            'Lihat Detail',
+                                                            style: TextStyle(
+                                                              color: Colors
+                                                                  .blue[700],
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                          Icon(
+                                                            Icons
+                                                                .arrow_forward_ios,
+                                                            size: 14,
+                                                            color: Colors
+                                                                .blue[700],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  } catch (e, stackTrace) {
+                                    print('Error creating CarEntry:');
+                                    print('Error: $e');
+                                    print('Stack trace: $stackTrace');
+                                    return const Center(
+                                        child:
+                                            Text('Error loading car details'));
+                                  }
+                                },
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -152,62 +292,59 @@ class _ForumDetailState extends State<ForumDetail> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    ...replies
-                        .map((reply) => Card(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                    ...replies.map((reply) => Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Oleh ${reply.fields.username} • ${formatDateTime(reply.fields.createdAt)}',
-                                            style: TextStyle(
-                                                color: Colors.grey[600]),
-                                          ),
-                                        ),
-                                        if (request.loggedIn)
-                                          FutureBuilder<Map<String, String?>>(
-                                            future: AuthService().getUserData(),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.hasData &&
-                                                  (reply.fields.user
-                                                              .toString() ==
-                                                          snapshot.data?[
-                                                              'user_id'] ||
-                                                      question.fields.user
-                                                              .toString() ==
-                                                          snapshot.data?[
-                                                              'user_id'] ||
-                                                      snapshot.data?['role'] ==
-                                                          'ADM')) {
-                                                return IconButton(
-                                                  padding: EdgeInsets.zero,
-                                                  constraints:
-                                                      const BoxConstraints(),
-                                                  icon: const Icon(Icons.delete,
-                                                      color: Colors.red),
-                                                  onPressed: () => _deleteReply(
-                                                      request, reply.pk),
-                                                );
-                                              }
-                                              return const SizedBox.shrink();
-                                            },
-                                          ),
-                                      ],
+                                    Expanded(
+                                      child: Text(
+                                        'Oleh ${reply.fields.username} • ${formatDateTime(reply.fields.createdAt)}',
+                                        style:
+                                            TextStyle(color: Colors.grey[600]),
+                                      ),
                                     ),
-                                    const SizedBox(height: 8),
-                                    Text(reply.fields.content),
+                                    if (request.loggedIn)
+                                      FutureBuilder<Map<String, String?>>(
+                                        future: AuthService().getUserData(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData &&
+                                              (reply.fields.user.toString() ==
+                                                      snapshot
+                                                          .data?['user_id'] ||
+                                                  question.fields.user
+                                                          .toString() ==
+                                                      snapshot
+                                                          .data?['user_id'] ||
+                                                  snapshot.data?['role'] ==
+                                                      'ADM')) {
+                                            return IconButton(
+                                              padding: EdgeInsets.zero,
+                                              constraints:
+                                                  const BoxConstraints(),
+                                              icon: const Icon(Icons.delete,
+                                                  color: Colors.red),
+                                              onPressed: () => _deleteReply(
+                                                  request, reply.pk),
+                                            );
+                                          }
+                                          return const SizedBox.shrink();
+                                        },
+                                      ),
                                   ],
                                 ),
-                              ),
-                            ))
-                        .toList(),
+                                const SizedBox(height: 8),
+                                Text(reply.fields.content),
+                              ],
+                            ),
+                          ),
+                        )),
                   ],
                 ),
               ),
@@ -234,7 +371,7 @@ class _ForumDetailState extends State<ForumDetail> {
                         ),
                         onPressed: () => _submitReply(request),
                         child: const Text('Kirim'),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -252,7 +389,29 @@ class _ForumDetailState extends State<ForumDetail> {
           .get('http://127.0.0.1:8000/forum/${widget.questionId}/');
       return response;
     } catch (e) {
-      print('Error fetching question detail: $e');
+      debugPrint('Error fetching question detail: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchCarDetails(
+      CookieRequest request, String carId) async {
+
+    try {
+      final url = 'http://127.0.0.1:8000/katalog/detail/json/$carId/';
+
+      final response = await request.get(url);
+
+      if (response is Map<String, dynamic>) {
+        return response;
+      } else {
+        throw Exception('Invalid response format');
+      }
+    } catch (e, stackTrace) {
+      print('Error in fetchCarDetails:');
+      print('Error type: ${e.runtimeType}');
+      print('Error message: $e');
+      print('Stack trace: $stackTrace');
       rethrow;
     }
   }
@@ -287,9 +446,7 @@ class _ForumDetailState extends State<ForumDetail> {
           if (context.mounted) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ShowForum(),
-              ),
+              MaterialPageRoute(builder: (context) => const ShowForum()),
             );
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Diskusi berhasil dihapus')),

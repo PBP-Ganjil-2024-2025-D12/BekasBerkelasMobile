@@ -1,7 +1,7 @@
 class Question {
    String model;
    String pk;
-   Fields fields;
+   QuestionFields fields; 
 
    Question({
        required this.model,
@@ -14,7 +14,7 @@ class Question {
        return Question(
            model: json["model"] ?? "forum.question",
            pk: json["pk"].toString(),
-           fields: Fields.fromJson(fieldsData),
+           fields: QuestionFields.fromJson(fieldsData),  
        );
    }
 
@@ -25,9 +25,9 @@ class Question {
    };
 }
 
-class Fields {
+class QuestionFields { 
    int user;
-   dynamic car;
+   String? car;
    String title;
    String content;
    String category;
@@ -36,9 +36,9 @@ class Fields {
    String username;  
    int replyCount;  
 
-   Fields({
+   QuestionFields({  
        required this.user,
-       required this.car,
+       this.car,
        required this.title,
        required this.content,
        required this.category,
@@ -48,17 +48,20 @@ class Fields {
        required this.replyCount,
    });
 
-   factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-       user: json["user"],
-       car: json["car"],
-       title: json["title"],
-       content: json["content"],
-       category: json["category"],
-       createdAt: json["created_at"],
-       updatedAt: json["updated_at"],
-       username: json["username"] ?? "",
-       replyCount: json["reply_count"] ?? 0,
-   );
+   factory QuestionFields.fromJson(Map<String, dynamic> json) {
+  
+  return QuestionFields(  
+    user: json["user"],
+    car: json["car"]?.toString(),
+    title: json["title"],
+    content: json["content"],
+    category: json["category"],
+    createdAt: json["created_at"],
+    updatedAt: json["updated_at"],
+    username: json["username"] ?? "",
+    replyCount: json["reply_count"] ?? 0,
+  );
+}
 
    Map<String, dynamic> toJson() => {
        "user": user,

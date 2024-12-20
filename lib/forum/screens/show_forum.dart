@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '../models/question.dart';
+import 'package:bekas_berkelas_mobile/katalog_produk/Car_entry.dart';
 import 'forum_detail.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
@@ -18,7 +19,6 @@ class _ShowForumState extends State<ShowForum> {
   String _searchQuery = '';
   int _currentPage = 1;
   final TextEditingController _searchController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +131,7 @@ class _ShowForumState extends State<ShowForum> {
                     .map((item) => Question(
                         model: item['model'],
                         pk: item['pk'],
-                        fields: Fields.fromJson(item['fields'])))
+                        fields: QuestionFields.fromJson(item['fields'])))
                     .toList();
 
                 return ListView.builder(
@@ -196,96 +196,458 @@ class _ShowForumState extends State<ShowForum> {
     return response;
   }
 
+  Future<List<CarEntry>> fetchCars(CookieRequest request) async {
+    try {
+      final response =
+          await request.get('http://127.0.0.1:8000/katalog/carsjson/');
+      if (response is List) {
+        return response.map((car) => CarEntry.fromJson(car)).toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching cars: $e');
+      return [];
+    }
+  }
+
   void _showCreateQuestionDialog(BuildContext context, CookieRequest request) {
     String title = '';
     String content = '';
     String category = 'UM';
+    String? selectedCarId;
+    String carSearchQuery = '';
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Buat Diskusi Baru'),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Judul'),
-                  validator: (value) => value?.isEmpty ?? true
-                      ? 'Judul tidak boleh kosong'
-                      : null,
-                  onSaved: (value) => title = value ?? '',
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Konten'),
-                  maxLines: 3,
-                  validator: (value) => value?.isEmpty ?? true
-                      ? 'Konten tidak boleh kosong'
-                      : null,
-                  onSaved: (value) => content = value ?? '',
-                ),
-                DropdownButtonFormField<String>(
-                  value: category,
-                  decoration: const InputDecoration(labelText: 'Kategori'),
-                  items: const [
-                    DropdownMenuItem(value: 'UM', child: Text('Umum')),
-                    DropdownMenuItem(value: 'JB', child: Text('Jual Beli')),
-                    DropdownMenuItem(value: 'TT', child: Text('Tips & Trik')),
-                    DropdownMenuItem(value: 'SA', child: Text('Santai')),
-                  ],
-                  onChanged: (value) => category = value ?? 'UM',
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Batal'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: const Text('Simpan'),
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                padding: const EdgeInsets.all(20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Buat Diskusi Baru',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Judul',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            onChanged: (value) => title = value,
+                            decoration: InputDecoration(
+                              hintText: 'Masukkan judul',
+                              hintStyle: TextStyle(
+                                color: Colors.grey[400],
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Kategori',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: category,
+                                isExpanded: true,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                items: const [
+                                  DropdownMenuItem(
+                                      value: 'UM', child: Text('Umum')),
+                                  DropdownMenuItem(
+                                      value: 'JB', child: Text('Jual Beli')),
+                                  DropdownMenuItem(
+                                      value: 'TT', child: Text('Tips & Trik')),
+                                  DropdownMenuItem(
+                                      value: 'SA', child: Text('Santai')),
+                                ],
+                                onChanged: (value) {
+                                  setState(() {
+                                    category = value ?? 'UM';
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      FutureBuilder(
+                        future: fetchCars(request),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
 
-                  try {
-                    final response = await request.post(
-                      'http://127.0.0.1:8000/forum/create_question/',
-                      {
-                        'title': title,
-                        'content': content,
-                        'category': category,
-                      },
-                    );
+                          List<CarEntry> cars = snapshot.data ?? [];
 
-                    if (response['status'] == 'success') {
-                      Navigator.pop(context);
-                      setState(() {});
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Diskusi berhasil dibuat')),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(
-                                response['message'] ?? 'Terjadi kesalahan')),
-                      );
-                    }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content:
-                              Text('Terjadi kesalahan saat membuat diskusi')),
-                    );
-                  }
-                }
-              },
-            ),
-          ],
+                          CarEntry? selectedCar;
+                          if (selectedCarId != null) {
+                            selectedCar = cars.cast<CarEntry?>().firstWhere(
+                                  (car) => car?.pk == selectedCarId,
+                                  orElse: () => null,
+                                );
+                          }
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Pilih Mobil',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                readOnly: true,
+                                controller: TextEditingController(
+                                  text: selectedCar != null
+                                      ? '${selectedCar.fields.brand} ${selectedCar.fields.carName}'
+                                      : '',
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Cari mobil...',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: Colors.grey[600],
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[50],
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide:
+                                        BorderSide(color: Colors.grey[300]!),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide:
+                                        BorderSide(color: Colors.grey[300]!),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                ),
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) => StatefulBuilder(
+                                      builder: (context, setModalState) {
+                                        List<CarEntry> filteredCars =
+                                            cars.where((car) {
+                                          String searchStr =
+                                              '${car.fields.brand} ${car.fields.carName}'
+                                                  .toLowerCase();
+                                          return searchStr.contains(
+                                              carSearchQuery.toLowerCase());
+                                        }).toList();
+
+                                        return Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.8,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(20),
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.all(16),
+                                          child: Column(
+                                            children: [
+                                              TextField(
+                                                autofocus: true,
+                                                decoration: InputDecoration(
+                                                  hintText: 'Cari mobil...',
+                                                  hintStyle: TextStyle(
+                                                    color: Colors.grey[400],
+                                                  ),
+                                                  prefixIcon: Icon(
+                                                    Icons.search,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                  filled: true,
+                                                  fillColor: Colors.grey[50],
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    borderSide: BorderSide(
+                                                        color:
+                                                            Colors.grey[300]!),
+                                                  ),
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    borderSide: BorderSide(
+                                                        color:
+                                                            Colors.grey[300]!),
+                                                  ),
+                                                ),
+                                                onChanged: (value) {
+                                                  setModalState(() {
+                                                    carSearchQuery = value;
+                                                  });
+                                                },
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Expanded(
+                                                child: ListView.builder(
+                                                  itemCount:
+                                                      filteredCars.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    final car =
+                                                        filteredCars[index];
+                                                    return ListTile(
+                                                      title: Text(
+                                                        '${car.fields.brand} ${car.fields.carName}',
+                                                        style: const TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                      subtitle: Text(
+                                                        'Tahun ${car.fields.year}',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          selectedCarId =
+                                                              car.pk;
+                                                        });
+                                                        Navigator.pop(context);
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Konten',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            onChanged: (value) => content = value,
+                            maxLines: 4,
+                            decoration: InputDecoration(
+                              hintText: 'Masukkan konten diskusi...',
+                              hintStyle: TextStyle(
+                                color: Colors.grey[400],
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red.shade400,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                              child: const Text(
+                                'Batal',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                              child: const Text(
+                                'Simpan',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onPressed: () async {
+                                if (title.isEmpty || content.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content:
+                                          Text('Judul dan konten harus diisi'),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                try {
+                                  final response = await request.post(
+                                    'http://127.0.0.1:8000/forum/create_question/',
+                                    {
+                                      'title': title,
+                                      'content': content,
+                                      'category': category,
+                                      'car_id': selectedCarId ?? '',
+                                    },
+                                  );
+
+                                  if (response['status'] == 'success') {
+                                    Navigator.pop(context);
+                                    setState(() {});
+                                    if (context.mounted) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ShowForum(),
+                                        ),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content:
+                                              Text('Diskusi berhasil dibuat'),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Gagal membuat diskusi'),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         );
       },
     );
