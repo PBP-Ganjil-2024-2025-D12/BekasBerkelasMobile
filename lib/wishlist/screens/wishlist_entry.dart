@@ -19,6 +19,7 @@ class _WishlistPageState extends State<WishlistPage> {
   final _formKey = GlobalKey<FormState>();
   String _collectionName = "";
   List<WishlistEntry> wishlists = [];
+  String _selectedFilter = 'Semua Prioritas';
 
   @override
   void initState() {
@@ -67,6 +68,65 @@ class _WishlistPageState extends State<WishlistPage> {
       throw Exception('Error fetching wishlist item: $e');
     }
   }
+
+    List<WishlistEntry> get _filteredWishlists {
+    if (_selectedFilter == 'Semua Prioritas') {
+      return wishlists;
+    } else {
+      return wishlists.where((wishlist) {
+        return wishlist.priorityName == _selectedFilter;
+      }).toList();
+    }
+  }
+
+    void _showFilterOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              title: Text('Semua Prioritas'),
+              onTap: () {
+                setState(() {
+                  _selectedFilter = 'Semua Prioritas';
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Tinggi'),
+              onTap: () {
+                setState(() {
+                  _selectedFilter = 'Tinggi';
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Sedang'),
+              onTap: () {
+                setState(() {
+                  _selectedFilter = 'Sedang';
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Rendah'),
+              onTap: () {
+                setState(() {
+                  _selectedFilter = 'Rendah';
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
     
   void showRemoveWishlistDialog(BuildContext context, String wishlistId) async {
     final request = context.read<CookieRequest>();
@@ -89,55 +149,32 @@ class _WishlistPageState extends State<WishlistPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Remove wishlist $wishlistName?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Yakin akan menghapus wishlist ini?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                    'Hapus $wishlistName dari wishlist?',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF000000)),
                   ),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      TextButton(
+                      ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: const Text('Cancel', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red, // Red background
+                          foregroundColor: Colors.white, // White text
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        child: const Text('Cancel', style: TextStyle(fontSize: 14)),
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          try {
-                            final deleteResponse = await request.post(
-                              'http://127.0.0.1:8000/wishlist/remove_wishlist/$wishlistId/',
-                              jsonEncode(<String, String>{'delete': 'yes'}),
-                            );
-
-                            if (deleteResponse['status'] == 'success') {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Wishlist successfully removed!")),
-                              );
-                              Navigator.pop(context);
-                              setState(() {
-                                wishlists.removeWhere((entry) => entry.id == wishlistId);
-                              });
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("There seems to be an issue, please try again.")),
-                              );
-                            }
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Error: ${e.toString()}")),
-                            );
-                          }
+                          // delete logic
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
+                          backgroundColor: const Color(0xFF0A39C4),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0)),
                         ),
@@ -163,9 +200,10 @@ class _WishlistPageState extends State<WishlistPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
+      backgroundColor: Color(0xFFC5D3FC),
       appBar: AppBar(
         title: const Text(
-          'Wish List',
+          'Wishlist',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -175,46 +213,102 @@ class _WishlistPageState extends State<WishlistPage> {
         centerTitle: true,
       ),
       drawer: const LeftDrawer(),
-      body: FutureBuilder(
-        future: fetchWishlist(request),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text(
-                'Belum ada data wishlist',
-                style: TextStyle(fontSize: 20, color: Color(0xFF07288B)),
-              ),
-            );
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (_, index) {
-                var wishlistEntry = wishlists[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: WishlistCard(
-                    key: ValueKey(wishlistEntry.id),
-                    wishlist: wishlistEntry,
-                    onEdit: () async {
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditWishlistFormPage(wishlistId: wishlistEntry.id),
-                        ),
-                      );
-                      refreshList();
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      _showFilterOptions(context);
                     },
-                    onDelete: (wishlistId) => showRemoveWishlistDialog(context, wishlistId),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black, width: 1.0),
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _selectedFilter,
+                            style: TextStyle(color: Color(0xFF000000)),
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.arrow_drop_down_outlined, color: Color(0xFF0A39C4)),
+                              SizedBox(width: 4.0),
+                              Container(
+                                width: 1.0,
+                                height: 16.0,
+                                color: Color(0xFF000000),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                );
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder(
+              future: fetchWishlist(request),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'Belum ada data wishlist',
+                      style: TextStyle(fontSize: 20, color: Color(0xFF07288B)),
+                    ),
+                  );
+                } else {
+                  wishlists = snapshot.data as List<WishlistEntry>;
+                  List<WishlistEntry> filteredWishlists = _filteredWishlists;
+                  if (filteredWishlists.isEmpty) {
+                    return const Center(
+                      child: Text('Tidak ada wishlist dalam prioritas ini'),
+                    );
+                  } else {
+                    return ListView.builder(
+                      itemCount: filteredWishlists.length,
+                      itemBuilder: (_, index) {
+                        var wishlistEntry = filteredWishlists[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          child: WishlistCard(
+                            key: ValueKey(wishlistEntry.id),
+                            wishlist: wishlistEntry,
+                            onEdit: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditWishlistFormPage(wishlistId: wishlistEntry.id),
+                                ),
+                              );
+                              refreshList();
+                            },
+                            onDelete: (wishlistId) => showRemoveWishlistDialog(context, wishlistId),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                }
               },
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }

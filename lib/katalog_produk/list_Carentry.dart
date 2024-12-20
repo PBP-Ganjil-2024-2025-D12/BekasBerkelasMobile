@@ -30,11 +30,11 @@ class _CarEntryPageState extends State<CarEntryPage> {
   }
 
   final ButtonStyle addStyle = ElevatedButton.styleFrom(
-    foregroundColor: Colors.deepPurple, backgroundColor: Colors.white,
+    foregroundColor: const Color(0xFF0A39C4), backgroundColor: Colors.white,
   );
 
   final ButtonStyle removeStyle = ElevatedButton.styleFrom(
-    foregroundColor: Colors.white, backgroundColor: Colors.deepPurple,
+    foregroundColor: Colors.white, backgroundColor: const Color(0xFF0A39C4),
   );
   
   Future<List<CarEntry>> fetchCar(CookieRequest request) async {
@@ -267,7 +267,10 @@ class _CarEntryPageState extends State<CarEntryPage> {
                                       ),
                                     );
                                   },
-                                  child: const Text('Detail'),
+                                  child: Text(
+                                    'Detail',
+                                    style: TextStyle(color: const Color(0xFF0A39C4)),
+                                    ),
                                 ),
                                 const SizedBox(width: 8),
                                 ElevatedButton(
@@ -278,7 +281,10 @@ class _CarEntryPageState extends State<CarEntryPage> {
                                 const SizedBox(width: 8),
                                 ElevatedButton(
                                   onPressed: () => _showContactSellerDialog(context),
-                                  child: const Text('Contact Seller'),
+                                  child: Text(
+                                    'Contact Seller',
+                                    style: TextStyle(color: const Color(0xFF0A39C4)),
+                                    ),
                                 ),
                               ],
                             ),

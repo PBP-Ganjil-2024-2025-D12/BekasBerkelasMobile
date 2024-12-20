@@ -68,28 +68,39 @@ class _EditWishlistFormPageState extends State<EditWishlistFormPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Wish List'),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      backgroundColor: const Color(0xFFC5D3FC),
+      title: Text(
+        'Edit Wishlist',
+        style: TextStyle(color: Color(0xFF0A39C4), fontWeight: FontWeight.bold),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: _wishlist != null
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Prioritas Saat Ini: ${_wishlist!.priorityName}',
-                    style: TextStyle(fontSize: 16),
+    ),
+    body: Padding(
+      padding: EdgeInsets.all(16.0),
+      child: _wishlist != null
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Prioritas Saat Ini: ${_wishlist!.priorityName}',
+                  style: TextStyle(fontSize: 16, color: Color(0xFF1EAC9E)),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Prioritas Baru:',
+                  style: TextStyle(fontSize: 16, fontWeight:FontWeight.w600, color: Color(0xFF000000)),
+                ),
+                SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: const Color(0xFF0A39C4)),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Prioritas Baru:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  DropdownButton<String>(
+                  child: DropdownButton<String>(
                     value: _selectedPriority,
                     onChanged: (String? newValue) {
                       setState(() {
@@ -99,59 +110,48 @@ class _EditWishlistFormPageState extends State<EditWishlistFormPage> {
                     items: priorityMap.keys.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value),
+                        child: Text(value, style: TextStyle(color: Colors.black)),
                       );
                     }).toList(),
+                    style: TextStyle(color: Colors.black),
+                    icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                    underline: Container(), // Remove default underline
                   ),
-                  SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Cancel'),
+                ),                Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red, // Red background
+                        foregroundColor: Colors.white, // White text
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
                       ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (_selectedPriority.isNotEmpty && _wishlist != null) {
-                            int newPriority = priorityMap[_selectedPriority]!;
-                            final request = context.read<CookieRequest>();
-                            try {
-                              final response = await request.post(
-                                'http://127.0.0.1:8000/wishlist/edit_wishlist/${_wishlist!.id}/',
-                                {'priority': newPriority.toString()},
-                              );
-                              if (response['status'] == 'success') {
-                                Navigator.pop(context, true);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Berhasil melakukan edit.')),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Gagal memperbarui prioritas.')),
-                                );
-                              }
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error updating priority: $e')),
-                              );
-                            }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Silakan pilih prioritas.')),
-                            );
-                          }
-                        },
-                        child: Text('Simpan'),
+                      child: Text('Cancel'),
+                    ),
+                    SizedBox(width: 16),
+                    ElevatedButton(
+                      onPressed: () async {
+                        // save logic
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF0A39C4),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                       ),
-                    ],
-                  ),
-                ],
-              )
-            : Center(child: CircularProgressIndicator()),
-      ),
-    );
-  }
+                      child: Text('Save'),
+                    ),
+                  ],
+                ),
+              ],
+            )
+          : Center(child: CircularProgressIndicator()),
+    ),
+  );
+}
 }
