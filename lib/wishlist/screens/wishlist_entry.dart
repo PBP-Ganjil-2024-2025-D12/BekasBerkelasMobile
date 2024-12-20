@@ -3,10 +3,8 @@ import 'package:bekas_berkelas_mobile/wishlist/screens/edit_wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:bekas_berkelas_mobile/katalog_produk/Car_entry.dart';
 import 'package:bekas_berkelas_mobile/wishlist/models/wishlist_entry.dart';
 import 'package:bekas_berkelas_mobile/wishlist/widgets/wishlist_card.dart';
-import 'package:bekas_berkelas_mobile/wishlist/screens/edit_wishlist.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
 
@@ -73,7 +71,6 @@ class _WishlistPageState extends State<WishlistPage> {
   void showRemoveWishlistDialog(BuildContext context, String wishlistId) async {
     final request = context.read<CookieRequest>();
 
-    // Fetch the wishlist item details
     final fetchedWishlist = await fetchWishlistItem(request, wishlistId);
 
     if (fetchedWishlist != null) {
@@ -140,7 +137,7 @@ class _WishlistPageState extends State<WishlistPage> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4C8BF5),
+                          backgroundColor: Colors.deepPurple,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0)),
                         ),

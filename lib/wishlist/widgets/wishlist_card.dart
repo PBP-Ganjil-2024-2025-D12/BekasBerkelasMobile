@@ -30,7 +30,6 @@ class WishlistCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Image section
                   Row(
                     children: [
                       Image.network(

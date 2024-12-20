@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:bekas_berkelas_mobile/katalog_produk/Car_entry.dart';
-import 'package:http/http.dart';
 
 List<WishlistEntry> wishlistEntryFromJson(String str) {
   return List<WishlistEntry>.from(

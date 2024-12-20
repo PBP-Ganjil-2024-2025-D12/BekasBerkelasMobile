@@ -18,7 +18,25 @@ class CarEntryPage extends StatefulWidget {
 class _CarEntryPageState extends State<CarEntryPage> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = "All";
+  late Future<List<CarEntry>> _carFuture;
+  List<String> _wishlistCarIds = [];
+  Map<String, bool> _wishlistStatus = {};
+  
+  @override
+  void initState() {
+    super.initState();
+    _carFuture = fetchCar(context.read<CookieRequest>());
+    _fetchWishlistCarIds();
+  }
 
+  final ButtonStyle addStyle = ElevatedButton.styleFrom(
+    foregroundColor: Colors.deepPurple, backgroundColor: Colors.white,
+  );
+
+  final ButtonStyle removeStyle = ElevatedButton.styleFrom(
+    foregroundColor: Colors.white, backgroundColor: Colors.deepPurple,
+  );
+  
   Future<List<CarEntry>> fetchCar(CookieRequest request) async {
     final response = await request.get('http://127.0.0.1:8000/katalog/carsjson/');
     List<CarEntry> listCar = [];
@@ -29,13 +47,37 @@ class _CarEntryPageState extends State<CarEntryPage> {
     }
     return listCar;
   }
- 
-  Future<void> _addToWishlist(BuildContext context, String carId, String carName) async {
+
+  Future<void> _fetchWishlistCarIds() async {
+    final request = context.read<CookieRequest>();
+    try {
+      final response = await request.get('http://127.0.0.1:8000/wishlist/car_ids/');
+      if (response is Map && response.containsKey('car_ids')) {
+        List<String> carIds = List<String>.from(response['car_ids']);
+        setState(() {
+          _wishlistCarIds = carIds;
+          _wishlistStatus = {
+            for (var id in _wishlistCarIds) id: true
+          };
+        });
+      } else {
+        print('Unexpected response format: $response');
+      }
+    } catch (e) {
+      print('Error fetching wishlist car IDs: $e');
+    }
+  }
+
+  Future<void> _addToWishlist(BuildContext context, String carId, String carName, bool isInWishlist) async {
+    setState(() {
+      _wishlistStatus[carId] = !isInWishlist;
+    });
+
     final request = context.read<CookieRequest>();
     try {
       final response = await request.post(
         'http://127.0.0.1:8000/wishlist/add_wishlist/$carId/',
-        jsonEncode(<String, String>{'add': 'yes'}),
+        jsonEncode(<String, String>{'add': !_wishlistStatus[carId]! ? 'yes' : 'no'}),
       );
 
       if (response['status'] == 'success') {
@@ -47,7 +89,11 @@ class _CarEntryPageState extends State<CarEntryPage> {
             duration: const Duration(seconds: 2),
           ),
         );
+        await _fetchWishlistCarIds();
       } else {
+        setState(() {
+          _wishlistStatus[carId] = isInWishlist;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${response['message']}'),
@@ -56,6 +102,9 @@ class _CarEntryPageState extends State<CarEntryPage> {
         );
       }
     } catch (e) {
+      setState(() {
+        _wishlistStatus[carId] = isInWishlist;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: $e'),
@@ -64,7 +113,6 @@ class _CarEntryPageState extends State<CarEntryPage> {
       );
     }
   }
-
 
   void _showContactSellerDialog(BuildContext context) {
     showDialog(
@@ -165,7 +213,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
           // List of Cars
           Expanded(
             child: FutureBuilder(
-              future: fetchCar(request),
+              future: _carFuture,
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -176,6 +224,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (_, index) {
                       final CarEntry = snapshot.data![index];
+                      bool isInWishlist = _wishlistStatus[CarEntry.pk.toString()] ?? false;
                       return Container(
                         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         padding: const EdgeInsets.all(20.0),
@@ -222,9 +271,9 @@ class _CarEntryPageState extends State<CarEntryPage> {
                                 ),
                                 const SizedBox(width: 8),
                                 ElevatedButton(
-                                  onPressed: () =>
-                                      _addToWishlist(context, CarEntry.pk, CarEntry.fields.carName),
-                                  child: const Text('Add to Wishlist'),
+                                  style: isInWishlist ? removeStyle : addStyle,
+                                  onPressed: () => _addToWishlist(context, CarEntry.pk.toString(), CarEntry.fields.carName, isInWishlist),
+                                  child: Text(isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"),
                                 ),
                                 const SizedBox(width: 8),
                                 ElevatedButton(
