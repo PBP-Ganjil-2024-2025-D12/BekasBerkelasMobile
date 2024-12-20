@@ -1,14 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class ChangePasswordPage extends StatefulWidget {
+  const ChangePasswordPage({super.key});
+
   @override
-  _ChangePasswordPageState createState() => _ChangePasswordPageState();
+  ChangePasswordPageState createState() => ChangePasswordPageState();
 }
 
-class _ChangePasswordPageState extends State<ChangePasswordPage> {
+class ChangePasswordPageState extends State<ChangePasswordPage> {
   final _formKey = GlobalKey<FormState>();
+  final _oldPasswordController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {
@@ -17,19 +25,46 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     super.dispose();
   }
 
-  void _submitForm() {
+  void _submitForm(CookieRequest request) async {
     if (_formKey.currentState!.validate()) {
-      String newPassword = _passwordController.text;
-      print('Password baru: $newPassword');
+      String oldPassword = _oldPasswordController.text;
+      String newPassword1 = _passwordController.text;
+      String newPassword2 = _confirmPasswordController.text;
+
+      final data = jsonEncode({
+        'old_password': oldPassword,
+        'new_password1': newPassword1,
+        'new_password2': newPassword2,
+      });
+    
+      final response = await request.post('$baseUrl/change_password_flutter/', data);
+      if (!mounted) return;
+
+      if (response['status'] == 'success') {
+        _showSnackbar(context, 'Password berhasil diubah');
+      } else {
+        _showSnackbar(context, 'Gagal mengubah password: ${response['message']}');
+      }
+
       Navigator.pop(context);
     }
   }
 
+  void _showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ubah Password'),
+        title: const Text('Ubah Password'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -39,8 +74,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                controller: _oldPasswordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password Lama',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Password tidak boleh kosong';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Password Baru',
                   border: OutlineInputBorder(),
                 ),
@@ -54,10 +104,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _confirmPasswordController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Konfirmasi Password',
                   border: OutlineInputBorder(),
                 ),
@@ -71,11 +121,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: _submitForm,
-                  child: Text('Simpan'),
+                  onPressed: () => _submitForm(request),
+                  child: const Text('Simpan'),
                 ),
               ),
             ],
