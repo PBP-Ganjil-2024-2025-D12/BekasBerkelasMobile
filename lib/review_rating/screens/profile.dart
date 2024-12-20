@@ -1,4 +1,5 @@
 import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
+import 'dart:convert';
 import 'package:bekas_berkelas_mobile/review_rating/models/review_rating.dart';
 import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/review_card.dart';
 import 'package:bekas_berkelas_mobile/review_rating/services/user_services.dart';
 import 'package:provider/provider.dart';
+import 'package:bekas_berkelas_mobile/katalog_produk/mobilsaya.dart';
+import 'package:bekas_berkelas_mobile/review_rating/widgets/car_listing.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String username;
@@ -20,6 +23,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   late Future<SellerProfile> sellerFuture;
   late Future<BuyerProfile> buyerFuture;
   late Future<List<ReviewRating>> reviewsFuture;
+  late List<CarFiltered> cars = [];
   final authService = AuthService();
   String baseUrl = "http://localhost:8000";
 
@@ -35,6 +39,7 @@ class ProfileScreenState extends State<ProfileScreen> {
       sellerFuture = fetchSellerProfile(request);
       reviewsFuture = fetchReviews(request);
     });
+    fetchFilter();
   }
 
   Future<User> fetchProfileUser(CookieRequest request) async {
@@ -65,6 +70,28 @@ class ProfileScreenState extends State<ProfileScreen> {
       return listReview;
     } catch (e) {
       throw Exception('Error fetching reviews: $e');
+    }
+  }
+
+  Future<void> fetchFilter() async {
+    try {
+      final request = Provider.of<CookieRequest>(context, listen: false);
+      final username = widget.username;
+      final payload = jsonEncode({'username': username});
+
+      final url = "$baseUrl/katalog/api/mobilsaya/";
+      final response = await request.postJson(url, payload);
+
+      List<CarFiltered> fetchedCars = [];
+      for (var car in response['cars']) {
+        fetchedCars.add(CarFiltered.fromJson(car));
+      }
+
+      setState(() {
+        cars = fetchedCars;
+      });
+    } catch (e) {
+      throw Exception("An error occurred while fetching filtered cars: $e");
     }
   }
 
@@ -415,6 +442,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
+                CarListingWidget(cars: cars),
                 FutureBuilder<User>(
                   future: fetchProfileUser(request),
                   builder: (context, snapshot) {
