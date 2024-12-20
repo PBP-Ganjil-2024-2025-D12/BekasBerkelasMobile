@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:bekas_berkelas_mobile/authentication/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class ChangePhonePage extends StatefulWidget {
   @override
@@ -8,6 +13,7 @@ class ChangePhonePage extends StatefulWidget {
 class _ChangePhonePageState extends State<ChangePhonePage> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
+  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {
@@ -15,19 +21,43 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
     super.dispose();
   }
 
-  void _submitForm() {
+  void _submitForm(CookieRequest request) async {
     if (_formKey.currentState!.validate()) {
-      String newPhone = _phoneController.text;
-      print('Nomor telepon baru: $newPhone');
-      Navigator.pop(context);
+      String newPhoneNum = _phoneController.text;
+
+      final data = jsonEncode({
+        'no_telp': newPhoneNum,
+      });
+
+      final response = await request.post('$baseUrl/update_profile_flutter/', data);
+
+      if (!mounted) return;
+
+      if (response['status'] == 'success') {
+        _showSnackbar(context, 'Nomor Telp berhasil diubah');
+      } else {
+        _showSnackbar(context, 'Gagal mengubah Nomor Telp: ${response['message']}');
+      }
+
+      Navigator.pop(context, newPhoneNum);
     }
+  }
+
+  void _showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    CookieRequest request = context.watch<CookieRequest>();
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ubah No Telp'),
+        title: const Text('Ubah No Telp'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -38,7 +68,7 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
             children: [
               TextFormField(
                 controller: _phoneController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'No Telp Baru',
                   border: OutlineInputBorder(),
                 ),
@@ -51,11 +81,11 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: _submitForm,
-                  child: Text('Simpan'),
+                  onPressed: () => _submitForm(request),
+                  child: const Text('Simpan'),
                 ),
               ),
             ],
