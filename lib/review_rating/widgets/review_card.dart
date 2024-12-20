@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:bekas_berkelas_mobile/review_rating/screens/profile.dart';
+import 'package:http/http.dart' as http;
 
 class ReviewCard extends StatelessWidget {
   final String name;
   final String? profilePicture;
   final String review;
-  final double rating;
+  final int rating;
+  final bool canDelete;
+  final String reviewId;
+  final String baseUrl = 'http://localhost:8000';
 
   const ReviewCard({
     Key? key,
@@ -12,14 +19,14 @@ class ReviewCard extends StatelessWidget {
     this.profilePicture,
     required this.review,
     required this.rating,
+    required this.canDelete,
+    required this.reviewId,
   }) : super(key: key);
 
-  // Method to generate star rating widget
-  Widget _buildStarRating(double rating) {
+  Widget _buildStarRating(int rating) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(5, (index) {
-        // Determine star state
         if (index < rating) {
           if (index < rating.floor()) {
             // Full star
@@ -29,7 +36,6 @@ class ReviewCard extends StatelessWidget {
               size: 20,
             );
           } else {
-            // Partial/half star
             return const Icon(
               Icons.star_half,
               color: Colors.amber,
@@ -37,7 +43,6 @@ class ReviewCard extends StatelessWidget {
             );
           }
         } else {
-          // Empty star
           return const Icon(
             Icons.star_border,
             color: Colors.grey,
@@ -48,8 +53,21 @@ class ReviewCard extends StatelessWidget {
     );
   }
 
+  Future<bool> _isValidProfilePicture(String? url) async {
+    if (url == null || url.isEmpty) return false;
+
+    try {
+      final response = await http.head(Uri.parse(url));
+      return response.statusCode == 200 &&
+          response.headers['content-type']?.startsWith('image/') == true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -63,15 +81,28 @@ class ReviewCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                // Profile Picture
-                CircleAvatar(
-                  radius: 25,
-                  backgroundImage: profilePicture != null 
-                    ? NetworkImage(profilePicture!) 
-                    : null,
-                  child: profilePicture == null 
-                    ? const Icon(Icons.person) 
-                    : null,
+                FutureBuilder<bool>(
+                  future: _isValidProfilePicture(profilePicture),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircleAvatar(
+                        radius: 25,
+                        backgroundImage: AssetImage(
+                            'assets/default_profile_picture.png'),
+                      );
+                    } else if (snapshot.data == true) {
+                      return CircleAvatar(
+                        radius: 25,
+                        backgroundImage: NetworkImage(profilePicture!),
+                      );
+                    } else {
+                      return const CircleAvatar(
+                        radius: 25,
+                        backgroundImage: AssetImage(
+                            'assets/default_profile_picture.png'),
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -91,10 +122,22 @@ class ReviewCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (canDelete)
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      final profileScreenState =
+                          context.findAncestorStateOfType<ProfileScreenState>();
+                      profileScreenState?.showDeleteConfirmationDialog(
+                          reviewId, context, request);
+                    },
+                  ),
               ],
             ),
             const SizedBox(height: 12),
-            // Review Text
             Text(
               '"$review"',
               style: TextStyle(

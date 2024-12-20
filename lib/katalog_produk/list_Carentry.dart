@@ -7,6 +7,7 @@ import 'add_car.dart';
 import 'myacc.dart';
 import 'dart:convert';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
+import 'mobilsaya.dart';
 
 class CarEntryPage extends StatefulWidget {
   const CarEntryPage({super.key});
@@ -149,6 +150,19 @@ class _CarEntryPageState extends State<CarEntryPage> {
         actions: <Widget>[
           TextButton(
             onPressed: () {
+              // Implement navigation or functionality for "My Account"
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CarListScreen()), // Replace with your actual account page
+              );
+            },
+            child: const Text(
+              'Mobil Saya',
+              style: TextStyle(color: Colors.black),
+            ),
+            ),
+          TextButton(
+            onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => AddCarFormPage()),
@@ -169,7 +183,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
             },
             child: const Text(
               'My Account',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.black),
             ),
             ),
         ],
