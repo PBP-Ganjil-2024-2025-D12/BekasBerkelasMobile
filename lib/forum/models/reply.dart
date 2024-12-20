@@ -1,7 +1,7 @@
 class Reply {
   String model;
   String pk;
-  ReplyFields fields;
+  ReplyFields fields; 
 
   Reply({
     required this.model,
@@ -13,7 +13,7 @@ class Reply {
     return Reply(
       model: "forum.reply",
       pk: json["id"] ?? "",
-      fields: ReplyFields(
+      fields: ReplyFields( 
         question: json["question"] ?? "",
         user: json["user"] ?? 0,
         content: json["content"] ?? "",
