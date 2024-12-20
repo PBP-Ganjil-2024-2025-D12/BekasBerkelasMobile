@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'detail.dart';
 import 'add_car.dart';
 import 'myacc.dart';
+import 'dart:convert';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'mobilsaya.dart';
 
 class CarEntryPage extends StatefulWidget {
@@ -17,7 +19,25 @@ class CarEntryPage extends StatefulWidget {
 class _CarEntryPageState extends State<CarEntryPage> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = "All";
+  late Future<List<CarEntry>> _carFuture;
+  List<String> _wishlistCarIds = [];
+  Map<String, bool> _wishlistStatus = {};
+  
+  @override
+  void initState() {
+    super.initState();
+    _carFuture = fetchCar(context.read<CookieRequest>());
+    _fetchWishlistCarIds();
+  }
 
+  final ButtonStyle addStyle = ElevatedButton.styleFrom(
+    foregroundColor: Colors.deepPurple, backgroundColor: Colors.white,
+  );
+
+  final ButtonStyle removeStyle = ElevatedButton.styleFrom(
+    foregroundColor: Colors.white, backgroundColor: Colors.deepPurple,
+  );
+  
   Future<List<CarEntry>> fetchCar(CookieRequest request) async {
     final response = await request.get('http://127.0.0.1:8000/katalog/carsjson/');
     List<CarEntry> listCar = [];
@@ -29,13 +49,70 @@ class _CarEntryPageState extends State<CarEntryPage> {
     return listCar;
   }
 
-  void _addToWishlist(BuildContext context, String carName) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$carName has been added to your wishlist!'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  Future<void> _fetchWishlistCarIds() async {
+    final request = context.read<CookieRequest>();
+    try {
+      final response = await request.get('http://127.0.0.1:8000/wishlist/car_ids/');
+      if (response is Map && response.containsKey('car_ids')) {
+        List<String> carIds = List<String>.from(response['car_ids']);
+        setState(() {
+          _wishlistCarIds = carIds;
+          _wishlistStatus = {
+            for (var id in _wishlistCarIds) id: true
+          };
+        });
+      } else {
+        print('Unexpected response format: $response');
+      }
+    } catch (e) {
+      print('Error fetching wishlist car IDs: $e');
+    }
+  }
+
+  Future<void> _addToWishlist(BuildContext context, String carId, String carName, bool isInWishlist) async {
+    setState(() {
+      _wishlistStatus[carId] = !isInWishlist;
+    });
+
+    final request = context.read<CookieRequest>();
+    try {
+      final response = await request.post(
+        'http://127.0.0.1:8000/wishlist/add_wishlist/$carId/',
+        jsonEncode(<String, String>{'add': !_wishlistStatus[carId]! ? 'yes' : 'no'}),
+      );
+
+      if (response['status'] == 'success') {
+        String action = response['action'];
+        String message = response['message'];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$carName $message'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        await _fetchWishlistCarIds();
+      } else {
+        setState(() {
+          _wishlistStatus[carId] = isInWishlist;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${response['message']}'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _wishlistStatus[carId] = isInWishlist;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   void _showContactSellerDialog(BuildContext context) {
@@ -111,6 +188,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
             ),
         ],
       ),
+      drawer: const LeftDrawer(),
       body: Column(
         children: [
           // Search Bar
@@ -149,7 +227,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
           // List of Cars
           Expanded(
             child: FutureBuilder(
-              future: fetchCar(request),
+              future: _carFuture,
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -160,6 +238,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (_, index) {
                       final CarEntry = snapshot.data![index];
+                      bool isInWishlist = _wishlistStatus[CarEntry.pk.toString()] ?? false;
                       return Container(
                         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         padding: const EdgeInsets.all(20.0),
@@ -206,9 +285,9 @@ class _CarEntryPageState extends State<CarEntryPage> {
                                 ),
                                 const SizedBox(width: 8),
                                 ElevatedButton(
-                                  onPressed: () =>
-                                      _addToWishlist(context, CarEntry.fields.carName),
-                                  child: const Text('Add to Wishlist'),
+                                  style: isInWishlist ? removeStyle : addStyle,
+                                  onPressed: () => _addToWishlist(context, CarEntry.pk.toString(), CarEntry.fields.carName, isInWishlist),
+                                  child: Text(isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"),
                                 ),
                                 const SizedBox(width: 8),
                                 ElevatedButton(
