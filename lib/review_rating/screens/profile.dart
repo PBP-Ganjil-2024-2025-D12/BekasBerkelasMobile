@@ -565,6 +565,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                                             rating: review.fields.rating,
                                             canDelete: canDelete,
                                             reviewId: review.fields.id,
+                                            deleteReview: () {
+                                              showDeleteConfirmationDialog(
+                                                  review.fields.id,
+                                                  context,
+                                                  request);
+                                            },
                                           );
                                         },
                                       );

@@ -319,6 +319,10 @@ class _AllReviewsScreenState extends State<AllReviewsScreen> {
                           rating: review.fields.rating,
                           canDelete: canDelete,
                           reviewId: review.fields.id,
+                          deleteReview: () {
+                            showDeleteConfirmationDialog(
+                                review.fields.id, context, request);
+                          },
                         ),
                       );
                     },
