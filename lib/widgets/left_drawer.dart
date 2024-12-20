@@ -1,6 +1,6 @@
 import 'package:bekas_berkelas_mobile/main.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/screen/dashboard.dart';
-import 'package:bekas_berkelas_mobile/wishlist/screens/wishlist_entry.dart';
+import 'package:bekas_berkelas_mobile/wishlist/screens/list_wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:bekas_berkelas_mobile/authentication/screens/homepage.dart';
 import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
@@ -70,7 +70,7 @@ class LeftDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.favorite),
-            title: const Text('Mobil Saya'),
+            title: const Text('Wishlist Saya'),
             onTap: () {
               Navigator.pushReplacement(
                 context,

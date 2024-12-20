@@ -68,90 +68,124 @@ class _EditWishlistFormPageState extends State<EditWishlistFormPage> {
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: const Color(0xFFC5D3FC),
-      title: Text(
-        'Edit Wishlist',
-        style: TextStyle(color: Color(0xFF0A39C4), fontWeight: FontWeight.bold),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Edit Wishlist',
+          style: TextStyle(
+            color: const Color(0xFF0A39C4),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.white,
       ),
-    ),
-    body: Padding(
-      padding: EdgeInsets.all(16.0),
-      child: _wishlist != null
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Prioritas Saat Ini: ${_wishlist!.priorityName}',
-                  style: TextStyle(fontSize: 16, color: Color(0xFF1EAC9E)),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Prioritas Baru:',
-                  style: TextStyle(fontSize: 16, fontWeight:FontWeight.w600, color: Color(0xFF000000)),
-                ),
-                SizedBox(height: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: const Color(0xFF0A39C4)),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: DropdownButton<String>(
-                    value: _selectedPriority,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedPriority = newValue!;
-                      });
-                    },
-                    items: priorityMap.keys.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value, style: TextStyle(color: Colors.black)),
-                      );
-                    }).toList(),
-                    style: TextStyle(color: Colors.black),
-                    icon: Icon(Icons.arrow_drop_down, color: Colors.black),
-                    underline: Container(), // Remove default underline
-                  ),
-                ),                Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: _wishlist != null
+            ? SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red, // Red background
-                        foregroundColor: Colors.white, // White text
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      child: Text('Cancel'),
+                    // Directly display the text without Card and Padding
+                    Text(
+                      'Prioritas Saat Ini: ${_wishlist!.priorityName}',
+                      style: TextStyle(fontSize: 16, color: Color(0xFF1EAC9E)),
                     ),
-                    SizedBox(width: 16),
-                    ElevatedButton(
-                      onPressed: () async {
-                        // save logic
+                    SizedBox(height: 16),
+                    Text(
+                      'Prioritas Baru:',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF000000)),
+                    ),
+                    DropdownButton<String>(
+                      value: _selectedPriority,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedPriority = newValue!;
+                        });
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF0A39C4),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                      ),
-                      child: Text('Save'),
+                      items: priorityMap.keys.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            'Cancel',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFFFFFFFF)),
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: const Color(0xFF0A39C4),
+                          ),
+                          onPressed: () async {
+                            if (_selectedPriority.isNotEmpty && _wishlist != null) {
+                              int newPriority = priorityMap[_selectedPriority]!;
+                              final request = context.read<CookieRequest>();
+                              try {
+                                final response = await request.post(
+                                  'http://127.0.0.1:8000/wishlist/edit_wishlist/${_wishlist!.id}/',
+                                  {'priority': newPriority.toString()},
+                                );
+                                if (response['status'] == 'success') {
+                                  Navigator.pop(context, true);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Berhasil mengedit wishlist')),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Gagal mengedit wishlist')),
+                                  );
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error updating priority: $e')),
+                                );
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Choose priority')),
+                              );
+                            }
+                          },
+                          child: Text(
+                            'Save',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFFFFFFFF)),
+                            ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            )
-          : Center(child: CircularProgressIndicator()),
-    ),
-  );
-}
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
 }

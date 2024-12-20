@@ -84,9 +84,20 @@ class _CarEntryPageState extends State<CarEntryPage> {
       if (response['status'] == 'success') {
         String action = response['action'];
         String message = response['message'];
+
+        // Customize the SnackBar message based on the action
+        String snackBarMessage;
+        if (action == 'added') {
+          snackBarMessage = '$carName ditambahkan ke Wishlist';
+        } else if (action == 'removed') {
+          snackBarMessage = '$carName dihapus dari Wishlist';
+        } else {
+          snackBarMessage = '$carName $message';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$carName $message'),
+            content: Text(snackBarMessage),
             duration: const Duration(seconds: 2),
           ),
         );

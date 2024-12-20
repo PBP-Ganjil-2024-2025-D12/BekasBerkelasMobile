@@ -150,28 +150,53 @@ class _WishlistPageState extends State<WishlistPage> {
                 children: [
                   Text(
                     'Hapus $wishlistName dari wishlist?',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF000000)),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
+                      TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red, // Red background
-                          foregroundColor: Colors.white, // White text
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0)),
                         ),
-                        child: const Text('Cancel', style: TextStyle(fontSize: 14)),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(fontSize: 14),
+                          ),
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          // delete logic
+                          try {
+                            final deleteResponse = await request.post(
+                              'http://127.0.0.1:8000/wishlist/remove_wishlist/$wishlistId/',
+                              jsonEncode(<String, String>{'delete': 'yes'}),
+                            );
+
+                            if (deleteResponse['status'] == 'success') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Berhasil menghapus wishlist")),
+                              );
+                              Navigator.pop(context);
+                              setState(() {
+                                wishlists.removeWhere((entry) => entry.id == wishlistId);
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("There seems to be an issue, please try again.")),
+                              );
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Error: ${e.toString()}")),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0A39C4),
@@ -194,6 +219,7 @@ class _WishlistPageState extends State<WishlistPage> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +303,7 @@ class _WishlistPageState extends State<WishlistPage> {
                   List<WishlistEntry> filteredWishlists = _filteredWishlists;
                   if (filteredWishlists.isEmpty) {
                     return const Center(
-                      child: Text('Tidak ada wishlist dalam prioritas ini'),
+                      child: Text('Tidak ada wishlist dengan prioritas ini'),
                     );
                   } else {
                     return ListView.builder(
