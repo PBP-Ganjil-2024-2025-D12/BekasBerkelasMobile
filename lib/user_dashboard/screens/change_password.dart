@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -75,9 +75,19 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
             children: [
               TextFormField(
                 controller: _oldPasswordController,
+                cursorColor: const Color.fromARGB(255, 9, 68, 127),
                 decoration: const InputDecoration(
                   labelText: 'Password Lama',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Color.fromARGB(255, 9, 68, 127)),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue)
+                  )
                 ),
                 obscureText: true,
                 validator: (value) {
@@ -90,9 +100,19 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _passwordController,
+                cursorColor: const Color.fromARGB(255, 9, 68, 127),
                 decoration: const InputDecoration(
                   labelText: 'Password Baru',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Color.fromARGB(255, 9, 68, 127)),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue)
+                  )
                 ),
                 obscureText: true,
                 validator: (value) {
@@ -106,10 +126,19 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
               ),
               const SizedBox(height: 20),
               TextFormField(
-                controller: _confirmPasswordController,
+                controller: _confirmPasswordController,cursorColor: const Color.fromARGB(255, 9, 68, 127),
                 decoration: const InputDecoration(
-                  labelText: 'Konfirmasi Password',
-                  border: OutlineInputBorder(),
+                  labelText: 'Konfirmasi Password Baru',
+                  labelStyle: TextStyle(color: Color.fromARGB(255, 9, 68, 127)),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue)
+                  )
                 ),
                 obscureText: true,
                 validator: (value) {
@@ -123,10 +152,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
               ),
               const SizedBox(height: 20),
               Center(
-                child: ElevatedButton(
-                  onPressed: () => _submitForm(request),
-                  child: const Text('Simpan'),
-                ),
+                child: SubmitButton(onPressed: () => _submitForm(request), text: 'Simpan')
               ),
             ],
           ),

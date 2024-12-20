@@ -1,8 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
 
 class ChangeEmailPage extends StatefulWidget {
   const ChangeEmailPage({super.key});
@@ -35,10 +35,8 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
       if (!mounted) return;
 
       if (response['status'] == 'success') {
-        // Berhasil mengubah nama
         _showSnackbar(context, 'Email berhasil diubah');
       } else {
-        // Gagal mengubah nama
         _showSnackbar(context, 'Gagal mengubah Email: ${response['message']}');
       }
 
@@ -70,9 +68,19 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
             children: [
               TextFormField(
                 controller: _emailController,
+                cursorColor: const Color.fromARGB(255, 9, 68, 127),
                 decoration: const InputDecoration(
                   labelText: 'Email Baru',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Color.fromARGB(255, 9, 68, 127)),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue)
+                  )
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -85,10 +93,7 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
               ),
               const SizedBox(height: 20),
               Center(
-                child: ElevatedButton(
-                  onPressed: () => _submitForm(request),
-                  child: const Text('Simpan'),
-                ),
+                child: SubmitButton(onPressed: () => _submitForm(request), text: 'Simpan')
               ),
             ],
           ),
