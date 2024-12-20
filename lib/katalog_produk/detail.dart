@@ -1,3 +1,4 @@
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'Car_entry.dart';
 
@@ -9,9 +10,7 @@ class CarDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Car Details'),
-      ),
+      appBar: appBar(context, 'Car details', true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

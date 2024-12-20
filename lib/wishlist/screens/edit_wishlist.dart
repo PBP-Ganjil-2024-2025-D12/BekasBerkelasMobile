@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/wishlist/models/wishlist_entry.dart';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
 class EditWishlistFormPage extends StatefulWidget {
   final String wishlistId;
@@ -71,17 +72,7 @@ class _EditWishlistFormPageState extends State<EditWishlistFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Edit Wishlist',
-          style: TextStyle(
-            color: const Color(0xFF0A39C4),
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.white,
-      ),
+      appBar: appBar(context, 'Edit Wishlist', true),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: _wishlist != null

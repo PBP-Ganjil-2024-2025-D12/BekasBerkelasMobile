@@ -7,7 +7,6 @@ import 'package:bekas_berkelas_mobile/wishlist/models/wishlist_entry.dart';
 import 'package:bekas_berkelas_mobile/wishlist/widgets/wishlist_card.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
-
 class WishlistPage extends StatefulWidget {
   const WishlistPage({super.key});
 
@@ -56,9 +55,11 @@ class _WishlistPageState extends State<WishlistPage> {
     }
   }
 
-  Future<WishlistEntry?> fetchWishlistItem(CookieRequest request, String wishlistId) async {
+  Future<WishlistEntry?> fetchWishlistItem(
+      CookieRequest request, String wishlistId) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/wishlist/get_wishlist_item/$wishlistId/');
+      final response = await request
+          .get('http://127.0.0.1:8000/wishlist/get_wishlist_item/$wishlistId/');
       if (response is Map<String, dynamic>) {
         return WishlistEntry.fromJson(response);
       } else {
@@ -69,7 +70,7 @@ class _WishlistPageState extends State<WishlistPage> {
     }
   }
 
-    List<WishlistEntry> get _filteredWishlists {
+  List<WishlistEntry> get _filteredWishlists {
     if (_selectedFilter == 'Semua Prioritas') {
       return wishlists;
     } else {
@@ -79,7 +80,7 @@ class _WishlistPageState extends State<WishlistPage> {
     }
   }
 
-    void _showFilterOptions(BuildContext context) {
+  void _showFilterOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -127,7 +128,7 @@ class _WishlistPageState extends State<WishlistPage> {
       },
     );
   }
-    
+
   void showRemoveWishlistDialog(BuildContext context, String wishlistId) async {
     final request = context.read<CookieRequest>();
 
@@ -164,12 +165,13 @@ class _WishlistPageState extends State<WishlistPage> {
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(9.0)),
                         ),
                         child: const Text(
                           'Cancel',
                           style: TextStyle(fontSize: 14),
-                          ),
+                        ),
                       ),
                       ElevatedButton(
                         onPressed: () async {
@@ -181,15 +183,20 @@ class _WishlistPageState extends State<WishlistPage> {
 
                             if (deleteResponse['status'] == 'success') {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Berhasil menghapus wishlist")),
+                                const SnackBar(
+                                    content:
+                                        Text("Berhasil menghapus wishlist")),
                               );
                               Navigator.pop(context);
                               setState(() {
-                                wishlists.removeWhere((entry) => entry.id == wishlistId);
+                                wishlists.removeWhere(
+                                    (entry) => entry.id == wishlistId);
                               });
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("There seems to be an issue, please try again.")),
+                                const SnackBar(
+                                    content: Text(
+                                        "There seems to be an issue, please try again.")),
                               );
                             }
                           } catch (e) {
@@ -201,9 +208,11 @@ class _WishlistPageState extends State<WishlistPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0A39C4),
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(9.0)),
                         ),
-                        child: const Text('Remove', style: TextStyle(fontSize: 14)),
+                        child: const Text('Remove',
+                            style: TextStyle(fontSize: 14)),
                       ),
                     ],
                   ),
@@ -220,24 +229,13 @@ class _WishlistPageState extends State<WishlistPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
       backgroundColor: Color(0xFFC5D3FC),
-      appBar: AppBar(
-        title: const Text(
-          'Wishlist',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF0A39C4),
-          ),
-        ),
-        centerTitle: true,
-      ),
+      appBar: appBar(context, 'Wishlist', true),
       drawer: const LeftDrawer(),
       body: Column(
         children: [
@@ -256,7 +254,8 @@ class _WishlistPageState extends State<WishlistPage> {
                         border: Border.all(color: Colors.black, width: 1.0),
                         borderRadius: BorderRadius.circular(4.0),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -266,7 +265,8 @@ class _WishlistPageState extends State<WishlistPage> {
                           ),
                           Row(
                             children: [
-                              Icon(Icons.arrow_drop_down_outlined, color: Color(0xFF0A39C4)),
+                              Icon(Icons.arrow_drop_down_outlined,
+                                  color: Color(0xFF0A39C4)),
                               SizedBox(width: 4.0),
                               Container(
                                 width: 1.0,
@@ -311,7 +311,8 @@ class _WishlistPageState extends State<WishlistPage> {
                       itemBuilder: (_, index) {
                         var wishlistEntry = filteredWishlists[index];
                         return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
                           child: WishlistCard(
                             key: ValueKey(wishlistEntry.id),
                             wishlist: wishlistEntry,
@@ -319,12 +320,14 @@ class _WishlistPageState extends State<WishlistPage> {
                               final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => EditWishlistFormPage(wishlistId: wishlistEntry.id),
+                                  builder: (context) => EditWishlistFormPage(
+                                      wishlistId: wishlistEntry.id),
                                 ),
                               );
                               refreshList();
                             },
-                            onDelete: (wishlistId) => showRemoveWishlistDialog(context, wishlistId),
+                            onDelete: (wishlistId) =>
+                                showRemoveWishlistDialog(context, wishlistId),
                           ),
                         );
                       },
