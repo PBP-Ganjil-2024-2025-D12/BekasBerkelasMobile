@@ -1,3 +1,4 @@
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:bekas_berkelas_mobile/katalog_produk/mobilsaya.dart';
 
@@ -19,16 +20,7 @@ class CarsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'All Cars',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF4C8BF5),
-        elevation: 0,
-      ),
+      appBar: appBar(context, 'All Cars', true),
       body: cars.isEmpty
           ? const Center(
               child: Text(

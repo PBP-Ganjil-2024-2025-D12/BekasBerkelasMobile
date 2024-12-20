@@ -64,18 +64,7 @@ class _ShowForumState extends State<ShowForum>
 
     return Scaffold(
       backgroundColor: const Color(0xFFEEF1FF),
-      appBar: AppBar(
-        elevation: 0,
-        title: const Text(
-          'Forum Diskusi',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF4C8BF5),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Color(0xFF4C8BF5)),
-      ),
+      appBar: appBar(context, 'Forum', true),
       drawer: const LeftDrawer(),
       body: FadeTransition(
         opacity: _fadeAnimation,
@@ -290,7 +279,7 @@ class _ShowForumState extends State<ShowForum>
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(12),
                                   onTap: () {
-                                    Navigator.pushReplacement(
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ForumDetail(

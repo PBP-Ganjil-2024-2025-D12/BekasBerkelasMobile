@@ -66,24 +66,10 @@ class _ForumDetailState extends State<ForumDetail>
 
     return Scaffold(
       backgroundColor: const Color(0xFFEEF1FF),
-      appBar: AppBar(
-        elevation: 0,
-        title: const Text(
-          'Detail Diskusi',
-          style: TextStyle(
-            color: Color(0xFF4C8BF5),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Color(0xFF4C8BF5)),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const ShowForum()),
-          ),
-        ),
+      appBar: appBar(
+        context,
+        'Detail Diskusi',
+        true,
       ),
       drawer: const LeftDrawer(),
       body: FutureBuilder(

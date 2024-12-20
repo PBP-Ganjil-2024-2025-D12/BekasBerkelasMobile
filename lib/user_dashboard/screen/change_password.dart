@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -36,14 +37,16 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
         'new_password1': newPassword1,
         'new_password2': newPassword2,
       });
-    
-      final response = await request.post('$baseUrl/change_password_flutter/', data);
+
+      final response =
+          await request.post('$baseUrl/change_password_flutter/', data);
       if (!mounted) return;
 
       if (response['status'] == 'success') {
         _showSnackbar(context, 'Password berhasil diubah');
       } else {
-        _showSnackbar(context, 'Gagal mengubah password: ${response['message']}');
+        _showSnackbar(
+            context, 'Gagal mengubah password: ${response['message']}');
       }
 
       Navigator.pop(context);
@@ -61,11 +64,9 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ubah Password'),
-      ),
+      appBar: appBar(context, 'Ubah Password', true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

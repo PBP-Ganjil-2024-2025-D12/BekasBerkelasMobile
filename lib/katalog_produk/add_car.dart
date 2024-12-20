@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -44,10 +45,7 @@ class _AddCarFormPageState extends State<AddCarFormPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Add New Car'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
+      appBar: appBar(context, 'Add New Car', true),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../authentication/services/auth.dart';  // Adjust the import path to where AuthService is located
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
 class CarFiltered {
   final String name;
@@ -58,9 +59,7 @@ class _CarListScreenState extends State<CarListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Cars Sold by You'),
-      ),
+      appBar: appBar(context, 'My Cars', true),
       body: Column(
         children: <Widget>[
           Expanded(

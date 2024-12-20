@@ -1,5 +1,6 @@
 import 'package:bekas_berkelas_mobile/review_rating/models/review_rating.dart';
 import 'package:bekas_berkelas_mobile/review_rating/screens/profile.dart';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/review_card.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -263,17 +264,7 @@ class _AllReviewsScreenState extends State<AllReviewsScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFD8E7FF),
-      appBar: AppBar(
-        title: Text(
-          'All Reviews for ${widget.username}',
-          style:
-              const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFF4C8BF5),
-        iconTheme: const IconThemeData(color: Colors.white),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      appBar: appBar(context, 'Reviews for ${widget.username}', true),
       body: FutureBuilder<List<ReviewRating>>(
         key: ValueKey(DateTime.now()),
         future: fetchReviews(request),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
 class ChangeNamePage extends StatefulWidget {
   const ChangeNamePage({super.key});
@@ -29,7 +30,8 @@ class ChangeNamePageState extends State<ChangeNamePage> {
         'name': newName,
       });
 
-      final response = await request.post('$baseUrl/update_profile_flutter/', data);
+      final response =
+          await request.post('$baseUrl/update_profile_flutter/', data);
 
       if (!mounted) return;
 
@@ -57,9 +59,7 @@ class ChangeNamePageState extends State<ChangeNamePage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ubah Nama'),
-      ),
+      appBar: appBar(context, 'Ubah Nama', true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

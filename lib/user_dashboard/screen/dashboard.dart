@@ -116,9 +116,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-      ),
+      appBar: appBar(context, 'Dashboard', true),
       drawer: const LeftDrawer(),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _fetchData(request),
