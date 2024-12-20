@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bekas_berkelas_mobile/katalog_produk/mobilsaya.dart';
+import 'package:bekas_berkelas_mobile/review_rating/screens/seller_cars.dart';
+import 'package:bekas_berkelas_mobile/katalog_produk/detail.dart';
 
 class CarListingWidget extends StatelessWidget {
   final List<CarFiltered> cars;
@@ -71,7 +73,12 @@ class CarListingWidget extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  // Add navigation to full car listing page if needed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CarsPage(cars: cars),
+                    ),
+                  );
                 },
                 child: Text(
                   'See all ${cars.length} cars',
@@ -84,99 +91,122 @@ class CarListingWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          SizedBox(
-            height: 260, // Adjusted for 2-line title
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: cars.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  width: 200,
-                  margin: const EdgeInsets.only(right: 16),
-                  child: Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Car Image
-                        ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(12),
-                          ),
-                          child: Container(
-                            height: 120,
-                            width: double.infinity,
-                            color: Colors.grey[200],
-                            child: const Center(
-                              child: Icon(
-                                Icons.directions_car,
-                                size: 50,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return SizedBox(
+                height: 260,
+                width: constraints.maxWidth,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(
+                      cars.length,
+                      (index) => Container(
+                        width: 200,
+                        margin: EdgeInsets.only(
+                          right: index == cars.length - 1 ? 0 : 16,
                         ),
-                        // Car Details
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
+                        child: GestureDetector(
+                          child: Card(
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Fixed height container for title
-                                SizedBox(
-                                  height: 44, // Height for exactly 2 lines of text
-                                  child: Text(
-                                    cars[index].name,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      height: 1.2, // Tighter line height
+                                // Car Image
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(12),
+                                  ),
+                                  child: Container(
+                                    height: 120,
+                                    width: double.infinity,
+                                    color: Colors.grey[200],
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.directions_car,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                const Spacer(),
-                                Text(
-                                  'Rp ${formatPrice(cars[index].price)}',
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    color: Color(0xFF4C8BF5),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF4C8BF5).withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: const Text(
-                                    'For Sale',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Color(0xFF4C8BF5),
+                                // Car Details
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          height: 44,
+                                          child: Text(
+                                            cars[index].name,
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              height: 1.2,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Text(
+                                          'Rp ${formatPrice(cars[index].price)}',
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Color(0xFF4C8BF5),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF4C8BF5)
+                                                .withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                          child: const Text(
+                                            'For Sale',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Color(0xFF4C8BF5),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          // onTap: () {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => CarDetailPage(
+                          //         carEntry: cars[index],
+                          //       ),
+                          //     ),
+                          //   );
+                          // },
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),

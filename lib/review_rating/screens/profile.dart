@@ -9,6 +9,7 @@ import 'package:bekas_berkelas_mobile/review_rating/services/user_services.dart'
 import 'package:provider/provider.dart';
 import 'package:bekas_berkelas_mobile/katalog_produk/mobilsaya.dart';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/car_listing.dart';
+import 'package:bekas_berkelas_mobile/review_rating/screens/all_reviews.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String username;
@@ -300,8 +301,14 @@ class ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFD8E7FF),
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
         backgroundColor: const Color(0xFF4C8BF5),
+        iconTheme: const IconThemeData(color: Colors.white),
+        centerTitle: true,
+        elevation: 0,
       ),
       body: SafeArea(
         child: Padding(
@@ -441,8 +448,6 @@ class ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
-                CarListingWidget(cars: cars),
                 FutureBuilder<User>(
                   future: fetchProfileUser(request),
                   builder: (context, snapshot) {
@@ -457,6 +462,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 24),
+                            CarListingWidget(cars: cars),
+                            const SizedBox(height: 24),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -464,27 +471,45 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   'Reviews',
                                   style: TextStyle(fontSize: 24),
                                 ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _showReviewModal(context, request);
+                                FutureBuilder<Map<String, String?>>(
+                                  future: authService.getUserData(),
+                                  builder: (context, userSnapshot) {
+                                    if (!userSnapshot.hasData) {
+                                      return const SizedBox.shrink();
+                                    }
+
+                                    String? currentUserRole =
+                                        userSnapshot.data!['role'];
+                                    bool canReview = currentUserRole == 'BUY';
+
+                                    if (canReview) {
+                                      return ElevatedButton(
+                                        onPressed: () =>
+                                            _showReviewModal(context, request),
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 15,
+                                            horizontal: 30,
+                                          ),
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 105, 153, 225),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'Review Seller',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
                                   },
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    backgroundColor: const Color.fromARGB(
-                                        255, 105, 153, 225),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Review Seller',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
                                 ),
                               ],
                             ),
@@ -502,21 +527,19 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 } else if (!snapshot.hasData ||
                                     snapshot.data!.isEmpty) {
                                   return const Text('No reviews available.');
-                                } else {
-                                  List<ReviewRating> reviews =
-                                      snapshot.data!.toList();
+                                }
 
-                                  return Column(
-                                    children: reviews.map((review) {
+                                List<ReviewRating> reviews = snapshot.data!;
+                                List<ReviewRating> displayedReviews =
+                                    reviews.take(3).toList();
+
+                                return Column(
+                                  children: [
+                                    ...displayedReviews.map((review) {
                                       return FutureBuilder<
                                           Map<String, String?>>(
                                         future: authService.getUserData(),
                                         builder: (context, userSnapshot) {
-                                          if (userSnapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const SizedBox.shrink();
-                                          }
-
                                           if (!userSnapshot.hasData) {
                                             return const SizedBox.shrink();
                                           }
@@ -525,11 +548,10 @@ class ProfileScreenState extends State<ProfileScreen> {
                                               userSnapshot.data!['username'];
                                           String? currentUserRole =
                                               userSnapshot.data!['role'];
-
-                                          bool canDelete = (currentUsername ==
+                                          bool canDelete = currentUsername ==
                                                   review.fields.reviewer
-                                                      .userProfile.name) ||
-                                              (currentUserRole == 'ADM');
+                                                      .userProfile.name ||
+                                              currentUserRole == 'ADM';
 
                                           return ReviewCard(
                                             name: review.fields.reviewer
@@ -547,19 +569,56 @@ class ProfileScreenState extends State<ProfileScreen> {
                                         },
                                       );
                                     }).toList(),
-                                  );
-                                }
+                                    if (reviews.length > 3)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16.0),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AllReviewsScreen(
+                                                  username: widget.username,
+                                                  reviews: reviews,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                              horizontal: 30,
+                                            ),
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 105, 153, 225),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'View All Reviews',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
                               },
                             ),
                           ],
                         );
-                      } else {
-                        // If the role is not 'SEL', display nothing or some other content
-                        return const SizedBox.shrink();
                       }
-                    } else {
-                      return const Text('Error: Could not fetch user data.');
+                      return const SizedBox.shrink();
                     }
+                    return const Text('Error: Could not fetch user data.');
                   },
                 ),
               ],
