@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
+import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -153,7 +154,6 @@ class HomePage extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         OutlinedButton(
-                          onPressed: () {},
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 30,
@@ -171,6 +171,14 @@ class HomePage extends StatelessWidget {
                               fontSize: 16,
                             ),
                           ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ShowForum(),
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 30),
                       ],
