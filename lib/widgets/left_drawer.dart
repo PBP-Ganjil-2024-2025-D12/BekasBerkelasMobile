@@ -184,7 +184,7 @@ PreferredSizeWidget appBar(BuildContext context, String title, bool hasTitle) {
     title: hasTitle
         ? Row(
             children: [
-              Image.network(
+              Image.asset(
                 'assets/logo-only.png',
                 height: 24,
               ),
