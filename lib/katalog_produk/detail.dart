@@ -1,11 +1,32 @@
-import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'Car_entry.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'detail.dart';
+import 'add_car.dart';
+import 'myacc.dart';
+import 'dart:convert';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
+import 'mobilsaya.dart';
+import '../review_rating/screens/profile.dart';
+import 'package:http/http.dart' as http;
 
 class CarDetailPage extends StatelessWidget {
   final CarEntry carEntry;
 
   const CarDetailPage({Key? key, required this.carEntry}) : super(key: key);
+
+  Future<String> fetchSellerUsername(String carId) async {
+    final String url = "http://127.0.0.1:8000/katalog/api/get-seller-username/$carId/";
+    final response = await http.get(Uri.parse(url));  // This is the HTTP response
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);  // Decode JSON only after checking status code
+      return data['seller_username'];  // Assuming the username is directly available
+    } else {
+      throw Exception('Failed to fetch seller username. Status Code: ${response.statusCode}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +62,23 @@ class CarDetailPage extends StatelessWidget {
             Text('Instalment: ${carEntry.fields.instalment}', style: TextStyle(fontSize: 18)),
             Text('Image URL: ${carEntry.fields.imageUrl}', style: TextStyle(fontSize: 18)),
             carEntry.fields.imageUrl.isNotEmpty ? Image.network(carEntry.fields.imageUrl) : Container(),
+            ElevatedButton(
+                                onPressed: () async {
+                                  // Fetch the seller's username using the car primary key (pk)
+                                  String username = await fetchSellerUsername(carEntry.pk);
+                                  // Navigate to the ProfileScreen with the fetched username
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfileScreen(username: username),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Seller Profile',
+                                  style: TextStyle(color: Color(0xFF0A39C4)),
+                                ),
+                              )
           ],
         ),
       ),
