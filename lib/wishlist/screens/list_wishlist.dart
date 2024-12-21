@@ -51,12 +51,11 @@ class _WishlistPageState extends State<WishlistPage> {
       }
       return listWishlist;
     } catch (e) {
-      throw Exception('Error fetching reviews: $e');
+      throw Exception('Error fetching wishlist: $e');
     }
   }
 
-  Future<WishlistEntry?> fetchWishlistItem(
-      CookieRequest request, String wishlistId) async {
+  Future<WishlistEntry?> fetchWishlistItem(CookieRequest request, String wishlistId) async {
     try {
       final response = await request
           .get('http://127.0.0.1:8000/wishlist/get_wishlist_item/$wishlistId/');
@@ -166,7 +165,7 @@ class _WishlistPageState extends State<WishlistPage> {
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(9.0)),
+                            borderRadius: BorderRadius.circular(9.0)),
                         ),
                         child: const Text(
                           'Cancel',
@@ -196,7 +195,7 @@ class _WishlistPageState extends State<WishlistPage> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text(
-                                        "There seems to be an issue, please try again.")),
+                                        "Terjadi error, harap coba kembali")),
                               );
                             }
                           } catch (e) {
@@ -224,7 +223,7 @@ class _WishlistPageState extends State<WishlistPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Wishlist not found.")),
+        const SnackBar(content: Text("Wishlist tidak ditemukan")),
       );
     }
   }
@@ -234,7 +233,7 @@ class _WishlistPageState extends State<WishlistPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      backgroundColor: Color(0xFFC5D3FC),
+      backgroundColor: const Color(0xFFEEF1FF),
       appBar: appBar(context, 'Wishlist', true),
       drawer: const LeftDrawer(),
       body: Column(
@@ -271,7 +270,7 @@ class _WishlistPageState extends State<WishlistPage> {
                               Container(
                                 width: 1.0,
                                 height: 16.0,
-                                color: Color(0xFF000000),
+                                color: const Color(0xFF000000),
                               ),
                             ],
                           ),
@@ -293,9 +292,21 @@ class _WishlistPageState extends State<WishlistPage> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(
-                    child: Text(
-                      'Belum ada data wishlist',
-                      style: TextStyle(fontSize: 20, color: Color(0xFF07288B)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.favorite_border,
+                          size: 60,
+                          color: Color(0xFF07288B),
+                        ),
+                        SizedBox(height: 16), 
+                        Text(
+                          'Belum ada wishlist',
+                          style: TextStyle(fontSize: 20, color: Color(0xFF07288B)),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
                   );
                 } else {
@@ -312,7 +323,7 @@ class _WishlistPageState extends State<WishlistPage> {
                         var wishlistEntry = filteredWishlists[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
+                            horizontal: 16.0, vertical: 8.0),
                           child: WishlistCard(
                             key: ValueKey(wishlistEntry.id),
                             wishlist: wishlistEntry,
@@ -321,13 +332,13 @@ class _WishlistPageState extends State<WishlistPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EditWishlistFormPage(
-                                      wishlistId: wishlistEntry.id),
+                                    wishlistId: wishlistEntry.id),
                                 ),
                               );
                               refreshList();
                             },
                             onDelete: (wishlistId) =>
-                                showRemoveWishlistDialog(context, wishlistId),
+                              showRemoveWishlistDialog(context, wishlistId),
                           ),
                         );
                       },
