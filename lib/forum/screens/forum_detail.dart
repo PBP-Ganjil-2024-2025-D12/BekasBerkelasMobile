@@ -8,7 +8,7 @@ import 'package:bekas_berkelas_mobile/katalog_produk/detail.dart';
 import 'show_forum.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
-import 'package:flutter/foundation.dart';
+import 'package:bekas_berkelas_mobile/review_rating/screens/profile.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class ForumDetail extends StatefulWidget {
@@ -66,11 +66,7 @@ class _ForumDetailState extends State<ForumDetail>
 
     return Scaffold(
       backgroundColor: const Color(0xFFEEF1FF),
-      appBar: appBar(
-        context,
-        'Detail Diskusi',
-        true,
-      ),
+      appBar: appBar(context, 'Detail Diskusi', true),
       drawer: const LeftDrawer(),
       body: FutureBuilder(
         future: fetchQuestionDetail(request),
@@ -171,11 +167,23 @@ class _ForumDetailState extends State<ForumDetail>
                                   Icon(Icons.person_outline,
                                       size: 16, color: Colors.grey[600]),
                                   const SizedBox(width: 4),
-                                  Text(
-                                    question.fields.username,
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ProfileScreen(
+                                            username: question.fields.username,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      question.fields.username,
+                                      style: const TextStyle(
+                                        color: Color(0xFF4C8BF5),
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -443,11 +451,29 @@ class _ForumDetailState extends State<ForumDetail>
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      Text(
-                                                        reply.fields.username,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  ProfileScreen(
+                                                                username: reply
+                                                                    .fields
+                                                                    .username,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Text(
+                                                          reply.fields.username,
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Color(
+                                                                0xFF4C8BF5), // Using your app's blue color
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
                                                         ),
                                                       ),
                                                       Text(

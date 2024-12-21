@@ -201,5 +201,12 @@ PreferredSizeWidget appBar(BuildContext context, String title, bool hasTitle) {
           )
         : SizedBox.shrink(),
     backgroundColor: Colors.white,
+    leading: title == 'Detail Diskusi' 
+        ? IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          )
+        : null,
+    automaticallyImplyLeading: title != 'Detail Diskusi', 
   );
 }

@@ -8,7 +8,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/review_card.dart';
 import 'package:bekas_berkelas_mobile/review_rating/services/user_services.dart';
 import 'package:provider/provider.dart';
-import 'package:bekas_berkelas_mobile/katalog_produk/mobilsaya.dart';
+import 'package:bekas_berkelas_mobile/katalog_produk/Car_entry.dart';
 import 'package:bekas_berkelas_mobile/review_rating/widgets/car_listing.dart';
 import 'package:bekas_berkelas_mobile/review_rating/screens/all_reviews.dart';
 
@@ -25,7 +25,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   late Future<SellerProfile> sellerFuture;
   late Future<BuyerProfile> buyerFuture;
   late Future<List<ReviewRating>> reviewsFuture;
-  late List<CarFiltered> cars = [];
+  late List<CarEntry> cars = [];
   final authService = AuthService();
   String baseUrl = "http://localhost:8000";
 
@@ -88,9 +88,9 @@ class ProfileScreenState extends State<ProfileScreen> {
       final url = "$baseUrl/katalog/api/mobilsaya/";
       final response = await request.postJson(url, payload);
 
-      List<CarFiltered> fetchedCars = [];
-      for (var car in response['cars']) {
-        fetchedCars.add(CarFiltered.fromJson(car));
+      List<CarEntry> fetchedCars = [];
+      for (var car in response) {
+        fetchedCars.add(CarEntry.fromJson(car));
       }
 
       setState(() {
