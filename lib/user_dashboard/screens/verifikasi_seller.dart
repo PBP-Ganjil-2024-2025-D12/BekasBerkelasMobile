@@ -1,4 +1,5 @@
 import 'package:bekas_berkelas_mobile/user_dashboard/screens/verifikasi_seller_detail.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -96,7 +97,7 @@ class _VerifikasiSellerPageState extends State<VerifikasiSellerPage> {
         )
       : Stack(
         children: [
-            ListView.builder(
+            ListView.separated(
               controller: _scrollController,
               itemCount: _sellerMap.keys.length + (_isLoading && _currentPage > 1 ? 1 : 0),
               itemBuilder: (context, index) {
@@ -105,11 +106,8 @@ class _VerifikasiSellerPageState extends State<VerifikasiSellerPage> {
                 }
                 final sellerId = _sellerMap.keys.elementAt(index);
                 final seller = _sellerMap[sellerId]!;
-                return ListTile(
-                  title: Text(seller.userProfile.name),
-                  subtitle: Text(seller.userProfile.email),
-                  trailing: ElevatedButton(
-                    onPressed: () async {
+                return InkWell(
+                  onTap: () async {
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => VerifikasiSellerDetailPage(seller: seller, id: sellerId)),
@@ -121,16 +119,10 @@ class _VerifikasiSellerPageState extends State<VerifikasiSellerPage> {
                         });
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.blue,
-                      shadowColor: Colors.black,
-                      overlayColor: Colors.black,
-                    ),
-                    child: const Text('Verifikasi'),
-                  ),
+                  child: UserCard(seller: seller),
                 );
               },
+              separatorBuilder: (context, index) => const Divider(height: 10, thickness: 2, color: Colors.grey,),
             ),
           if (_isLoading && _currentPage == 1)
             const Center(

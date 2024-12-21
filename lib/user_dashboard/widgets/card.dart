@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/models/rating.dart';
+import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 
 class UserCard extends StatelessWidget {
-  final String name;
-  final String email;
-  final String imageUrl;
+  final SellerProfile seller;
 
   const UserCard({
     super.key,
-    required this.name,
-    required this.email,
-    required this.imageUrl,
+    required this.seller,
   });
 
   @override
@@ -19,7 +16,7 @@ class UserCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
-      elevation: 10, // Menambahkan bayangan yang lebih menonjol
+      elevation: 0, // Menambahkan bayangan yang lebih menonjol
       margin: const EdgeInsets.all(10.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,8 +24,8 @@ class UserCard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundImage: imageUrl.isNotEmpty
-                  ? NetworkImage(imageUrl)
+              backgroundImage: seller.userProfile.profilePicture.isNotEmpty
+                  ? NetworkImage(seller.userProfile.profilePicture)
                   : const AssetImage('assets/default_profile_picture.png') as ImageProvider,
               backgroundColor: Colors.blue[900],
             ),
@@ -37,12 +34,12 @@ class UserCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  seller.userProfile.name,
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  email,
+                  seller.userProfile.email,
                   style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               ],
