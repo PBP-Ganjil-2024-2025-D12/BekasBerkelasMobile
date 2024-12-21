@@ -313,8 +313,12 @@ class _WishlistPageState extends State<WishlistPage> {
                   wishlists = snapshot.data as List<WishlistEntry>;
                   List<WishlistEntry> filteredWishlists = _filteredWishlists;
                   if (filteredWishlists.isEmpty) {
-                    return const Center(
-                      child: Text('Tidak ada wishlist dengan prioritas ini'),
+                    return Center(
+                      child: Text(
+                        'Belum ada wishlist dengan prioritas ini',
+                        style: TextStyle(fontSize: 16, color: Color(0xFF07288B)),
+                        textAlign: TextAlign.center,
+                      ),
                     );
                   } else {
                     return ListView.builder(
