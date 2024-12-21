@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:bekas_berkelas_mobile/review_rating/screens/profile.dart';
 import 'package:http/http.dart' as http;
+import 'package:bekas_berkelas_mobile/review_rating/screens/profile.dart';
 
 class ReviewCard extends StatelessWidget {
   final String name;
@@ -11,6 +11,7 @@ class ReviewCard extends StatelessWidget {
   final int rating;
   final bool canDelete;
   final String reviewId;
+  final VoidCallback deleteReview;
   final String baseUrl = 'http://localhost:8000';
 
   const ReviewCard({
@@ -21,6 +22,7 @@ class ReviewCard extends StatelessWidget {
     required this.rating,
     required this.canDelete,
     required this.reviewId,
+    required this.deleteReview,
   }) : super(key: key);
 
   Widget _buildStarRating(int rating) {
@@ -87,8 +89,8 @@ class ReviewCard extends StatelessWidget {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircleAvatar(
                         radius: 25,
-                        backgroundImage: AssetImage(
-                            'assets/default_profile_picture.png'),
+                        backgroundImage:
+                            AssetImage('assets/default_profile_picture.png'),
                       );
                     } else if (snapshot.data == true) {
                       return CircleAvatar(
@@ -98,8 +100,8 @@ class ReviewCard extends StatelessWidget {
                     } else {
                       return const CircleAvatar(
                         radius: 25,
-                        backgroundImage: AssetImage(
-                            'assets/default_profile_picture.png'),
+                        backgroundImage:
+                            AssetImage('assets/default_profile_picture.png'),
                       );
                     }
                   },
@@ -110,12 +112,25 @@ class ReviewCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Name
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      GestureDetector(
+                        child: Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[900],
+                          ),
                         ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                username: name,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       // Star Rating
                       _buildStarRating(rating),
@@ -128,12 +143,7 @@ class ReviewCard extends StatelessWidget {
                       Icons.delete,
                       color: Colors.red,
                     ),
-                    onPressed: () {
-                      final profileScreenState =
-                          context.findAncestorStateOfType<ProfileScreenState>();
-                      profileScreenState?.showDeleteConfirmationDialog(
-                          reviewId, context, request);
-                    },
+                    onPressed: deleteReview,
                   ),
               ],
             ),

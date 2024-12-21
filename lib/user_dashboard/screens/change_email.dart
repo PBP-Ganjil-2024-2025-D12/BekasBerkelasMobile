@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bekas_berkelas_mobile/user_dashboard/widgets/textfield.dart';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -57,9 +58,7 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
   Widget build(BuildContext context) {
     CookieRequest request = context.watch<CookieRequest>();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ubah Email'),
-      ),
+      appBar: appBar(context, 'Ubah Email', true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

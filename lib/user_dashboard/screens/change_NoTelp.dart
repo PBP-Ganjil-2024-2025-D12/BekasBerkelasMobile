@@ -4,6 +4,7 @@ import 'package:bekas_berkelas_mobile/user_dashboard/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 
 class ChangePhonePage extends StatefulWidget {
   @override
@@ -56,9 +57,7 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
     CookieRequest request = context.watch<CookieRequest>();
     
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ubah No Telp'),
-      ),
+      appBar: appBar(context, 'Ubah No Telp', true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

@@ -1,3 +1,4 @@
+import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import '../authentication/services/auth.dart';  // Adjust this import path to where your AuthService is located
 
@@ -9,9 +10,7 @@ class MyAccountPage extends StatelessWidget {
     final authService = AuthService();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("My Account"),
-      ),
+      appBar: appBar(context, 'My Account', true),
       body: FutureBuilder<Map<String, String?>>(
         future: authService.getUserData(),
         builder: (context, snapshot) {

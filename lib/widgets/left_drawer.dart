@@ -5,8 +5,11 @@ import 'package:bekas_berkelas_mobile/authentication/screens/homepage.dart';
 import 'package:bekas_berkelas_mobile/katalog_produk/list_Carentry.dart';
 import 'package:bekas_berkelas_mobile/wishlist/screens/list_wishlist.dart';
 import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
-import 'package:bekas_berkelas_mobile/user_dashboard/screen/dashboard.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/screens/dashboard.dart';
 import 'package:bekas_berkelas_mobile/authentication/screens/login_screen.dart';
+import 'package:bekas_berkelas_mobile/review_rating/services/user_services.dart';
+import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
+import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -19,7 +22,7 @@ class LeftDrawer extends StatelessWidget {
 
     return Drawer(
       child: Container(
-        color: const Color(0xFF4C8BF5),  
+        color: const Color(0xFF4C8BF5),
         child: Column(
           children: [
             Expanded(
@@ -53,9 +56,7 @@ class LeftDrawer extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 8),
-
                   ListTile(
                     leading:
                         const Icon(Icons.home_outlined, color: Colors.white),
@@ -66,7 +67,6 @@ class LeftDrawer extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => const HomePage()),
                     ),
                   ),
-
                   ListTile(
                     leading: const Icon(Icons.search, color: Colors.white),
                     title: const Text('Katalog',
@@ -77,7 +77,6 @@ class LeftDrawer extends StatelessWidget {
                           builder: (context) => const CarEntryPage()),
                     ),
                   ),
-
                   ListTile(
                     leading:
                         const Icon(Icons.favorite_outline, color: Colors.white),
@@ -89,7 +88,6 @@ class LeftDrawer extends StatelessWidget {
                           builder: (context) => const WishlistPage()),
                     ),
                   ),
-
                   ListTile(
                     leading:
                         const Icon(Icons.forum_outlined, color: Colors.white),
@@ -101,7 +99,6 @@ class LeftDrawer extends StatelessWidget {
                           builder: (context) => const ShowForum()),
                     ),
                   ),
-
                   ListTile(
                     leading:
                         const Icon(Icons.person_outline, color: Colors.white),
@@ -115,7 +112,6 @@ class LeftDrawer extends StatelessWidget {
                 ],
               ),
             ),
-
             if (userRole == 'SEL')
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -129,12 +125,11 @@ class LeftDrawer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    onPressed: () {
-                    },
+                    onPressed: () {},
                     child: Text(
                       'Jual Mobil Anda',
                       style: TextStyle(
-                        color: Colors.blue, 
+                        color: Colors.blue,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -142,8 +137,7 @@ class LeftDrawer extends StatelessWidget {
                   ),
                 ),
               ),
-              
-            const Divider(color: Colors.white24), 
+            const Divider(color: Colors.white24),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.white),
               title:
@@ -183,4 +177,29 @@ class LeftDrawer extends StatelessWidget {
       ),
     );
   }
+}
+
+PreferredSizeWidget appBar(BuildContext context, String title, bool hasTitle) {
+  return AppBar(
+    title: hasTitle
+        ? Row(
+            children: [
+              Image.network(
+                'assets/logo-only.png',
+                height: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          )
+        : SizedBox.shrink(),
+    backgroundColor: Colors.white,
+  );
 }
