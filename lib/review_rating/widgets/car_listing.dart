@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:bekas_berkelas_mobile/katalog_produk/mobilsaya.dart';
+import 'package:bekas_berkelas_mobile/katalog_produk/Car_entry.dart';
 import 'package:bekas_berkelas_mobile/review_rating/screens/seller_cars.dart';
 import 'package:bekas_berkelas_mobile/katalog_produk/detail.dart';
 
 class CarListingWidget extends StatelessWidget {
-  final List<CarFiltered> cars;
+  final List<CarEntry> cars;
 
   const CarListingWidget({
     super.key,
@@ -144,7 +144,7 @@ class CarListingWidget extends StatelessWidget {
                                         SizedBox(
                                           height: 44,
                                           child: Text(
-                                            cars[index].name,
+                                            cars[index].fields.carName,
                                             style: const TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
@@ -156,7 +156,7 @@ class CarListingWidget extends StatelessWidget {
                                         ),
                                         const Spacer(),
                                         Text(
-                                          'Rp ${formatPrice(cars[index].price)}',
+                                          'Rp ${formatPrice(double.parse(cars[index].fields.price))}',
                                           style: const TextStyle(
                                             fontSize: 15,
                                             color: Color(0xFF4C8BF5),
@@ -190,16 +190,16 @@ class CarListingWidget extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // onTap: () {
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => CarDetailPage(
-                          //         carEntry: cars[index],
-                          //       ),
-                          //     ),
-                          //   );
-                          // },
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CarDetailPage(
+                                  carEntry: cars[index],
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
