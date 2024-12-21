@@ -1,7 +1,6 @@
 import 'dart:convert';
-
-import 'package:bekas_berkelas_mobile/authentication/screens/login_screen.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -67,31 +66,17 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: _phoneController,
-                cursorColor: const Color.fromARGB(255, 9, 68, 127),
-                decoration: const InputDecoration(
-                  labelText: 'No Telp Baru',
-                  labelStyle: TextStyle(color: Color.fromARGB(255, 9, 68, 127)),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue)
-                  )
-                ),
-                validator: (value) {
+            InputTextField(
+              validator:  (value) {
                   if (value == null || value.isEmpty) {
                     return 'Nomor telepon tidak boleh kosong';
                   } else if (!RegExp(r'^\+?[0-9]{7,15}$').hasMatch(value)) {
                     return 'Masukkan nomor telepon yang valid';
                   }
                   return null;
-                },
-              ),
+                }, 
+              text: 'No Telp Baru', 
+              controller: _phoneController),
               const SizedBox(height: 20),
               Center(
                 child: SubmitButton(onPressed: () => _submitForm(request), text: 'Simpan')

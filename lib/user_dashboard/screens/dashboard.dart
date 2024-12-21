@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bekas_berkelas_mobile/user_dashboard/screens/verifikasi_seller.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
@@ -126,7 +127,7 @@ class _DashboardPageState extends State<DashboardPage> {
         future: _fetchData(request),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Colors.blue));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: $snapshot'));
           } else if (snapshot.hasData) {
@@ -141,7 +142,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
             return Stack(
               children : [
-                Column(
+                ListView(
                   children: [
                     Expanded(
                       flex: 3,
@@ -327,13 +328,13 @@ class _DashboardPageState extends State<DashboardPage> {
                                       text: "Ulasan Saya", 
                                       icon: Icons.reviews,
                                       color: Colors.black
-                                    )
+                                    ) 
                                   ] else if (role == 'Admin' || role == 'ADM')...[
                                     SelectionButton(
                                       onPressed: () {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
+                                          MaterialPageRoute(builder: (context) => const VerifikasiSellerPage()),
                                         );
                                       }, 
                                       text: "Verifikasi User", 
@@ -352,7 +353,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
                 if (isLoading)...[
                   const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(color: Colors.blue),
                   ),
                 ]
               ]

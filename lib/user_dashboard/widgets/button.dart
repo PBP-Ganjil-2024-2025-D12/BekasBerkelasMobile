@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class SubmitButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
+  final double? elevation;
 
   const SubmitButton({
     super.key,
     required this.onPressed,
     required this.text,
+    this.elevation,
   });
 
   @override
@@ -18,7 +20,7 @@ class SubmitButton extends StatelessWidget {
         backgroundColor: Colors.blue, // Warna latar belakang tombol
         foregroundColor: Colors.white, // Warna teks tombol// Warna tombol saat tidak aktif
         shadowColor: Colors.black, // Warna bayangan tombol
-        elevation: 0, // Ketinggian bayangan tombol
+        elevation: elevation ?? 0, // Ketinggian bayangan tombol
         minimumSize: const Size(double.infinity, 50), // Ukuran minimum tombol
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8), // Bentuk border tombol
@@ -52,6 +54,7 @@ class SelectionButton extends StatelessWidget {
     return ElevatedButton.icon(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
+        overlayColor: Colors.black,
         minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),

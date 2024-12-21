@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -66,22 +67,7 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: _emailController,
-                cursorColor: const Color.fromARGB(255, 9, 68, 127),
-                decoration: const InputDecoration(
-                  labelText: 'Email Baru',
-                  labelStyle: TextStyle(color: Color.fromARGB(255, 9, 68, 127)),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue)
-                  )
-                ),
+              InputTextField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Email tidak boleh kosong';
@@ -90,7 +76,8 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
                   }
                   return null;
                 },
-              ),
+                text: 'Email Baru', 
+                controller: _emailController),
               const SizedBox(height: 20),
               Center(
                 child: SubmitButton(onPressed: () => _submitForm(request), text: 'Simpan')
