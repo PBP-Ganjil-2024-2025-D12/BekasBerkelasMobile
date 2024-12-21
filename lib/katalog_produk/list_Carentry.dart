@@ -8,6 +8,8 @@ import 'myacc.dart';
 import 'dart:convert';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'mobilsaya.dart';
+import '../review_rating/screens/profile.dart';
+import 'package:http/http.dart' as http;
 
 class CarEntryPage extends StatefulWidget {
   const CarEntryPage({super.key});
@@ -18,7 +20,9 @@ class CarEntryPage extends StatefulWidget {
 
 class _CarEntryPageState extends State<CarEntryPage> {
   final TextEditingController _searchController = TextEditingController();
-  String _selectedFilter = "All";
+  String _selectedFilter = "Car Name";
+  List<CarEntry> cars = [];
+  bool isLoading = true;
   late Future<List<CarEntry>> _carFuture;
   List<String> _wishlistCarIds = [];
   Map<String, bool> _wishlistStatus = {};
@@ -37,6 +41,32 @@ class _CarEntryPageState extends State<CarEntryPage> {
   final ButtonStyle removeStyle = ElevatedButton.styleFrom(
     foregroundColor: Colors.white, backgroundColor: const Color(0xFF0A39C4),
   );
+   Future<String> fetchSellerUsername(String carId) async {
+    final String url = "http://127.0.0.1:8000/katalog/api/get-seller-username/$carId/";
+    final response = await http.get(Uri.parse(url));  // This is the HTTP response
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);  // Decode JSON only after checking status code
+      return data['seller_username'];  // Assuming the username is directly available
+    } else {
+      throw Exception('Failed to fetch seller username. Status Code: ${response.statusCode}');
+    }
+  }
+  Future<Map<String, String>> fetchSellerContact(String carId) async {
+  final String url = "http://127.0.0.1:8000/katalog/api/get-seller-contact/$carId/";
+  final response = await http.get(Uri.parse(url));  // This is the HTTP response
+
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);  // Decode JSON only after checking status code
+    return {
+      'email': data['email'],  // Assuming 'seller_email' is the key for email in the JSON
+      'phone_number': data['no_telp'],  // Assuming 'seller_phone_number' is the key for phone number
+    };
+  } else {
+    throw Exception('Failed to fetch seller contact information. Status Code: ${response.statusCode}');
+  }
+}
+
   
   Future<List<CarEntry>> fetchCar(CookieRequest request) async {
     final response = await request.get('http://127.0.0.1:8000/katalog/carsjson/');
@@ -48,6 +78,78 @@ class _CarEntryPageState extends State<CarEntryPage> {
     }
     return listCar;
   }
+  void showContactSellerDialog(BuildContext context, String carId) async {
+  // Fetch the seller's contact details
+  Map<String, String> contactInfo = await fetchSellerContact(carId);
+
+  // Extract email and phone number
+  String email = contactInfo['email'] ?? "Email not available";
+  String phoneNumber = contactInfo['phone_number'] ?? "Phone number not available";
+
+  // Show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Contact Seller'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Email: $email'),
+            Text('Phone Number: $phoneNumber'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Close'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      );
+    },
+  );
+}
+Future<void> fetchFilteredCars() async {
+  final request = context.read<CookieRequest>();
+
+  // Build query parameters
+  Map<String, String> queryParams = {};
+  if (_searchController.text.isNotEmpty) {
+    switch (_selectedFilter) {
+      case "Car Name":
+        queryParams['car_name'] = _searchController.text;
+        break;
+      case "Brand":
+        queryParams['brand'] = _searchController.text;
+        break;
+      case "Year":
+        queryParams['year'] = _searchController.text;
+        break;
+      case "Price Max":
+        queryParams['price_max'] = _searchController.text;
+        break;
+      case "Plate Type":
+        queryParams['plate_type'] = _searchController.text;
+        break;
+      default:
+        break;
+    }
+  }
+
+  final queryString = Uri(queryParameters: queryParams).query;
+
+  // Assign a new future to _carFuture
+  setState(() {
+    _carFuture = request.get(
+      'http://127.0.0.1:8000/katalog/api/cars/filter/?$queryString',
+    ).then((response) {
+      return (response as List).map((d) => CarEntry.fromJson(d)).toList();
+    });
+  });
+}
+
+
+
 
   Future<void> _fetchWishlistCarIds() async {
     final request = context.read<CookieRequest>();
@@ -126,31 +228,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
     }
   }
 
-  void _showContactSellerDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Contact Seller'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('Seller Name: Placeholder Name'),
-                Text('Seller Email: placeholder@email.com'),
-                Text('Seller Number: 123-456-7890'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Close'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +292,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
                   borderRadius: BorderRadius.circular(5.0),
                 ),
               ),
+              onSubmitted: (_) => fetchFilteredCars(), // Trigger search on submit
             ),
           ),
           // Filter Dropdown
@@ -222,7 +301,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
             child: DropdownButton<String>(
               value: _selectedFilter,
               isExpanded: true,
-              items: <String>["All", "Brand", "Year"]
+              items: <String>["Car Name", "Brand", "Year", "Plate Type", "Price Max"]
                   .map((filter) => DropdownMenuItem<String>(
                         value: filter,
                         child: Text(filter),
@@ -305,12 +384,14 @@ class _CarEntryPageState extends State<CarEntryPage> {
                                 ),
                                 const SizedBox(width: 8),
                                 ElevatedButton(
-                                  onPressed: () => _showContactSellerDialog(context),
+                                  onPressed: () {
+                                    showContactSellerDialog(context, CarEntry.pk); // Use CarEntry.pk for the car ID
+                                  },
                                   child: Text(
                                     'Contact Seller',
-                                    style: TextStyle(color: const Color(0xFF0A39C4)),
-                                    ),
-                                ),
+                                    style: TextStyle(color: Color(0xFF0A39C4)),
+                                  ),
+)
                               ],
                             ),
                           ],
