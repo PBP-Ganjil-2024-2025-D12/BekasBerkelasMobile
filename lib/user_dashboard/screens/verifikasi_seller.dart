@@ -2,7 +2,8 @@ import 'package:bekas_berkelas_mobile/user_dashboard/screens/verifikasi_seller_d
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:bekas_berkelas_mobile/review_rating/models/user.dart'; 
+import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 class VerifikasiSellerPage extends StatefulWidget {
   const VerifikasiSellerPage({super.key});
 
@@ -16,7 +17,6 @@ class _VerifikasiSellerPageState extends State<VerifikasiSellerPage> {
   final Map<int, SellerProfile> _sellerMap = {};
   bool _isLoading = false;
   int _currentPage = 1;
-  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void initState() {

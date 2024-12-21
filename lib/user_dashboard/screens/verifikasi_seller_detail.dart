@@ -5,6 +5,7 @@ import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class VerifikasiSellerDetailPage extends StatefulWidget {
   final SellerProfile seller;
@@ -22,7 +23,6 @@ class VerifikasiSellerDetailPage extends StatefulWidget {
 
 class _VerifikasiSellerDetailPageState extends State<VerifikasiSellerDetailPage> {
   bool _isLoading = false;
-  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   Future<void> _verifySeller() async {
     setState(() {

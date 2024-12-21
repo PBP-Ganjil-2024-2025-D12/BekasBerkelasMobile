@@ -5,6 +5,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class ChangeNamePage extends StatefulWidget {
   const ChangeNamePage({super.key});
@@ -16,7 +17,6 @@ class ChangeNamePage extends StatefulWidget {
 class ChangeNamePageState extends State<ChangeNamePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {

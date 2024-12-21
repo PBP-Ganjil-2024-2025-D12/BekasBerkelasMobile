@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class ChangePhonePage extends StatefulWidget {
   @override
@@ -14,7 +15,6 @@ class ChangePhonePage extends StatefulWidget {
 class _ChangePhonePageState extends State<ChangePhonePage> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
-  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {

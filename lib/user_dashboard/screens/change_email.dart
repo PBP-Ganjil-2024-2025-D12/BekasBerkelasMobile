@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class ChangeEmailPage extends StatefulWidget {
   const ChangeEmailPage({super.key});
@@ -16,7 +17,6 @@ class ChangeEmailPage extends StatefulWidget {
 class ChangeEmailPageState extends State<ChangeEmailPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {

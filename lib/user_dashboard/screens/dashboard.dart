@@ -12,6 +12,7 @@ import 'change_name.dart';
 import 'change_email.dart';
 import 'change_NoTelp.dart';
 import 'change_password.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -19,7 +20,6 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final String baseUrl = 'http://10.0.2.2:8000';
   late int id;
   late String name = '';
   late String email = '';
@@ -31,7 +31,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Future<Map<String, dynamic>> _fetchData(CookieRequest request) async {
     try {
-      final response = await request.post('$baseUrl/dashboard/get_user_flutter/', {});
+      final response = await request.post('$baseUrl/get_user_flutter/', {});
       if (response['status'] == 'success') {
         return response;  
       } else {
@@ -79,7 +79,7 @@ class _DashboardPageState extends State<DashboardPage> {
           'profile_picture_id': jsonResponse['public_id'],
         });
 
-        final backendResponse = await cookieRequest.post("$baseUrl/dashboard/upload_profile_picture_flutter/", data);
+        final backendResponse = await cookieRequest.post("$baseUrl/upload_profile_picture_flutter/", data);
 
         if (!mounted) return;
 
@@ -143,9 +143,7 @@ class _DashboardPageState extends State<DashboardPage> {
               children : [
                 ListView(
                   children: [
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
+                      Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,7 +346,6 @@ class _DashboardPageState extends State<DashboardPage> {
                           ],
                         ),
                       ),
-                    ),
                   ],
                 ),
                 if (isLoading)...[

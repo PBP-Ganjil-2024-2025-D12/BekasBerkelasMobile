@@ -1,8 +1,10 @@
 import 'package:bekas_berkelas_mobile/user_dashboard/screens/rating_detail.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:bekas_berkelas_mobile/user_dashboard/models/rating.dart'; // Ganti dengan path yang sesuai
+import 'package:bekas_berkelas_mobile/user_dashboard/models/rating.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart'; // Ganti dengan path yang sesuai
 
 class RatingListPage extends StatefulWidget {
   const RatingListPage({super.key});
@@ -16,7 +18,6 @@ class _RatingListPageState extends State<RatingListPage> {
   final List<Rating> _ratings = [];
   bool _isLoading = false;
   int _currentPage = 1;
-  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void initState() {
@@ -79,7 +80,7 @@ class _RatingListPageState extends State<RatingListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Rating'),
+        title: const Text('Reviews'),
       ),
       body: _ratings.isEmpty && !_isLoading
           ? const Column(
@@ -101,8 +102,9 @@ class _RatingListPageState extends State<RatingListPage> {
                     child: CircularProgressIndicator(color: Colors.blue),
                   ),
                 ]
-                else...[
-                  ListView.separated(
+                else
+                ...[
+                  ListView.builder(
                     controller: _scrollController,
                     itemCount: _ratings.length + (_isLoading ? 1 : 0),
                     itemBuilder: (context, index) {
@@ -110,40 +112,20 @@ class _RatingListPageState extends State<RatingListPage> {
                         return const Center(child: CircularProgressIndicator(color: Colors.blue));
                       }
                       final rating = _ratings[index];
-                      return InkWell(
+                      return GestureDetector(
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => RatingDetailPage(rating: rating,),
                           ),
                         ),
-                        child: Container(
-                          color: Colors.transparent,
-                          child: ListTile(
-                            title: Text('Reviewer: ${rating.reviewer}', style: const TextStyle(fontSize: 16),),
-                            subtitle: Row(children: [ 
-                              Text('Rating: ${rating.rating}'),
-                              const Icon(Icons.star, color: Colors.amber, size: 16,),
-                            ]),
-                            trailing: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: rating.reviewerPicture.isNotEmpty
-                                      ? NetworkImage(rating.reviewerPicture)
-                                      : const AssetImage('assets/default_profile_picture.png') as ImageProvider,
-                                  backgroundColor: Colors.blue[900],
-                                ),
-                              ],
-                            ),
-                          )
-                        )
+                        child: RatingCard(rating: rating),
+                        
                       );
                     },
-                    separatorBuilder: (context, index) => const Divider(color: Colors.grey,),
                   ),
                 ],
-              ]
+              ],
             ),
     );
   }
