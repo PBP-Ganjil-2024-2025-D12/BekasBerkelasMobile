@@ -20,14 +20,17 @@ class InputTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: text,
         labelStyle: const TextStyle(color: Color.fromARGB(255, 9, 68, 127)),
-        border: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
         ),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 9, 68, 127)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: const BorderSide(color: Colors.black),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 0, 64, 117)),
         ),
       ),
       validator: validator,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bekas_berkelas_mobile/user_dashboard/screens/rating_list.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/screens/verifikasi_seller.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
@@ -155,6 +156,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 backgroundImage: imageUrl.isNotEmpty
                                     ? NetworkImage(imageUrl)
                                     : const AssetImage('assets/default_profile_picture.png') as ImageProvider,
+                                  backgroundColor: Colors.blue[900],
                               ),
                             ),
                             const SizedBox(height: 10),
@@ -320,7 +322,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       onPressed:() {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
+                                          MaterialPageRoute(builder: (context) => const RatingListPage()),
                                         );
                                       }, 
                                       text: "Ulasan Saya", 

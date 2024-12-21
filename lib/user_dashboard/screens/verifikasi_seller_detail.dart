@@ -71,6 +71,7 @@ class _VerifikasiSellerDetailPageState extends State<VerifikasiSellerDetailPage>
                       backgroundImage: widget.seller.userProfile.profilePicture.isNotEmpty
                           ? NetworkImage(widget.seller.userProfile.profilePicture)
                           : const AssetImage('assets/default_profile_picture.png') as ImageProvider,
+                      backgroundColor: Colors.blue[900],
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -95,7 +96,7 @@ class _VerifikasiSellerDetailPageState extends State<VerifikasiSellerDetailPage>
                           children: [
                             const Expanded(
                               flex: 1,
-                              child: Text('Id', style: TextStyle(fontSize: 16)),
+                              child: Text('Id', style: TextStyle(fontSize: 16, color: Colors.grey)),
                             ),
                             Expanded(
                               flex: 1,
@@ -108,7 +109,7 @@ class _VerifikasiSellerDetailPageState extends State<VerifikasiSellerDetailPage>
                           children: [
                             const Expanded(
                               flex: 1,
-                              child: Text('Nama', style: TextStyle(fontSize: 16)),
+                              child: Text('Nama', style: TextStyle(fontSize: 16, color: Colors.grey)),
                             ),
                             Expanded(
                               flex: 1,
@@ -121,7 +122,7 @@ class _VerifikasiSellerDetailPageState extends State<VerifikasiSellerDetailPage>
                           children: [
                             const Expanded(
                               flex: 1,
-                              child: Text('Email', style: TextStyle(fontSize: 16)),
+                              child: Text('Email', style: TextStyle(fontSize: 16, color: Colors.grey)),
                             ),
                             Expanded(
                               flex: 1,
@@ -134,7 +135,7 @@ class _VerifikasiSellerDetailPageState extends State<VerifikasiSellerDetailPage>
                           children: [
                             const Expanded(
                               flex: 1,
-                              child: Text('No Telp', style: TextStyle(fontSize: 16)),
+                              child: Text('No Telp', style: TextStyle(fontSize: 16, color: Colors.grey)),
                             ),
                             Expanded(
                               flex: 1,
@@ -147,7 +148,7 @@ class _VerifikasiSellerDetailPageState extends State<VerifikasiSellerDetailPage>
                           children: [
                             const Expanded(
                               flex: 1,
-                              child: Text('Total Penjualan', style: TextStyle(fontSize: 16)),
+                              child: Text('Total Penjualan', style: TextStyle(fontSize: 16, color: Colors.grey)),
                             ),
                             Expanded(
                               flex: 1,
@@ -160,7 +161,7 @@ class _VerifikasiSellerDetailPageState extends State<VerifikasiSellerDetailPage>
                           children: [
                             const Expanded(
                               flex: 1,
-                              child: Text('Rating', style: TextStyle(fontSize: 16)),
+                              child: Text('Rating', style: TextStyle(fontSize: 16, color: Colors.grey)),
                             ),
                             Expanded(
                               flex: 1,
