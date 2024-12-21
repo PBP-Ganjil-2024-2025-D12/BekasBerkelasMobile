@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../authentication/services/auth.dart';  // Adjust the import path to where AuthService is located
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
+import 'Car_entry.dart';
 
 class CarFiltered {
   final String name;
@@ -26,7 +26,7 @@ class CarListScreen extends StatefulWidget {
 }
 
 class _CarListScreenState extends State<CarListScreen> {
-  late List<CarFiltered> cars = [];
+  late List<CarEntry> cars = [];
 
   Future<void> fetchFilter() async {
     try {
@@ -43,9 +43,9 @@ class _CarListScreenState extends State<CarListScreen> {
       final response = await request.postJson(url, payload);
 
       // Parse the response
-      List<CarFiltered> fetchedCars = [];
-      for (var car in response['cars']) {
-        fetchedCars.add(CarFiltered.fromJson(car));
+      List<CarEntry> fetchedCars = [];
+      for (var car in response) {
+        fetchedCars.add(CarEntry.fromJson(car));
       }
 
       setState(() {
@@ -56,10 +56,43 @@ class _CarListScreenState extends State<CarListScreen> {
     }
   }
 
+  Future<void> deleteCar(String carId, int index) async {
+  try {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    final userData = await AuthService().getUserData();
+    final username = userData['username'] ?? "defaultUsername";
+    final payload = jsonEncode({
+      'car_id': carId,
+      'username': username,
+    });
+
+    final url = "http://127.0.0.1:8000/katalog/api/mobilsaya/delete/"; // Ensure this matches your actual API
+    final response = await request.postJson(url, payload);
+
+    // Handling text response directly
+     await fetchFilter();
+
+    // Check if the car with specific carId is still present in the list
+    if (!cars.any((car) => car.pk == carId)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Car deleted successfully")));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to delete car")));
+    }
+  } catch (e) {
+    print("Error deleting the car: $e");
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error occurred while deleting the car")));
+  }
+}
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(context, 'My Cars', true),
+      appBar: AppBar(
+        title: Text('Cars Sold by You'),
+      ),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -68,13 +101,17 @@ class _CarListScreenState extends State<CarListScreen> {
               itemBuilder: (context, index) {
                 final car = cars[index];
                 return ListTile(
-                  title: Text('${car.name} - \$${car.price.toStringAsFixed(2)}'),
+                  title: Text('${car.fields.carName} - \$${car.fields.price}'),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => deleteCar(car.pk, index),
+                  ),
                 );
               },
             ),
           ),
           ElevatedButton(
-            onPressed: fetchFilter,  // Calls fetchFilter directly when button is pressed
+            onPressed: fetchFilter,
             child: Text('Fetch Filtered Cars'),
           ),
         ],
