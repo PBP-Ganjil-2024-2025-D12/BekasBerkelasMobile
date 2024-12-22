@@ -34,7 +34,8 @@ class _CarEntryPageState extends State<CarEntryPage> {
     super.initState();
     _carFuture = fetchCar(context.read<CookieRequest>());
     _fetchWishlistCarIds();
-  }
+    fetchUserData();
+      }
   Future<void> fetchUserData() async {
     try {
       final authService = AuthService();
@@ -98,15 +99,15 @@ class _CarEntryPageState extends State<CarEntryPage> {
       'car_id': carId,
     });
 
-    final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/deleteAdmin/"; // Ensure this matches your actual API
+    final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/deleteAdmin"; // Ensure this matches your actual API
     final response = await request.postJson(url, payload);
 
     // Handling text response directly
-    _carFuture = fetchCar(context.read<CookieRequest>());
+    _carFuture = fetchCar(request);
 
     // Check if the car with specific carId is still present in the list
     if (!cars.any((car) => car.pk == carId)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Car deleted successfully")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Car deleted successfully, please refresh")));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to delete car")));
     }
@@ -438,65 +439,71 @@ Expanded(
                   const SizedBox(width: 16), // Space between image and text
                   // Car Details
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          CarEntry.fields.carName,
-                          style: const TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Price: ${formatCurrencyManually(CarEntry.fields.price)}',
-  style: TextStyle(color: Colors.grey[600]),
-                        ),
-                        const SizedBox(height: 4),
-                        // Action Buttons
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CarDetailPage(carEntry: CarEntry),
-                                  ),
-                                );
-                              },
-                              child: const Text('Detail'),
-                            ),
-                            const SizedBox(width: 4),
-                            
-                            ElevatedButton(
-                              style: isInWishlist ? removeStyle : addStyle,
-                              onPressed: () => _addToWishlist(context, CarEntry.pk.toString(), CarEntry.fields.carName, isInWishlist),
-                              child: Text(isInWishlist ? "Remove" : "Add Wishlist"),
-                            ),
-                            const SizedBox(width: 4),
-                            ElevatedButton(
-                              onPressed: () {
-                                showContactSellerDialog(context, CarEntry.pk);
-                              },
-                              child: const Text('Contact'),
-                            ),
-                            if (role == 'ADM') ...[
-                            const SizedBox(width: 4),
-                            ElevatedButton(
-                              onPressed: () {
-                                deleteCarAdmin(CarEntry.pk);
-                              },
-                              child: const Text('Delete'),
-                            ),
-                          ],
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        CarEntry.fields.carName,
+        style: const TextStyle(
+          fontSize: 18.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      const SizedBox(height: 10),
+      Text(
+        'Price: ${formatCurrencyManually(CarEntry.fields.price)}',
+        style: TextStyle(color: Colors.grey[600]),
+      ),
+      const SizedBox(height: 4),
+      // First Row for Detail and Contact buttons
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CarDetailPage(carEntry: CarEntry),
+                ),
+              );
+            },
+            child: const Text('Detail'),
+          ),
+          const SizedBox(width: 2),
+          ElevatedButton(
+            onPressed: () {
+              showContactSellerDialog(context, CarEntry.pk);
+            },
+            child: const Text('Contact'),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8), // Space between rows
+      // Separate Row for Add to Wishlist
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            ElevatedButton(
+              style: isInWishlist ? removeStyle : addStyle,
+              onPressed: () => _addToWishlist(context, CarEntry.pk.toString(), CarEntry.fields.carName, isInWishlist),
+              child: Text(isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"),
+            ),
+            if (role == 'ADM') ...[
+            const SizedBox(width: 2),
+            ElevatedButton(
+              onPressed: () {
+                deleteCarAdmin(CarEntry.pk);
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+          ],
+        ),
+    ],
+  ),
+),
+
                 ],
               ),
             );
