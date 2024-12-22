@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
-                        validator: (value) => value?.isEmpty ?? true ? 'Please enter username' : null,
+                        validator: (value) => value?.isEmpty ?? true ? 'Masukkan username' : null,
                         onSaved: (value) => _username = value ?? '',
                       ),
                     ),
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
                         obscureText: true,
-                        validator: (value) => value?.isEmpty ?? true ? 'Please enter password' : null,
+                        validator: (value) => value?.isEmpty ?? true ? 'Masukkan password' : null,
                         onSaved: (value) => _password = value ?? '',
                       ),
                     ),
@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Don't have an account yet? ",
+                          "Belum punya Akun? ",
                           style: TextStyle(color: Colors.black87),
                         ),
                         GestureDetector(
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
                           },
                           child: const Text(
-                            'Register Now',
+                            'Daftar sekarang',
                             style: TextStyle(
                               color: Color(0xFF4C8BF5),
                               fontWeight: FontWeight.w600,
