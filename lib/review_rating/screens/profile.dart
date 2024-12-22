@@ -310,320 +310,242 @@ class ProfileScreenState extends State<ProfileScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      FutureBuilder<User>(
-                        future: fetchProfileUser(request),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircleAvatar(
-                              radius: 48,
-                              backgroundImage: AssetImage(
-                                  'assets/default_profile_picture.png'),
-                            );
-                          } else if (snapshot.hasError) {
-                            return const CircleAvatar(
-                              radius: 48,
-                              backgroundImage: AssetImage(
-                                  'assets/default_profile_picture.png'),
-                            );
-                          } else if (snapshot.hasData) {
-                            User user = snapshot.data!;
-                            UserProfile profile = user.userProfile;
-                            if (profile.profilePicture != '') {
-                              return CircleAvatar(
-                                radius: 48,
-                                backgroundImage:
-                                    NetworkImage(profile.profilePicture),
-                              );
-                            } else {
-                              return const CircleAvatar(
-                                radius: 48,
-                                backgroundImage: AssetImage(
-                                    'assets/default_profile_picture.png'),
-                              );
-                            }
-                          } else {
-                            return const CircleAvatar(
-                              radius: 48,
-                              backgroundImage: AssetImage(
-                                  'assets/default_profile_picture.png'),
-                            );
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      Text(widget.username,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      FutureBuilder<User>(
-                        future: fetchProfileUser(request),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.star, color: Colors.yellow),
-                                Text('Loading...',
-                                    style: TextStyle(fontSize: 16)),
-                              ],
-                            );
-                          } else if (snapshot.hasError) {
-                            return const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.star, color: Colors.yellow),
-                                Text('Error', style: TextStyle(fontSize: 16)),
-                              ],
-                            );
-                          } else if (snapshot.hasData) {
-                            User user = snapshot.data!;
-                            if (user.role == 'SEL') {
-                              sellerFuture = fetchSellerProfile(request);
-                              return FutureBuilder<SellerProfile>(
-                                future: sellerFuture,
-                                builder: (context, sellerSnapshot) {
-                                  if (sellerSnapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
-                                  } else if (sellerSnapshot.hasError) {
-                                    return const Text(
-                                        'Error fetching seller profile');
-                                  } else if (sellerSnapshot.hasData) {
-                                    SellerProfile sellerProfile =
-                                        sellerSnapshot.data!;
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(Icons.star,
-                                            color: Colors.yellow),
-                                        Text(
-                                          sellerProfile.rating
-                                              .toStringAsFixed(2),
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return const Text(
-                                        'No seller profile available');
-                                  }
-                                },
-                              );
-                            } else {
+            child: FutureBuilder<User>(
+              future: fetchProfileUser(request),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  User user = snapshot.data!;
+
+                  Widget profileCard = Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 48,
+                          backgroundImage: user.userProfile.profilePicture != ''
+                              ? NetworkImage(user.userProfile.profilePicture)
+                              : const AssetImage(
+                                      'assets/default_profile_picture.png')
+                                  as ImageProvider,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(widget.username,
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        if (user.role == 'SEL')
+                          FutureBuilder<SellerProfile>(
+                            future: fetchSellerProfile(request),
+                            builder: (context, sellerSnapshot) {
+                              if (sellerSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (sellerSnapshot.hasData) {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.star,
+                                        color: Colors.yellow),
+                                    Text(
+                                      sellerSnapshot.data!.rating
+                                          .toStringAsFixed(2),
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ],
+                                );
+                              }
                               return const SizedBox.shrink();
-                            }
-                          } else {
-                            return const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.star, color: Colors.yellow),
-                                Text('No data', style: TextStyle(fontSize: 16)),
-                              ],
-                            );
-                          }
-                        },
+                            },
+                          ),
+                      ],
+                    ),
+                  );
+
+                  if (user.role != 'SEL') {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 100),
+                          profileCard,
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                FutureBuilder<User>(
-                  future: fetchProfileUser(request),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      User user = snapshot.data!;
-                      if (user.role == 'SEL') {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 24),
-                            CarListingWidget(cars: cars),
-                            const SizedBox(height: 24),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'Reviews',
-                                  style: TextStyle(fontSize: 24),
-                                ),
-                                FutureBuilder<Map<String, String?>>(
+                    );
+                  }
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      profileCard,
+                      const SizedBox(height: 24),
+                      CarListingWidget(cars: cars),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Reviews',
+                            style: TextStyle(fontSize: 24),
+                          ),
+                          FutureBuilder<Map<String, String?>>(
+                            future: authService.getUserData(),
+                            builder: (context, userSnapshot) {
+                              if (!userSnapshot.hasData) {
+                                return const SizedBox.shrink();
+                              }
+
+                              String? currentUserRole =
+                                  userSnapshot.data!['role'];
+                              bool canReview = currentUserRole == 'BUY';
+
+                              if (canReview) {
+                                return ElevatedButton(
+                                  onPressed: () =>
+                                      _showReviewModal(context, request),
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 15,
+                                      horizontal: 30,
+                                    ),
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 105, 153, 225),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Review Seller',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      // Reviews section
+                      FutureBuilder<List<ReviewRating>>(
+                        key: ValueKey(DateTime.now()),
+                        future: fetchReviews(request),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text(
+                                'Error loading reviews: ${snapshot.error}');
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
+                            return const Text('No reviews available.');
+                          }
+
+                          List<ReviewRating> reviews = snapshot.data!;
+                          List<ReviewRating> displayedReviews =
+                              reviews.take(3).toList();
+
+                          return Column(
+                            children: [
+                              ...displayedReviews.map((review) {
+                                return FutureBuilder<Map<String, String?>>(
                                   future: authService.getUserData(),
                                   builder: (context, userSnapshot) {
                                     if (!userSnapshot.hasData) {
                                       return const SizedBox.shrink();
                                     }
 
+                                    String? currentUsername =
+                                        userSnapshot.data!['username'];
                                     String? currentUserRole =
                                         userSnapshot.data!['role'];
-                                    bool canReview = currentUserRole == 'BUY';
+                                    bool canDelete = currentUsername ==
+                                            review.fields.reviewer.userProfile
+                                                .name ||
+                                        currentUserRole == 'ADM';
 
-                                    if (canReview) {
-                                      return ElevatedButton(
-                                        onPressed: () =>
-                                            _showReviewModal(context, request),
-                                        style: ElevatedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 15,
-                                            horizontal: 30,
-                                          ),
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 105, 153, 225),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'Review Seller',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
+                                    return ReviewCard(
+                                      name: review
+                                          .fields.reviewer.userProfile.name,
+                                      profilePicture: review.fields.reviewer
+                                          .userProfile.profilePicture,
+                                      review: review.fields.review,
+                                      rating: review.fields.rating,
+                                      canDelete: canDelete,
+                                      reviewId: review.fields.id,
+                                      deleteReview: () {
+                                        showDeleteConfirmationDialog(
+                                            review.fields.id, context, request);
+                                      },
+                                    );
                                   },
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 24),
-                            FutureBuilder<List<ReviewRating>>(
-                              key: ValueKey(DateTime.now()),
-                              future: fetchReviews(request),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                } else if (snapshot.hasError) {
-                                  return Text(
-                                      'Error loading reviews: ${snapshot.error}');
-                                } else if (!snapshot.hasData ||
-                                    snapshot.data!.isEmpty) {
-                                  return const Text('No reviews available.');
-                                }
-
-                                List<ReviewRating> reviews = snapshot.data!;
-                                List<ReviewRating> displayedReviews =
-                                    reviews.take(3).toList();
-
-                                return Column(
-                                  children: [
-                                    ...displayedReviews.map((review) {
-                                      return FutureBuilder<
-                                          Map<String, String?>>(
-                                        future: authService.getUserData(),
-                                        builder: (context, userSnapshot) {
-                                          if (!userSnapshot.hasData) {
-                                            return const SizedBox.shrink();
-                                          }
-
-                                          String? currentUsername =
-                                              userSnapshot.data!['username'];
-                                          String? currentUserRole =
-                                              userSnapshot.data!['role'];
-                                          bool canDelete = currentUsername ==
-                                                  review.fields.reviewer
-                                                      .userProfile.name ||
-                                              currentUserRole == 'ADM';
-
-                                          return ReviewCard(
-                                            name: review.fields.reviewer
-                                                .userProfile.name,
-                                            profilePicture: review
-                                                .fields
-                                                .reviewer
-                                                .userProfile
-                                                .profilePicture,
-                                            review: review.fields.review,
-                                            rating: review.fields.rating,
-                                            canDelete: canDelete,
-                                            reviewId: review.fields.id,
-                                            deleteReview: () {
-                                              showDeleteConfirmationDialog(
-                                                  review.fields.id,
-                                                  context,
-                                                  request);
-                                            },
-                                          );
-                                        },
-                                      );
-                                    }).toList(),
-                                    if (reviews.length > 3)
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16.0),
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AllReviewsScreen(
-                                                  username: widget.username,
-                                                  reviews: reviews,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 15,
-                                              horizontal: 30,
-                                            ),
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 105, 153, 225),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'View All Reviews',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                );
+                              }).toList(),
+                              if (reviews.length > 3)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AllReviewsScreen(
+                                            username: widget.username,
+                                            reviews: reviews,
                                           ),
                                         ),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 15,
+                                        horizontal: 30,
                                       ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }
-                    return const Text('Error: Could not fetch user data.');
-                  },
-                ),
-              ],
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 105, 153, 225),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'View All Reviews',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                }
+                return const Center(
+                    child: Text('Error: Could not fetch user data.'));
+              },
             ),
           ),
         ),
