@@ -1,1 +1,1 @@
-const String baseUrl = 'http://127.0.0.1:8000/dashboard';
+const String baseUrl = 'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/dashboard';

@@ -33,7 +33,7 @@ class _EditWishlistFormPageState extends State<EditWishlistFormPage> {
     try {
       final request = context.read<CookieRequest>();
       final response = await request.get(
-        'http://127.0.0.1:8000/wishlist/get_wishlist_item/${widget.wishlistId}/',
+        'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/wishlist/get_wishlist_item/${widget.wishlistId}/',
       );
 
       setState(() {
@@ -133,7 +133,7 @@ class _EditWishlistFormPageState extends State<EditWishlistFormPage> {
                               final request = context.read<CookieRequest>();
                               try {
                                 final response = await request.post(
-                                  'http://127.0.0.1:8000/wishlist/edit_wishlist/${_wishlist!.id}/',
+                                  'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/wishlist/edit_wishlist/${_wishlist!.id}/',
                                   {'priority': newPriority.toString()},
                                 );
                                 if (response['status'] == 'success') {

@@ -56,7 +56,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
   );
 
    Future<String> fetchSellerVerif(String carId) async {
-    final String url = "http://127.0.0.1:8000/katalog/api/get-seller-verif/$carId/";
+    final String url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/get-seller-verif/$carId/";
     final response = await http.get(Uri.parse(url));  // This is the HTTP response
 
     if (response.statusCode == 200) {
@@ -67,7 +67,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
     }
   }
    Future<String> fetchSellerUsername(String carId) async {
-    final String url = "http://127.0.0.1:8000/katalog/api/get-seller-username/$carId/";
+    final String url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/get-seller-username/$carId/";
     final response = await http.get(Uri.parse(url));  // This is the HTTP response
 
     if (response.statusCode == 200) {
@@ -78,7 +78,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
     }
   }
   Future<Map<String, String>> fetchSellerContact(String carId) async {
-  final String url = "http://127.0.0.1:8000/katalog/api/get-seller-contact/$carId/";
+  final String url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/get-seller-contact/$carId/";
   final response = await http.get(Uri.parse(url));  // This is the HTTP response
 
   if (response.statusCode == 200) {
@@ -98,7 +98,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
       'car_id': carId,
     });
 
-    final url = "http://127.0.0.1:8000/katalog/api/deleteAdmin/"; // Ensure this matches your actual API
+    final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/deleteAdmin/"; // Ensure this matches your actual API
     final response = await request.postJson(url, payload);
 
     // Handling text response directly
@@ -117,7 +117,7 @@ class _CarEntryPageState extends State<CarEntryPage> {
 }
   
   Future<List<CarEntry>> fetchCar(CookieRequest request) async {
-    final response = await request.get('http://127.0.0.1:8000/katalog/carsjson/');
+    final response = await request.get('https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/carsjson/');
     List<CarEntry> listCar = [];
     for (var d in response) {
       if (d != null) {
@@ -213,7 +213,7 @@ Future<void> fetchFilteredCars() async {
   // Assign a new future to _carFuture
   setState(() {
     _carFuture = request.get(
-      'http://127.0.0.1:8000/katalog/api/cars/filter/?$queryString',
+      'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/cars/filter/?$queryString',
     ).then((response) {
       return (response as List).map((d) => CarEntry.fromJson(d)).toList();
     });
@@ -223,7 +223,7 @@ Future<void> fetchFilteredCars() async {
   Future<void> _fetchWishlistCarIds() async {
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.get('http://127.0.0.1:8000/wishlist/car_ids/');
+      final response = await request.get('https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/wishlist/car_ids/');
       if (response is Map && response.containsKey('car_ids')) {
         List<String> carIds = List<String>.from(response['car_ids']);
         setState(() {
@@ -248,7 +248,7 @@ Future<void> fetchFilteredCars() async {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.post(
-        'http://127.0.0.1:8000/wishlist/add_wishlist/$carId/',
+        'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/wishlist/add_wishlist/$carId/',
         jsonEncode(<String, String>{'add': !_wishlistStatus[carId]! ? 'yes' : 'no'}),
       );
 

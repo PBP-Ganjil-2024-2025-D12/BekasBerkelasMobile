@@ -58,7 +58,7 @@ class _CarListScreenState extends State<CarListScreen> {
     }
   }
 Future<void> fetchSellerVerif(String username) async {
-    final String url = "http://127.0.0.1:8000/katalog/api/get-seller-verif/$username/";
+    final String url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/get-seller-verif/$username/";
     final response = await http.get(Uri.parse(url));  // This is the HTTP response
 
     if (response.statusCode == 200) {
@@ -80,7 +80,7 @@ Future<void> fetchSellerVerif(String username) async {
 
       print("Payload being sent: $payload");
 
-      final url = "http://127.0.0.1:8000/katalog/api/mobilsaya/";
+      final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/mobilsaya/";
       final response = await request.postJson(url, payload);
 
       // Parse the response
@@ -107,7 +107,7 @@ Future<void> fetchSellerVerif(String username) async {
       'username': username,
     });
 
-    final url = "http://127.0.0.1:8000/katalog/api/mobilsaya/delete/"; // Ensure this matches your actual API
+    final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/mobilsaya/delete/"; // Ensure this matches your actual API
     final response = await request.postJson(url, payload);
 
     // Handling text response directly

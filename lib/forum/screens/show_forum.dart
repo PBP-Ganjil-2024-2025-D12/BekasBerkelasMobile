@@ -3,7 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '../models/question.dart';
 import 'package:bekas_berkelas_mobile/katalog_produk/Car_entry.dart';
-import 'forum_detail.dart';
+import '../widgets/forum_card.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
@@ -260,113 +260,15 @@ class _ShowForumState extends State<ShowForum>
                       padding: const EdgeInsets.only(top: 8),
                       itemCount: questions.length,
                       itemBuilder: (context, index) {
-                        var question = questions[index];
                         return AnimationConfiguration.staggeredList(
                           position: index,
                           duration: const Duration(milliseconds: 375),
                           child: SlideAnimation(
                             verticalOffset: 50.0,
                             child: FadeInAnimation(
-                              child: Card(
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                elevation: 2,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(12),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ForumDetail(
-                                            questionId: question.pk),
-                                      ),
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          question.fields.title,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF4C8BF5),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          question.fields.content,
-                                          style: TextStyle(
-                                            color: Colors.grey[600],
-                                            height: 1.3,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 12),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.access_time,
-                                                size: 16,
-                                                color: Colors.grey[500]),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              question.fields.createdAt
-                                                  .toString(),
-                                              style: TextStyle(
-                                                color: Colors.grey[500],
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 8,
-                                                vertical: 4,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue
-                                                    .withOpacity(0.1),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: Text(
-                                                getCategoryFullName(
-                                                    question.fields.category),
-                                                style: const TextStyle(
-                                                  color: Color(0xFF4C8BF5),
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Icon(Icons.comment_outlined,
-                                                size: 16,
-                                                color: Colors.grey[500]),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              '${question.fields.replyCount ?? 0}',
-                                              style: TextStyle(
-                                                color: Colors.grey[500],
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                              child: ForumCard(
+                                question: questions[index],
+                                getCategoryFullName: getCategoryFullName,
                               ),
                             ),
                           ),
@@ -396,14 +298,14 @@ class _ShowForumState extends State<ShowForum>
 
   Future<Map<String, dynamic>> fetchQuestions(CookieRequest request) async {
     final response = await request.get(
-        'http://127.0.0.1:8000/forum/get_questions_json/?page=$_currentPage&sort=$_sortBy&category=$_category&search=$_searchQuery');
+        'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/forum/get_questions_json/?page=$_currentPage&sort=$_sortBy&category=$_category&search=$_searchQuery');
     return response;
   }
 
   Future<List<CarEntry>> fetchCars(CookieRequest request) async {
     try {
       final response =
-          await request.get('http://127.0.0.1:8000/katalog/carsjson/');
+          await request.get('https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/carsjson/');
       if (response is List) {
         return response.map((car) => CarEntry.fromJson(car)).toList();
       }
@@ -803,7 +705,7 @@ class _ShowForumState extends State<ShowForum>
 
                                 try {
                                   final response = await request.post(
-                                    'http://127.0.0.1:8000/forum/create_question/',
+                                    'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/forum/create_question/',
                                     {
                                       'title': title,
                                       'content': content,

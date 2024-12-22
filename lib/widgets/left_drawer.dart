@@ -145,7 +145,7 @@ class LeftDrawer extends StatelessWidget {
               onTap: () async {
                 try {
                   final response = await request.post(
-                    'http://127.0.0.1:8000/auth/logout/',
+                    'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/auth/logout/',
                     {},
                   );
 
