@@ -9,6 +9,12 @@
 - Steven Setiawan (2306152260) - `setiawans`
 - Wida Putri Kinasih (2306229840) - `widaputri`
 
+### Tautan Aplikasi
+[Download](https://install.appcenter.ms/orgs/bekasberkelasmobile/apps/bekasberkelas-mobile/distribution_groups/public)
+
+### Video Promosi Aplikasi
+[Video](https://drive.google.com/drive/folders/1iYbv1EyP-3H-xT0LedGPI1-tpj9bBzjT?usp=sharing)
+
 ### Deskripsi Aplikasi
 BekasBerkelas lahir dari kisah inspiratif para pejuang yang datang ke ibukota untuk mengadu nasib. Sebagai pendatang baru di kota besar, mereka menyadari bahwa mobilitas adalah kunci utama untuk bisa bertahan dan berkembang. Banyak dari mereka yang membutuhkan kendaraan untuk pergi ke tempat kerja, menghadiri wawancara, atau hanya sekedar menjelajahi kota. Namun, harga mobil yang kurang terjangkau kerap kali menjadi kendala bagi mereka. Dengan demikian, membeli mobil bekas dapat menjadi solusi alternatif bagi para pendatang. Sayangnya, opsi ini sering kali terhambat karena banyaknya tantangan yang menghadang, seperti kurangnya pemahaman tentang pasar lokal, tingginya kekhawatiran akan tindak penipuan, dan adanya kendala bahasa dalam proses negoisasi.
 
@@ -17,8 +23,6 @@ Di sisi lain, Jakarta sebagai pusat ekonomi Indonesia memiliki dinamika tersendi
 Melihat tantangan yang dihadapi para pendatang baru serta fenomena unik di kalangan pemilik mobil di ibukota, BekasBerkelas tercipta sebagai solusi komprehensif. Aplikasi ini hadir sebagai jembatan penghubung antara pendatang baru yang mencari kendaraan terjangkau dengan pemilik mobil yang kerap berganti kendaraan untuk mengikuti tren terbaru. Dengan kombinasi fitur-fitur yang menarik, BekasBerkelas akan menjadi teman setia bagi pendatang dalam perjalanan membangun kehidupan di kota baru sambil memfasilitasi gaya hidup dinamis pemilik mobil di ibukota. 
 
 Kesuksesan BekasBerkelas dalam membantu para pendatang dan penjual melalui aplikasi website mendorong pengembangan lebih lanjut untuk peningkatan kualitas pelayanan. Kini, BekasBerkelas hadir dalam aplikasi mobile dengan akses yang lebih cepat dan mudah melalui genggaman tangan. Melalui inovasi ini, BekasBerkelas berkomitmen penuh untuk terus memahami dan menjawab kebutuhan kedua belah pihak serta menciptakan ekosistem jual-beli mobil bekas yang saling menguntungkan bagi semua penggunanya.
-
-Kesuksesan BekasBerkelas dalam membantu para pendatang dan penjual melalui platform website mendorong pengembangan lebih lanjut untuk peningkatan kualitas pelayanan. Kini, BekasBerkelas hadir dalam aplikasi mobile dengan akses yang lebih cepat dan mudah melalui genggaman tangan. Melalui inovasi ini, BekasBerkelas berkomitmen penuh untuk terus memahami dan menjawab kebutuhan kedua belah pihak, menciptakan ekosistem jual-beli mobil bekas yang saling menguntungkan bagi semua penggunanya.
 
 ### Daftar Modul
 Berikut adalah daftar modul yang akan kami implementasikan.
@@ -45,8 +49,6 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 ### Sumber Inisial Dataset
 [Dataset](https://www.kaggle.com/datasets/indraputra21/used-car-listings-in-indonesia?select=used_car.csv)
 
-### Tautan Aplikasi
-[Download](https://install.appcenter.ms/orgs/bekasberkelasmobile/apps/bekasberkelas-mobile/distribution_groups/public)
 
 ### Alur Pengintegrasian dengan _Web Service_
 ![](answer/AlurIntegrasi.jpg)
