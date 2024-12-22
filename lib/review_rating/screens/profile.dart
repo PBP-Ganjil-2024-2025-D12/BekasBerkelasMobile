@@ -27,7 +27,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   late Future<List<ReviewRating>> reviewsFuture;
   late List<CarEntry> cars = [];
   final authService = AuthService();
-  String baseUrl = "http://localhost:8000";
+  String baseUrl = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id";
 
   @override
   initState() {

@@ -24,7 +24,7 @@ class AllReviewsScreen extends StatefulWidget {
 class _AllReviewsScreenState extends State<AllReviewsScreen> {
   final authService = AuthService();
   late Future<List<ReviewRating>> reviewsFuture;
-  final String baseUrl = "http://localhost:8000";
+  final String baseUrl = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id";
 
   @override
   void initState() {

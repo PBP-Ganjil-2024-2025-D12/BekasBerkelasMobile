@@ -165,7 +165,7 @@ void _showSnackbar(BuildContext context, String message) {
 
                       final response = await request.postJson(
 
-      "http://127.0.0.1:8000/katalog/create-flutter/",
+      "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/create-flutter/",
 
                         jsonEncode(data),
                       );

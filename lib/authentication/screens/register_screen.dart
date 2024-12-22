@@ -260,7 +260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             }
 
                             final response = await request.post(
-                              'http://127.0.0.1:8000/auth/register/', 
+                              'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/auth/register/', 
                               {
                                 'username': _username,
                                 'name': _name,

@@ -2,7 +2,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
 
 class UserService {
-  String baseUrl = "http://localhost:8000";
+  String baseUrl = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id";
 
   Future<User> fetchUser(CookieRequest request, username) async {
     try {

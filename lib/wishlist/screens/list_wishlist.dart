@@ -40,7 +40,7 @@ class _WishlistPageState extends State<WishlistPage> {
 
   Future<List<WishlistEntry>> fetchWishlist(CookieRequest request) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/wishlist/json');
+      final response = await request.get('https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/wishlist/json');
       var data = response;
 
       List<WishlistEntry> listWishlist = [];
@@ -58,7 +58,7 @@ class _WishlistPageState extends State<WishlistPage> {
   Future<WishlistEntry?> fetchWishlistItem(CookieRequest request, String wishlistId) async {
     try {
       final response = await request
-          .get('http://127.0.0.1:8000/wishlist/get_wishlist_item/$wishlistId/');
+          .get('https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/wishlist/get_wishlist_item/$wishlistId/');
       if (response is Map<String, dynamic>) {
         return WishlistEntry.fromJson(response);
       } else {
@@ -176,7 +176,7 @@ class _WishlistPageState extends State<WishlistPage> {
                         onPressed: () async {
                           try {
                             final deleteResponse = await request.post(
-                              'http://127.0.0.1:8000/wishlist/remove_wishlist/$wishlistId/',
+                              'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/wishlist/remove_wishlist/$wishlistId/',
                               jsonEncode(<String, String>{'delete': 'yes'}),
                             );
 

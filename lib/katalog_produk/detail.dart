@@ -17,7 +17,7 @@ class CarDetailPage extends StatelessWidget {
   const CarDetailPage({Key? key, required this.carEntry}) : super(key: key);
 
   Future<String> fetchSellerUsername(String carId) async {
-    final String url = "http://127.0.0.1:8000/katalog/api/get-seller-username/$carId/";
+    final String url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/get-seller-username/$carId/";
     final response = await http.get(Uri.parse(url));  // This is the HTTP response
 
     if (response.statusCode == 200) {

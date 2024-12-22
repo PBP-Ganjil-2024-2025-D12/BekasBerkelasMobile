@@ -12,7 +12,7 @@ class ReviewCard extends StatelessWidget {
   final bool canDelete;
   final String reviewId;
   final VoidCallback deleteReview;
-  final String baseUrl = 'http://localhost:8000';
+  final String baseUrl = 'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id';
 
   const ReviewCard({
     Key? key,

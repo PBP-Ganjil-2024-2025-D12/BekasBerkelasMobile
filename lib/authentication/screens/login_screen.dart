@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             _formKey.currentState!.save();
                             
                             final response = await request.login(
-                              "http://127.0.0.1:8000/auth/login/",  
+                              "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/auth/login/",  
                               {
                                 'username': _username,
                                 'password': _password,
