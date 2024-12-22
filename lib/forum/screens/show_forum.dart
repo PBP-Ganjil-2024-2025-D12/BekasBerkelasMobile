@@ -147,18 +147,65 @@ class _ShowForumState extends State<ShowForum>
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 16),
                             ),
-                            items: const [
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.035,
+                              color: Colors.black87,
+                            ),
+                            dropdownColor: Colors.white,
+                            itemHeight:
+                                MediaQuery.of(context).size.height * 0.08,
+                            items: [
                               DropdownMenuItem(
-                                  value: '', child: Text('Semua Kategori')),
+                                value: '',
+                                child: Text(
+                                  'Semua Kategori',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035),
+                                ),
+                              ),
                               DropdownMenuItem(
-                                  value: 'UM', child: Text('Diskusi Umum')),
+                                value: 'UM',
+                                child: Text(
+                                  'Diskusi Umum',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035),
+                                ),
+                              ),
                               DropdownMenuItem(
-                                  value: 'JB', child: Text('Forum Jual Beli')),
+                                value: 'JB',
+                                child: Text(
+                                  'Forum Jual Beli',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035),
+                                ),
+                              ),
                               DropdownMenuItem(
-                                  value: 'TT',
-                                  child: Text('Diskusi Tips & Trik')),
+                                value: 'TT',
+                                child: Text(
+                                  'Diskusi Tips & Trik',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035),
+                                ),
+                              ),
                               DropdownMenuItem(
-                                  value: 'SA', child: Text('Ruang Santai')),
+                                value: 'SA',
+                                child: Text(
+                                  'Ruang Santai',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035),
+                                ),
+                              ),
                             ],
                             onChanged: (value) {
                               setState(() {
@@ -195,11 +242,35 @@ class _ShowForumState extends State<ShowForum>
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 16),
                             ),
-                            items: const [
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.035,
+                              color: Colors.black87,
+                            ),
+                            dropdownColor: Colors.white,
+                            itemHeight:
+                                MediaQuery.of(context).size.height * 0.08,
+                            items: [
                               DropdownMenuItem(
-                                  value: 'terbaru', child: Text('Terbaru')),
+                                value: 'terbaru',
+                                child: Text(
+                                  'Terbaru',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035),
+                                ),
+                              ),
                               DropdownMenuItem(
-                                  value: 'populer', child: Text('Populer')),
+                                value: 'populer',
+                                child: Text(
+                                  'Populer',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035),
+                                ),
+                              ),
                             ],
                             onChanged: (value) {
                               setState(() {
@@ -211,7 +282,7 @@ class _ShowForumState extends State<ShowForum>
                         ),
                       ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),
@@ -304,8 +375,8 @@ class _ShowForumState extends State<ShowForum>
 
   Future<List<CarEntry>> fetchCars(CookieRequest request) async {
     try {
-      final response =
-          await request.get('https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/carsjson/');
+      final response = await request.get(
+          'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/carsjson/');
       if (response is List) {
         return response.map((car) => CarEntry.fromJson(car)).toList();
       }
