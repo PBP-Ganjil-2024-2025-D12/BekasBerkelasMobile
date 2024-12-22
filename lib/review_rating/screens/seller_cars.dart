@@ -60,12 +60,29 @@ class CarsPage extends StatelessWidget {
                                   height: 120,
                                   width: double.infinity,
                                   color: Colors.grey[200],
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.directions_car,
-                                      size: 50,
-                                      color: Colors.grey,
-                                    ),
+                                  child: Image.network(
+                                    cars[index].fields.imageUrl,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return const Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  Color(0xFF4C8BF5)),
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Center(
+                                        child: Icon(
+                                          Icons.directions_car,
+                                          size: 50,
+                                          color: Colors.grey,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
