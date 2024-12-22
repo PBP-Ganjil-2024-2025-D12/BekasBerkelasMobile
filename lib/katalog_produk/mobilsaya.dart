@@ -14,10 +14,9 @@ class CarFiltered {
 
   CarFiltered({required this.name, required this.price});
 
-  // Factory constructor to create a CarFiltered object from JSON
   factory CarFiltered.fromJson(Map<String, dynamic> json) {
     return CarFiltered(
-      name: json['car_name'],  // Adjust key names based on your JSON structure
+      name: json['car_name'],
       price: double.tryParse(json['price'].toString()) ?? 0.0,
     );
   }
@@ -46,9 +45,9 @@ class _CarListScreenState extends State<CarListScreen> {
       uname = userData['username'] ?? '';
       await fetchSellerVerif(uname);
       setState(() {
-        role = userData['role'] ?? ''; // Store the user's role
+        role = userData['role'] ?? '';
         if (verif) {
-            fetchFilter(); // Fetch cars only if verification is true
+            fetchFilter();
           } else {
             print('Seller is not verified.');
           }
@@ -59,11 +58,11 @@ class _CarListScreenState extends State<CarListScreen> {
   }
 Future<void> fetchSellerVerif(String username) async {
     final String url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/get-seller-verif/$username/";
-    final response = await http.get(Uri.parse(url));  // This is the HTTP response
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);  // Decode JSON only after checking status code
-      verif = data['seller_verif'];  // Assuming the username is directly available
+      var data = jsonDecode(response.body);
+      verif = data['seller_verif'];
     } else {
       throw Exception('Failed to fetch seller username. Status Code: ${response.statusCode}');
     }
@@ -83,7 +82,6 @@ Future<void> fetchSellerVerif(String username) async {
       final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/mobilsaya/";
       final response = await request.postJson(url, payload);
 
-      // Parse the response
       List<CarEntry> fetchedCars = [];
       for (var car in response) {
         fetchedCars.add(CarEntry.fromJson(car));
@@ -107,13 +105,11 @@ Future<void> fetchSellerVerif(String username) async {
       'username': username,
     });
 
-    final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/mobilsaya/delete/"; // Ensure this matches your actual API
+    final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/mobilsaya/delete/";
     final response = await request.postJson(url, payload);
 
-    // Handling text response directly
      await fetchFilter();
 
-    // Check if the car with specific carId is still present in the list
     if (!cars.any((car) => car.pk == carId)) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Car deleted successfully")));
     } else {
@@ -133,10 +129,10 @@ Widget build(BuildContext context) {
   title: Row(
     children: [
       Image.asset(
-        'assets/logo-only.png',  // Make sure the logo asset is correctly placed in your assets folder
-        height: 20,         // Adjust size as necessary
+        'assets/logo-only.png',
+        height: 20,
       ),
-      const SizedBox(width: 10),  // Space between logo and title
+      const SizedBox(width: 10),
       const Text(
         'Cars Sold by You',
         style: TextStyle(fontWeight: FontWeight.bold),

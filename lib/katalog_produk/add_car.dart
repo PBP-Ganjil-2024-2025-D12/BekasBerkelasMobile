@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import '../authentication/services/auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'dart:io'; // For mobile-specific features
-import 'package:flutter/foundation.dart'; // For kIsWeb
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class AddCarFormPage extends StatefulWidget {
@@ -19,14 +19,14 @@ class AddCarFormPage extends StatefulWidget {
 
 class _AddCarFormPageState extends State<AddCarFormPage> {
   final _formKey = GlobalKey<FormState>();
-  Map<String, dynamic>? userData; // Field to store user data
+  Map<String, dynamic>? userData;
   @override
   void initState() {
     super.initState();
-    _loadUserData(); // Call async function
+    _loadUserData();
   }
   final ImagePicker _picker = ImagePicker();
-bool isLoading = false; // For showing a loading indicator
+bool isLoading = false;
 
 Future<void> _pickImage(CookieRequest request, int id) async {
   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -36,7 +36,7 @@ Future<void> _pickImage(CookieRequest request, int id) async {
 
     if (uploadedUrl != null) {
       setState(() {
-        _imageUrlController.text = uploadedUrl; // Set the Cloudinary URL to the controller
+        _imageUrlController.text = uploadedUrl;
       });
     }
   }
@@ -44,7 +44,7 @@ Future<void> _pickImage(CookieRequest request, int id) async {
 
 Future<String?> _uploadImageToCloudinary(String imagePath, CookieRequest cookieRequest, int id) async {
   setState(() {
-    isLoading = true; // Show loading indicator
+    isLoading = true;
   });
 
   try {
@@ -62,7 +62,7 @@ Future<String?> _uploadImageToCloudinary(String imagePath, CookieRequest cookieR
     if (response.statusCode == 200) {
       final responseData = await response.stream.bytesToString();
       final jsonResponse = jsonDecode(responseData);
-      return jsonResponse['secure_url']; // Return the Cloudinary URL
+      return jsonResponse['secure_url'];
     } else {
       _showSnackbar(context, 'Failed to upload image: ${response.statusCode}');
       return null;
@@ -72,7 +72,7 @@ Future<String?> _uploadImageToCloudinary(String imagePath, CookieRequest cookieR
     return null;
   } finally {
     setState(() {
-      isLoading = false; // Hide loading indicator
+      isLoading = false;
     });
   }
 }
@@ -84,11 +84,10 @@ void _showSnackbar(BuildContext context, String message) {
     final authService = AuthService();
     final data = await authService.getUserData();
     setState(() {
-      userData = data; // Store user data and trigger UI update
+      userData = data;
     });
   }
 
-  // Text editing controllers for each field
   TextEditingController _carNameController = TextEditingController();
   TextEditingController _brandController = TextEditingController();
   TextEditingController _yearController = TextEditingController();
@@ -100,7 +99,6 @@ void _showSnackbar(BuildContext context, String message) {
   TextEditingController _instalmentController = TextEditingController();
   TextEditingController _imageUrlController = TextEditingController();
 
-  // Boolean fields for switches
   Map<String, bool> features = {
     'rear_camera': false,
     'sun_roof': false,
@@ -137,7 +135,7 @@ void _showSnackbar(BuildContext context, String message) {
     buildSwitches(),
     buildNumericTextField(_priceController, 'Price'),
     buildNumericTextField(_instalmentController, 'Instalment'),
-    buildImagePicker(), // New Image Picker Widget
+    buildImagePicker(),
   
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -145,7 +143,7 @@ void _showSnackbar(BuildContext context, String message) {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       var data = {
-                        'username': userData!['username'], // Add username to the data
+                        'username': userData!['username'],
                         'car_name': _carNameController.text,
                         'brand': _brandController.text,
                         'year': int.parse(_yearController.text),
@@ -205,14 +203,14 @@ void _showSnackbar(BuildContext context, String message) {
               label: const Text('Pick Image'),
               onPressed: () async {
                 final CookieRequest request = Provider.of<CookieRequest>(context, listen: false);
-                await _pickImage(request, int.parse(userData!["user_id"])); // Replace `1` with the actual user ID
+                await _pickImage(request, int.parse(userData!["user_id"]));
               },
             ),
             const SizedBox(width: 16),
             Expanded(
               child: TextFormField(
                 controller: _imageUrlController,
-                readOnly: true, // Prevent manual editing
+                readOnly: true,
                 decoration: const InputDecoration(
                   hintText: 'URL will appear here...',
                   border: OutlineInputBorder(),
@@ -253,7 +251,7 @@ void _showSnackbar(BuildContext context, String message) {
       ],
       onChanged: (String? newValue) {
         setState(() {
-          _plateTypeController.text = newValue!; // Update the controller with the selected value
+          _plateTypeController.text = newValue!;
         });
       },
       validator: (value) {
@@ -287,7 +285,7 @@ Widget buildTransmissionDropdown() {
       ],
       onChanged: (String? newValue) {
         setState(() {
-          _transmissionController.text = newValue!; // Update the controller with the selected value
+          _transmissionController.text = newValue!;
         });
       },
       validator: (value) {
@@ -333,7 +331,7 @@ Widget buildLocationDropdown() {
       ],
       onChanged: (String? newValue) {
         setState(() {
-          _locationController.text = newValue!; // Update the controller with the selected value
+          _locationController.text = newValue!;
         });
       },
       validator: (value) {
