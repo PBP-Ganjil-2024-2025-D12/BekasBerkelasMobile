@@ -58,35 +58,35 @@ class _CarEntryPageState extends State<CarEntryPage> {
 
    Future<String> fetchSellerVerif(String carId) async {
     final String url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/get-seller-verif/$carId/";
-    final response = await http.get(Uri.parse(url));  // This is the HTTP response
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);  // Decode JSON only after checking status code
-      return data['seller_verif'];  // Assuming the username is directly available
+      var data = jsonDecode(response.body); 
+      return data['seller_verif'];
     } else {
       throw Exception('Failed to fetch seller username. Status Code: ${response.statusCode}');
     }
   }
    Future<String> fetchSellerUsername(String carId) async {
     final String url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/get-seller-username/$carId/";
-    final response = await http.get(Uri.parse(url));  // This is the HTTP response
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);  // Decode JSON only after checking status code
-      return data['seller_username'];  // Assuming the username is directly available
+      var data = jsonDecode(response.body);
+      return data['seller_username'];
     } else {
       throw Exception('Failed to fetch seller username. Status Code: ${response.statusCode}');
     }
   }
   Future<Map<String, String>> fetchSellerContact(String carId) async {
   final String url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/get-seller-contact/$carId/";
-  final response = await http.get(Uri.parse(url));  // This is the HTTP response
+  final response = await http.get(Uri.parse(url));
 
   if (response.statusCode == 200) {
-    var data = jsonDecode(response.body);  // Decode JSON only after checking status code
+    var data = jsonDecode(response.body);
     return {
-      'email': data['email'],  // Assuming 'seller_email' is the key for email in the JSON
-      'phone_number': data['no_telp'],  // Assuming 'seller_phone_number' is the key for phone number
+      'email': data['email'],
+      'phone_number': data['no_telp'],
     };
   } else {
     throw Exception('Failed to fetch seller contact information. Status Code: ${response.statusCode}');
@@ -99,13 +99,11 @@ class _CarEntryPageState extends State<CarEntryPage> {
       'car_id': carId,
     });
 
-    final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/deleteAdmin"; // Ensure this matches your actual API
+    final url = "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/deleteAdmin";
     final response = await request.postJson(url, payload);
 
-    // Handling text response directly
     _carFuture = fetchCar(request);
 
-    // Check if the car with specific carId is still present in the list
     if (!cars.any((car) => car.pk == carId)) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Car deleted successfully, please refresh")));
     } else {
@@ -128,15 +126,12 @@ class _CarEntryPageState extends State<CarEntryPage> {
     return listCar;
   }
   String formatCurrencyManually(String price) {
-  // Parse the string to a double
   double parsedPrice = double.tryParse(price) ?? 0.0;
 
-  // Split the price into whole and fractional parts
   List<String> parts = parsedPrice.toStringAsFixed(2).split('.');
   String wholePart = parts[0];
   String fractionalPart = parts[1];
 
-  // Add thousand separators to the whole part
   String formattedWholePart = '';
   for (int i = wholePart.length - 1, j = 1; i >= 0; i--, j++) {
     formattedWholePart = wholePart[i] + formattedWholePart;
@@ -145,18 +140,15 @@ class _CarEntryPageState extends State<CarEntryPage> {
     }
   }
 
-  // Combine the formatted whole part and fractional part
+
   return 'Rp$formattedWholePart,$fractionalPart';
 }
   void showContactSellerDialog(BuildContext context, String carId) async {
-  // Fetch the seller's contact details
   Map<String, String> contactInfo = await fetchSellerContact(carId);
 
-  // Extract email and phone number
   String email = contactInfo['email'] ?? "Email not available";
   String phoneNumber = contactInfo['phone_number'] ?? "Phone number not available";
 
-  // Show the dialog
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -182,7 +174,6 @@ class _CarEntryPageState extends State<CarEntryPage> {
 Future<void> fetchFilteredCars() async {
   final request = context.read<CookieRequest>();
 
-  // Build query parameters
   Map<String, String> queryParams = {};
   if (_searchController.text.isNotEmpty) {
     switch (_selectedFilter) {
@@ -211,7 +202,6 @@ Future<void> fetchFilteredCars() async {
 
   final queryString = Uri(queryParameters: queryParams).query;
 
-  // Assign a new future to _carFuture
   setState(() {
     _carFuture = request.get(
       'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/katalog/api/cars/filter/?$queryString',
@@ -257,7 +247,6 @@ Future<void> fetchFilteredCars() async {
         String action = response['action'];
         String message = response['message'];
 
-        // Customize the SnackBar message based on the action
         String snackBarMessage;
         if (action == 'added') {
           snackBarMessage = '$carName ditambahkan ke Wishlist';
@@ -345,7 +334,6 @@ Future<void> fetchFilteredCars() async {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          // Search Bar
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
@@ -362,8 +350,7 @@ Future<void> fetchFilteredCars() async {
             ),
             onSubmitted: (_) => fetchFilteredCars(),
           ),
-          const SizedBox(height: 8), // Space between search bar and dropdown
-          // Filter Dropdown
+          const SizedBox(height: 8), 
           DropdownButton<String>(
             value: _selectedFilter,
             isExpanded: true,
@@ -379,9 +366,7 @@ Future<void> fetchFilteredCars() async {
               });
             },
           ),
-          const SizedBox(height: 8), // Space between dropdown and list
-          // List of Cars
-          // List of Cars
+          const SizedBox(height: 8),
 Expanded(
   child: FutureBuilder(
     future: _carFuture,
@@ -413,7 +398,6 @@ Expanded(
               ),
               child: Row(
                 children: [
-                  // Car Image
                  CarEntry.fields.imageUrl != null && CarEntry.fields.imageUrl.isNotEmpty
     ? Image.network(
         CarEntry.fields.imageUrl,
@@ -421,9 +405,8 @@ Expanded(
         height: 100,
         fit: BoxFit.cover,
         errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-          // This fallback will be used if loading the network image fails
           return Image.asset(
-            'assets/logo-only.png', // Path to your local fallback image
+            'assets/logo-only.png',
             width: 100,
             height: 100,
             fit: BoxFit.cover,
@@ -431,13 +414,12 @@ Expanded(
         },
       )
     : Image.asset(
-        'assets/logo-only.png', // Path to your local fallback image
+        'assets/logo-only.png',
         width: 100,
         height: 100,
         fit: BoxFit.cover,
       ),
-                  const SizedBox(width: 16), // Space between image and text
-                  // Car Details
+                  const SizedBox(width: 16),
                   Expanded(
   child: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,7 +437,6 @@ Expanded(
         style: TextStyle(color: Colors.grey[600]),
       ),
       const SizedBox(height: 4),
-      // First Row for Detail and Contact buttons
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -479,8 +460,7 @@ Expanded(
           ),
         ],
       ),
-      const SizedBox(height: 8), // Space between rows
-      // Separate Row for Add to Wishlist
+      const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
