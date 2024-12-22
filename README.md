@@ -45,6 +45,9 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 ### Sumber Inisial Dataset
 [Dataset](https://www.kaggle.com/datasets/indraputra21/used-car-listings-in-indonesia?select=used_car.csv)
 
+### Tautan Aplikasi
+[Download](https://install.appcenter.ms/orgs/bekasberkelasmobile/apps/bekasberkelas-mobile/distribution_groups/public)
+
 ### Alur Pengintegrasian dengan _Web Service_
 ![](answer/AlurIntegrasi.jpg)
 1. Dalam melakukan integrasi antara Django pada Proyek Tengah Semester dengan Flutter pada Proyek Akhir Semester ini, kami melakukan konfigurasi terlebih dahulu pada setiap endpoint API yang akan menerima _request_ dari Flutter melalui `views.py` dan mengirimkan data kembali dalam format JSON.
