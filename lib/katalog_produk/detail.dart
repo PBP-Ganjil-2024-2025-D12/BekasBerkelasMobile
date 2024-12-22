@@ -29,59 +29,154 @@ class CarDetailPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar(context, 'Car details', true),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('Model: ${carEntry.model}', style: TextStyle(fontSize: 18)),
-            Text('Primary Key: ${carEntry.pk}', style: TextStyle(fontSize: 18)),
-            Text('Seller ID: ${carEntry.fields.seller}', style: TextStyle(fontSize: 18)),
-            Text('Car Name: ${carEntry.fields.carName}', style: TextStyle(fontSize: 18)),
-            Text('Brand: ${carEntry.fields.brand}', style: TextStyle(fontSize: 18)),
-            Text('Year: ${carEntry.fields.year}', style: TextStyle(fontSize: 18)),
-            Text('Mileage: ${carEntry.fields.mileage}', style: TextStyle(fontSize: 18)),
-            Text('Location: ${carEntry.fields.location}', style: TextStyle(fontSize: 18)),
-            Text('Transmission: ${carEntry.fields.transmission}', style: TextStyle(fontSize: 18)),
-            Text('Plate Type: ${carEntry.fields.plateType}', style: TextStyle(fontSize: 18)),
-            Text('Rear Camera: ${carEntry.fields.rearCamera ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Sun Roof: ${carEntry.fields.sunRoof ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Auto Retract Mirror: ${carEntry.fields.autoRetractMirror ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Electric Parking Brake: ${carEntry.fields.electricParkingBrake ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Map Navigator: ${carEntry.fields.mapNavigator ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Vehicle Stability Control: ${carEntry.fields.vehicleStabilityControl ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Keyless Push Start: ${carEntry.fields.keylessPushStart ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Sports Mode: ${carEntry.fields.sportsMode ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('360° Camera View: ${carEntry.fields.camera360View ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Power Sliding Door: ${carEntry.fields.powerSlidingDoor ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Auto Cruise Control: ${carEntry.fields.autoCruiseControl ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-            Text('Price: ${carEntry.fields.price}', style: TextStyle(fontSize: 18)),
-            Text('Instalment: ${carEntry.fields.instalment}', style: TextStyle(fontSize: 18)),
-            Text('Image URL: ${carEntry.fields.imageUrl}', style: TextStyle(fontSize: 18)),
-            carEntry.fields.imageUrl.isNotEmpty ? Image.network(carEntry.fields.imageUrl) : Container(),
-            ElevatedButton(
-                                onPressed: () async {
-                                  // Fetch the seller's username using the car primary key (pk)
-                                  String username = await fetchSellerUsername(carEntry.pk);
-                                  // Navigate to the ProfileScreen with the fetched username
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProfileScreen(username: username),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  'Seller Profile',
-                                  style: TextStyle(color: Color(0xFF0A39C4)),
-                                ),
-                              )
-          ],
-        ),
+ Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(
+        'Car Details',
+        style: TextStyle(color: Colors.blue[800]),
       ),
-    );
-  }
+      backgroundColor: Colors.white,
+      iconTheme: IconThemeData(color: Colors.blue[600]),
+      elevation: 1,
+    ),
+    body: SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildInfoCard(context),
+          const SizedBox(height: 20),
+          _buildImage(),
+          const SizedBox(height: 20),
+          _buildSellerButton(context),
+        ],
+      ),
+    ),
+  );
 }
+
+Widget _buildInfoCard(BuildContext context) {
+  return Card(
+    elevation: 4,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildCarBasicInfo(),
+          const Divider(height: 24),
+          _buildCarFeatures(),
+          const Divider(height: 24),
+          _buildPricingInfo(),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildCarBasicInfo() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _buildDetailItem('Car Name', carEntry.fields.carName),
+      _buildDetailItem('Brand', carEntry.fields.brand),
+      _buildDetailItem('Year', carEntry.fields.year),
+      _buildDetailItem('Mileage', carEntry.fields.mileage),
+      _buildDetailItem('Location', carEntry.fields.location),
+      _buildDetailItem('Transmission', carEntry.fields.transmission),
+      _buildDetailItem('Plate Type', carEntry.fields.plateType),
+    ],
+  );
+}
+
+Widget _buildCarFeatures() {
+  final features = {
+    'Rear Camera': carEntry.fields.rearCamera,
+    'Sun Roof': carEntry.fields.sunRoof,
+    'Auto Retract Mirror': carEntry.fields.autoRetractMirror,
+    'Electric Parking Brake': carEntry.fields.electricParkingBrake,
+    'Map Navigator': carEntry.fields.mapNavigator,
+    'Vehicle Stability Control': carEntry.fields.vehicleStabilityControl,
+    'Keyless Push Start': carEntry.fields.keylessPushStart,
+    'Sports Mode': carEntry.fields.sportsMode,
+    '360° Camera View': carEntry.fields.camera360View,
+    'Power Sliding Door': carEntry.fields.powerSlidingDoor,
+    'Auto Cruise Control': carEntry.fields.autoCruiseControl,
+  };
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: features.entries
+        .map((e) => _buildDetailItem(e.key, e.value ? "Yes" : "No"))
+        .toList(),
+  );
+}
+
+Widget _buildPricingInfo() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _buildDetailItem('Price', carEntry.fields.price),
+      _buildDetailItem('Instalment', carEntry.fields.instalment),
+    ],
+  );
+}
+
+Widget _buildImage() {
+  return carEntry.fields.imageUrl.isNotEmpty
+      ? ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.network(
+            carEntry.fields.imageUrl,
+            fit: BoxFit.cover,
+            height: 200,
+            width: double.infinity,
+          ),
+        )
+      : Container(
+          height: 200,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Center(child: Text('No Image Available')),
+        );
+}
+
+Widget _buildSellerButton(BuildContext context) {
+  return ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.blue[600],
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+    ),
+    onPressed: () async {
+      final username = await fetchSellerUsername(carEntry.pk);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProfileScreen(username: username),
+        ),
+      );
+    },
+    child: const Text(
+      'Seller Profile',
+      style: TextStyle(fontSize: 16),
+    ),
+  );
+}
+
+Widget _buildDetailItem(String label, dynamic value) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8.0),
+    child: Text(
+      '$label: $value',
+      style: const TextStyle(fontSize: 16),
+    ),
+  );
+}}
