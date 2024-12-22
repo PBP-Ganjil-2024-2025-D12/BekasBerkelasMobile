@@ -64,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               horizontal: 16, vertical: 14),
                         ),
                         validator: (value) => value?.isEmpty ?? true
-                            ? 'Please enter username'
+                            ? 'Masukkan username'
                             : null,
                         onSaved: (value) => _username = value ?? '',
                       ),
@@ -77,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       child: TextFormField(
                         decoration: const InputDecoration(
-                          hintText: 'Name',
+                          hintText: 'Nama',
                           border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
@@ -91,7 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               horizontal: 16, vertical: 14),
                         ),
                         validator: (value) =>
-                            value?.isEmpty ?? true ? 'Please enter name' : null,
+                            value?.isEmpty ?? true ? 'Masukkan nama' : null,
                         onSaved: (value) => _name = value ?? '',
                       ),
                     ),
@@ -117,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               horizontal: 16, vertical: 14),
                         ),
                         validator: (value) => value?.isEmpty ?? true
-                            ? 'Please enter email'
+                            ? 'Masukkan email'
                             : null,
                         onSaved: (value) => _email = value ?? '',
                       ),
@@ -144,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               horizontal: 16, vertical: 14),
                         ),
                         validator: (value) => value?.isEmpty ?? true
-                            ? 'Please enter phone number'
+                            ? 'Masukkan No Telp'
                             : null,
                         onSaved: (value) => _phone = value ?? '',
                       ),
@@ -158,7 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
                           isDense: true,
-                          hintText: 'Choose role',
+                          hintText: 'Pilih Role',
                           border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
@@ -184,7 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onChanged: (value) =>
                             setState(() => _role = value ?? ''),
                         validator: (value) =>
-                            value == null ? 'Please select a role' : null,
+                            value == null ? 'Harap pilih role' : null,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -210,7 +210,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         obscureText: true,
                         validator: (value) => value?.isEmpty ?? true
-                            ? 'Please enter password'
+                            ? 'Masukkan password'
                             : null,
                         onSaved: (value) => _password = value ?? '',
                       ),
@@ -238,7 +238,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         obscureText: true,
                         validator: (value) => value?.isEmpty ?? true
-                            ? 'Please confirm password'
+                            ? 'Masukkan password konfirmasi'
                             : null,
                         onSaved: (value) => _confirmPassword = value ?? '',
                       ),
@@ -315,7 +315,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Already have an account? ",
+                          "Sudah punya Akun? ",
                           style: TextStyle(color: Colors.black87),
                         ),
                         GestureDetector(
@@ -327,7 +327,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             );
                           },
                           child: const Text(
-                            'Login Now',
+                            'Login Sekarang',
                             style: TextStyle(
                               color: Color(0xFF4C8BF5),
                               fontWeight: FontWeight.w600,
