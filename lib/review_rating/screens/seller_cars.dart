@@ -34,9 +34,10 @@ class CarsPage extends StatelessWidget {
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.8,
+                  crossAxisSpacing: 12, // Reduced from 16
+                  mainAxisSpacing: 12, // Reduced from 16
+                  childAspectRatio:
+                      0.75, // Adjusted from 0.8 to give more vertical space
                 ),
                 itemCount: cars.length,
                 itemBuilder: (context, index) {
@@ -49,41 +50,52 @@ class CarsPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Car Image
                           ClipRRect(
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(16),
                             ),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  height: 120,
-                                  width: double.infinity,
-                                  color: Colors.grey[200],
-                                  child: const Center(
+                            child: Container(
+                              height: 110, // Reduced from 120
+                              width: double.infinity,
+                              color: Colors.grey[200],
+                              child: Image.network(
+                                cars[index].fields.imageUrl,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return const Center(
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color(0xFF4C8BF5)),
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Center(
                                     child: Icon(
                                       Icons.directions_car,
-                                      size: 50,
+                                      size: 40, // Reduced from 50
                                       color: Colors.grey,
                                     ),
-                                  ),
-                                ),
-                              ],
+                                  );
+                                },
+                              ),
                             ),
                           ),
-                          // Car Details
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.all(12),
+                              padding:
+                                  const EdgeInsets.all(8), // Reduced from 12
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(
-                                    height: 40,
+                                    height: 36, // Reduced from 40
                                     child: Text(
                                       cars[index].fields.carName,
                                       style: const TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 13, // Reduced from 14
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF333333),
                                         height: 1.2,
@@ -96,39 +108,34 @@ class CarsPage extends StatelessWidget {
                                   Text(
                                     'Rp ${formatPrice(double.parse(cars[index].fields.price))}',
                                     style: const TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14, // Reduced from 16
                                       color: Color(0xFF4C8BF5),
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          gradient: const LinearGradient(
-                                            colors: [
-                                              Color(0xFF4C8BF5),
-                                              Color(0xFF6AA6F8)
-                                            ],
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                        ),
-                                        child: const Text(
-                                          'For Sale',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                                  const SizedBox(height: 6), // Reduced from 8
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, // Reduced from 8
+                                      vertical: 3, // Reduced from 4
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFF4C8BF5),
+                                          Color(0xFF6AA6F8)
+                                        ],
                                       ),
-                                    ],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: const Text(
+                                      'For Sale',
+                                      style: TextStyle(
+                                        fontSize: 11, // Reduced from 12
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),

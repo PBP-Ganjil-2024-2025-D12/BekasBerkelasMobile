@@ -115,7 +115,6 @@ class CarListingWidget extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Car Image
                                 ClipRRect(
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(12),
@@ -124,16 +123,45 @@ class CarListingWidget extends StatelessWidget {
                                     height: 120,
                                     width: double.infinity,
                                     color: Colors.grey[200],
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.directions_car,
-                                        size: 50,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
+                                    child: (cars[index].fields.imageUrl.isEmpty)
+                                        ? const Center(
+                                            child: Icon(
+                                              Icons.directions_car,
+                                              size: 50,
+                                              color: Colors.grey,
+                                            ),
+                                          )
+                                        : Image.network(
+                                            cars[index].fields.imageUrl,
+                                            fit: BoxFit.cover,
+                                            loadingBuilder: (context, child,
+                                                loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                              Color>(
+                                                          Color(0xFF4C8BF5)),
+                                                ),
+                                              );
+                                            },
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return const Center(
+                                                child: Icon(
+                                                  Icons.directions_car,
+                                                  size: 50,
+                                                  color: Colors.grey,
+                                                ),
+                                              );
+                                            },
+                                          ),
                                   ),
                                 ),
-                                // Car Details
                                 Expanded(
                                   child: Padding(
                                     padding: const EdgeInsets.all(12),
