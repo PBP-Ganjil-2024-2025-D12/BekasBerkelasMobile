@@ -31,15 +31,7 @@ class CarDetailPage extends StatelessWidget {
   @override
  Widget build(BuildContext context) {
   return Scaffold(
-    appBar: AppBar(
-      title: Text(
-        'Car Details',
-        style: TextStyle(color: Colors.blue[800]),
-      ),
-      backgroundColor: Colors.white,
-      iconTheme: IconThemeData(color: Colors.blue[600]),
-      elevation: 1,
-    ),
+    appBar: appBar(context, 'Car Detail', true),
     body: SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -79,19 +71,27 @@ Widget _buildInfoCard(BuildContext context) {
 }
 
 Widget _buildCarBasicInfo() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      _buildDetailItem('Car Name', carEntry.fields.carName),
-      _buildDetailItem('Brand', carEntry.fields.brand),
-      _buildDetailItem('Year', carEntry.fields.year),
-      _buildDetailItem('Mileage', carEntry.fields.mileage),
-      _buildDetailItem('Location', carEntry.fields.location),
-      _buildDetailItem('Transmission', carEntry.fields.transmission),
-      _buildDetailItem('Plate Type', carEntry.fields.plateType),
-    ],
+  // Wrap the basic car information in a blue box with a title "Main Info"
+  return _buildBlueBox(
+    title: "Main Info",
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,  // Maintain left alignment for details
+        children: [
+          _buildDetailItem('Car Name', carEntry.fields.carName),
+          _buildDetailItem('Brand', carEntry.fields.brand),
+          _buildDetailItem('Year', carEntry.fields.year.toString()),  // Ensure data types are handled correctly
+          _buildDetailItem('Mileage', '${carEntry.fields.mileage} km'),  // Format mileage with units
+          _buildDetailItem('Location', carEntry.fields.location),
+          _buildDetailItem('Transmission', carEntry.fields.transmission),
+          _buildDetailItem('Plate Type', carEntry.fields.plateType),
+        ],
+      ),
+    ),
   );
 }
+
 
 Widget _buildCarFeatures() {
   final features = {
@@ -108,23 +108,59 @@ Widget _buildCarFeatures() {
     'Auto Cruise Control': carEntry.fields.autoCruiseControl,
   };
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: features.entries
-        .map((e) => _buildDetailItem(e.key, e.value ? "Yes" : "No"))
-        .toList(),
+  // Encapsulate features into the blue box with a title
+  return _buildBlueBox(
+    title: "Features",
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,  // Use center for aligning the features nicely
+        children: features.entries
+            .map((e) => _buildDetailItem(e.key, e.value ? "Yes" : "No"))
+            .toList(),
+      ),
+    ),
   );
 }
 
-Widget _buildPricingInfo() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      _buildDetailItem('Price', carEntry.fields.price),
-      _buildDetailItem('Instalment', carEntry.fields.instalment),
-    ],
+Widget _buildBlueBox({required Widget child, required String title}) {
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.blue[50], // Light blue background
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: Colors.blue[300]!, width: 1), // Adds a light blue border
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue[800])),
+        ),
+        child,
+      ],
+    ),
   );
 }
+
+
+Widget _buildPricingInfo() {
+  // This uses the _buildBlueBox method to wrap the pricing info with a blue background and a title
+  return _buildBlueBox(
+    title: "Pricing",  // Title for the pricing section
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDetailItem('Price', 'Rp ' + carEntry.fields.price.toString()),
+          _buildDetailItem('Instalment', 'Rp ' + carEntry.fields.instalment.toString()),
+        ],
+      ),
+    ),
+  );
+}
+
 
 Widget _buildImage() {
   return carEntry.fields.imageUrl.isNotEmpty
@@ -135,6 +171,22 @@ Widget _buildImage() {
             fit: BoxFit.cover,
             height: 200,
             width: double.infinity,
+            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+              // Log the error, optionally
+              print('Failed to load network image, loading asset image instead.');
+
+              return Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Image.asset(
+                  'assets/logo-only.png', // Specify the fallback asset image
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
           ),
         )
       : Container(
@@ -146,6 +198,7 @@ Widget _buildImage() {
           child: const Center(child: Text('No Image Available')),
         );
 }
+
 
 Widget _buildSellerButton(BuildContext context) {
   return ElevatedButton(

@@ -112,31 +112,6 @@ class LeftDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            if (userRole == 'SEL')
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Text(
-                      'Jual Mobil Anda',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             const Divider(color: Colors.white24),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.white),

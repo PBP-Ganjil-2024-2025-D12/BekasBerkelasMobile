@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
+import '../../katalog_produk/list_Carentry.dart';
+import '../../katalog_produk/mobilsaya.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -79,7 +81,12 @@ class HomePage extends StatelessWidget {
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => CarListScreen()), // Ensure CarListScreen is a defined widget
+                              );
+                            },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               side: BorderSide(color: Colors.blue[900]!),
@@ -97,7 +104,12 @@ class HomePage extends StatelessWidget {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => CarEntryPage()), // Ensure CarListScreen is a defined widget
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               backgroundColor: Colors.blue[900],
