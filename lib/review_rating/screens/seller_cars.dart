@@ -128,12 +128,6 @@ class CarsPage extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      const Spacer(),
-                                      Icon(
-                                        Icons.favorite_border,
-                                        size: 20,
-                                        color: Colors.grey[400],
-                                      ),
                                     ],
                                   ),
                                 ],
