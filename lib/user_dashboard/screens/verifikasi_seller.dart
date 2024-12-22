@@ -37,7 +37,6 @@ class _VerifikasiSellerPageState extends State<VerifikasiSellerPage> {
       _isLoading = true;
     });
 
-    // Tambahkan delay di sini
     await Future.delayed(const Duration(seconds: 1));
 
     if(!mounted) return;
