@@ -474,7 +474,7 @@ Expanded(
                             ElevatedButton(
                               style: isInWishlist ? removeStyle : addStyle,
                               onPressed: () => _addToWishlist(context, CarEntry.pk.toString(), CarEntry.fields.carName, isInWishlist),
-                              child: Text(isInWishlist ? "Remove" : "Add"),
+                              child: Text(isInWishlist ? "Remove" : "Add Wishlist"),
                             ),
                             const SizedBox(width: 4),
                             ElevatedButton(
