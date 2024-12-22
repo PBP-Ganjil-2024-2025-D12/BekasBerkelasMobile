@@ -1,9 +1,11 @@
 import 'dart:convert';
-
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/textfield.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class ChangeEmailPage extends StatefulWidget {
   const ChangeEmailPage({super.key});
@@ -15,7 +17,6 @@ class ChangeEmailPage extends StatefulWidget {
 class ChangeEmailPageState extends State<ChangeEmailPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {
@@ -36,10 +37,8 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
       if (!mounted) return;
 
       if (response['status'] == 'success') {
-        // Berhasil mengubah nama
         _showSnackbar(context, 'Email berhasil diubah');
       } else {
-        // Gagal mengubah nama
         _showSnackbar(context, 'Gagal mengubah Email: ${response['message']}');
       }
 
@@ -67,12 +66,7 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email Baru',
-                  border: OutlineInputBorder(),
-                ),
+              InputTextField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Email tidak boleh kosong';
@@ -81,13 +75,11 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
                   }
                   return null;
                 },
-              ),
+                text: 'Email Baru', 
+                controller: _emailController),
               const SizedBox(height: 20),
               Center(
-                child: ElevatedButton(
-                  onPressed: () => _submitForm(request),
-                  child: const Text('Simpan'),
-                ),
+                child: SubmitButton(onPressed: () => _submitForm(request), text: 'Simpan')
               ),
             ],
           ),

@@ -1,10 +1,11 @@
 import 'dart:convert';
-
-import 'package:bekas_berkelas_mobile/authentication/screens/login_screen.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class ChangePhonePage extends StatefulWidget {
   @override
@@ -14,7 +15,6 @@ class ChangePhonePage extends StatefulWidget {
 class _ChangePhonePageState extends State<ChangePhonePage> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
-  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {
@@ -65,27 +65,20 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(
-                  labelText: 'No Telp Baru',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
+            InputTextField(
+              validator:  (value) {
                   if (value == null || value.isEmpty) {
                     return 'Nomor telepon tidak boleh kosong';
                   } else if (!RegExp(r'^\+?[0-9]{7,15}$').hasMatch(value)) {
                     return 'Masukkan nomor telepon yang valid';
                   }
                   return null;
-                },
-              ),
+                }, 
+              text: 'No Telp Baru', 
+              controller: _phoneController),
               const SizedBox(height: 20),
               Center(
-                child: ElevatedButton(
-                  onPressed: () => _submitForm(request),
-                  child: const Text('Simpan'),
-                ),
+                child: SubmitButton(onPressed: () => _submitForm(request), text: 'Simpan')
               ),
             ],
           ),

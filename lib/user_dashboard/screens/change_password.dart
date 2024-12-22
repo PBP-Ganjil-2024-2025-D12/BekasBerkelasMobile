@@ -1,9 +1,11 @@
 import 'dart:convert';
-
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -17,7 +19,6 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
   final _oldPasswordController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final String baseUrl = 'http://10.0.2.2:8000/dashboard';
 
   @override
   void dispose() {
@@ -74,28 +75,18 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: _oldPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password Lama',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
+              InputTextField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Password tidak boleh kosong';
                   }
                   return null;
-                },
+                }, 
+                text: 'Password Lama', 
+                controller: _oldPasswordController
               ),
               const SizedBox(height: 20),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password Baru',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
+              InputTextField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Password tidak boleh kosong';
@@ -103,16 +94,12 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
                     return 'Password harus terdiri dari minimal 6 karakter';
                   }
                   return null;
-                },
+                }, 
+                text: 'Password Baru', 
+                controller: _passwordController
               ),
               const SizedBox(height: 20),
-              TextFormField(
-                controller: _confirmPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Konfirmasi Password',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
+              InputTextField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Konfirmasi password tidak boleh kosong';
@@ -121,13 +108,12 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
                   }
                   return null;
                 },
+                text: "Konfirmasi Password Baru", 
+                controller: _confirmPasswordController
               ),
               const SizedBox(height: 20),
               Center(
-                child: ElevatedButton(
-                  onPressed: () => _submitForm(request),
-                  child: const Text('Simpan'),
-                ),
+                child: SubmitButton(onPressed: () => _submitForm(request), text: 'Simpan')
               ),
             ],
           ),

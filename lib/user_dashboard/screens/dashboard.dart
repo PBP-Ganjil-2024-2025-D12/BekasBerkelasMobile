@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:bekas_berkelas_mobile/user_dashboard/screens/rating_list.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/screens/verifikasi_seller.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/widgets/button.dart';
 import 'package:bekas_berkelas_mobile/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +12,7 @@ import 'change_name.dart';
 import 'change_email.dart';
 import 'change_NoTelp.dart';
 import 'change_password.dart';
-import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -17,7 +20,6 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final String baseUrl = 'http://10.0.2.2:8000';
   late int id;
   late String name = '';
   late String email = '';
@@ -29,7 +31,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Future<Map<String, dynamic>> _fetchData(CookieRequest request) async {
     try {
-      final response = await request.post('$baseUrl/dashboard/get_user_flutter/', {});
+      final response = await request.post('$baseUrl/get_user_flutter/', {});
       if (response['status'] == 'success') {
         return response;  
       } else {
@@ -77,15 +79,17 @@ class _DashboardPageState extends State<DashboardPage> {
           'profile_picture_id': jsonResponse['public_id'],
         });
 
-        final backendResponse = await cookieRequest.post("$baseUrl/dashboard/upload_profile_picture_flutter/", data);
+        final backendResponse = await cookieRequest.post("$baseUrl/upload_profile_picture_flutter/", data);
+
+        if (!mounted) return;
 
         if (backendResponse['status'] == 'success') {
           setState(() {
             imageUrl = jsonResponse['secure_url'];
           });
-          _showSnackbar(context, 'Gambar berhasil diunggah dan diperbarui di server.');
+          _showSnackbar(context, 'Gambar berhasil diunggah.');
         } else {
-          _showSnackbar(context, 'Gagal memperbarui gambar di server: ${backendResponse['message']}');
+          _showSnackbar(context, 'Gagal memperbarui gambar: ${backendResponse['message']}');
         }
       } else {
         _showSnackbar(context, 'Gagal mengunggah gambar: ${response.statusCode}');
@@ -122,7 +126,7 @@ class _DashboardPageState extends State<DashboardPage> {
         future: _fetchData(request),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Colors.blue));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: $snapshot'));
           } else if (snapshot.hasData) {
@@ -137,11 +141,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
             return Stack(
               children : [
-                Column(
+                ListView(
                   children: [
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
+                      Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,6 +154,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 backgroundImage: imageUrl.isNotEmpty
                                     ? NetworkImage(imageUrl)
                                     : const AssetImage('assets/default_profile_picture.png') as ImageProvider,
+                                  backgroundColor: Colors.blue[900],
                               ),
                             ),
                             const SizedBox(height: 10),
@@ -162,8 +165,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                   'Ubah Foto Profil',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: Colors.blue,
-                                    decoration: TextDecoration.underline,
+                                    color: Color.fromARGB(255, 9, 68, 127),
                                   ),
                                 ),
                               ),
@@ -225,7 +227,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ),
                               ),
                             ),
-                            if (role == "SEL")...[
+                            if (role == "SEL" || role == "Seller")...[
                               const SizedBox(height: 10),
                               Center(
                                 child: SizedBox(
@@ -250,7 +252,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             Center(
                               child: Column(
                                 children: [
-                                  ElevatedButton.icon(
+                                  SelectionButton(
                                     onPressed: () async {
                                       final newName = await Navigator.push(
                                         context,
@@ -261,18 +263,11 @@ class _DashboardPageState extends State<DashboardPage> {
                                           name = newName;
                                         });
                                       }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(double.infinity, 50),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    icon: const Icon(Icons.person),
-                                    label: const Text('Ubah Nama'),
-                                  ),
+                                    }, 
+                                    text: "Ubah Nama", 
+                                    icon: Icons.person),
                                   const SizedBox(height: 10),
-                                  ElevatedButton.icon(
+                                  SelectionButton(
                                     onPressed: () async {
                                       final newEmail = await Navigator.push(
                                         context,
@@ -283,69 +278,79 @@ class _DashboardPageState extends State<DashboardPage> {
                                           email = newEmail;
                                         });
                                       }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(double.infinity, 50),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    icon: const Icon(Icons.email),
-                                    label: const Text('Ubah Email'),
-                                  ),
+                                    }, 
+                                    text: "Ubah Email", 
+                                    icon: Icons.email),
                                   const SizedBox(height: 10),
-                                  ElevatedButton.icon(
+                                  SelectionButton(
                                     onPressed: () async {
                                       final newPhoneNum = await Navigator.push(
                                         context,
                                         MaterialPageRoute(builder: (context) => ChangePhonePage()),
                                       );
-                                      if (newPhoneNum != null){
+                                      if (newPhoneNum != null) {
                                         setState(() {
                                           phoneNumber = newPhoneNum;
                                         });
                                       }
                                     },
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(double.infinity, 50),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    icon: const Icon(Icons.phone),
-                                    label: const Text('Ubah No Telp'),
+                                    text: 'Ubah No Telp',
+                                    icon: Icons.phone,
                                   ),
-                                  if (role != 'Admin')...[
+                                  if (role != 'Admin' && role != 'ADM')...[
                                     const SizedBox(height: 10),
-                                    ElevatedButton.icon(
-                                      onPressed: () {
+                                    SelectionButton(onPressed: () => {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
+                                        )
+                                      }, 
+                                      text: "Ubah Password", 
+                                      icon: Icons.lock)
+                                  ],
+                                  const Divider(
+                                    color: Colors.grey,
+                                    height: 40,
+                                    thickness: 1,
+                                    indent: 10,
+                                    endIndent: 10,
+                                  ),
+                                  if (role == 'SEL' || role == 'Seller')...[
+                                    SelectionButton(
+                                      onPressed:() {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => const RatingListPage()),
                                         );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        minimumSize: const Size(double.infinity, 50),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      icon: const Icon(Icons.lock),
-                                      label: const Text('Ubah Password'),
-                                    ),
-                                  ]
+                                      }, 
+                                      text: "Ulasan Saya", 
+                                      icon: Icons.reviews,
+                                      color: Colors.black
+                                    ) 
+                                  ] else if (role == 'Admin' || role == 'ADM')...[
+                                    SelectionButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => const VerifikasiSellerPage()),
+                                        );
+                                      }, 
+                                      text: "Verifikasi User", 
+                                      icon: Icons.verified_user,
+                                      color: Colors.black
+                                      )
+                                  ],
                                 ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
                   ],
                 ),
                 if (isLoading)...[
                   const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(color: Colors.blue),
                   ),
                 ]
               ]

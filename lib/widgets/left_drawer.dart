@@ -5,7 +5,7 @@ import 'package:bekas_berkelas_mobile/authentication/screens/homepage.dart';
 import 'package:bekas_berkelas_mobile/katalog_produk/list_Carentry.dart';
 import 'package:bekas_berkelas_mobile/wishlist/screens/list_wishlist.dart';
 import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
-import 'package:bekas_berkelas_mobile/user_dashboard/screen/dashboard.dart';
+import 'package:bekas_berkelas_mobile/user_dashboard/screens/dashboard.dart';
 import 'package:bekas_berkelas_mobile/authentication/screens/login_screen.dart';
 import 'package:bekas_berkelas_mobile/review_rating/services/user_services.dart';
 import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
