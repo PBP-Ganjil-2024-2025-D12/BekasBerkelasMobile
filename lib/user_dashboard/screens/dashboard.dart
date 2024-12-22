@@ -128,7 +128,16 @@ class _DashboardPageState extends State<DashboardPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator(color: Colors.blue));
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: $snapshot'));
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.sentiment_dissatisfied, size: 50, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text('Terjadi Kesalahan, Periksa Koneksi Anda.', style: TextStyle(fontSize: 15, color: Colors.grey)),
+                ],
+              ),
+            );
           } else if (snapshot.hasData) {
             final data = snapshot.data!;
             id = data['id'];
@@ -308,14 +317,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                       text: "Ubah Password", 
                                       icon: Icons.lock)
                                   ],
-                                  const Divider(
-                                    color: Colors.grey,
-                                    height: 40,
-                                    thickness: 1,
-                                    indent: 10,
-                                    endIndent: 10,
-                                  ),
                                   if (role == 'SEL' || role == 'Seller')...[
+                                    const Divider(
+                                      color: Colors.grey,
+                                      height: 40,
+                                      thickness: 1,
+                                      indent: 10,
+                                      endIndent: 10,
+                                    ),
                                     SelectionButton(
                                       onPressed:() {
                                         Navigator.push(
@@ -328,6 +337,13 @@ class _DashboardPageState extends State<DashboardPage> {
                                       color: Colors.black
                                     ) 
                                   ] else if (role == 'Admin' || role == 'ADM')...[
+                                    const Divider(
+                                      color: Colors.grey,
+                                      height: 40,
+                                      thickness: 1,
+                                      indent: 10,
+                                      endIndent: 10,
+                                    ),
                                     SelectionButton(
                                       onPressed: () {
                                         Navigator.push(
