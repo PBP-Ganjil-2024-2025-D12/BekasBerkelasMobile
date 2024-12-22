@@ -119,6 +119,7 @@ class _ForumDetailState extends State<ForumDetail>
       ),
     );
   }
+  
 
   Future<Map<String, dynamic>> fetchQuestionDetail(CookieRequest request) async {
     try {
