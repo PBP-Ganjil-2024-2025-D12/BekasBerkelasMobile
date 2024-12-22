@@ -383,6 +383,8 @@ Widget buildLocationDropdown() {
           if (double.tryParse(value) == null) {
             return '$label must be a number';
           }
+          if (double.parse(value) <= 0) {
+            return 'Please enter a number greater than zero';}
           return null;
         },
       ),
