@@ -7,18 +7,38 @@ import 'package:bekas_berkelas_mobile/wishlist/screens/list_wishlist.dart';
 import 'package:bekas_berkelas_mobile/forum/screens/show_forum.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/screens/dashboard.dart';
 import 'package:bekas_berkelas_mobile/authentication/screens/login_screen.dart';
-import 'package:bekas_berkelas_mobile/review_rating/services/user_services.dart';
-import 'package:bekas_berkelas_mobile/review_rating/models/user.dart';
-import 'package:bekas_berkelas_mobile/authentication/services/auth.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
+  static const String baseUrl = 'https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id/dashboard';
+
+    Future<Map<String, dynamic>> _fetchData(CookieRequest request) async {
+    try {
+      final response = await request.post('$baseUrl/get_user_flutter/', {});
+      if (response['status'] == 'success') {
+        return response;  
+      } else {
+        throw Exception('Failed to load data: ${response['status']}');
+      }
+    } catch (e) {
+      throw Exception('Failed to parse JSON: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     final username = request.jsonData['username'] ?? 'User';
-    final userRole = request.jsonData['role'];
+
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _fetchData(request),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error loading data'));
+        } else {
+          final imageUrl = snapshot.data!['profile_picture'] ?? '';
 
     return Drawer(
       child: Container(
@@ -34,12 +54,13 @@ class LeftDrawer extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Center(
+                        Center(
                           child: CircleAvatar(
                             backgroundColor: Colors.white24,
                             radius: 30,
-                            child: Icon(Icons.person,
-                                size: 40, color: Colors.white),
+                            backgroundImage: imageUrl.isNotEmpty
+                                    ? NetworkImage(imageUrl)
+                                    : const AssetImage('assets/default_profile_picture.png') as ImageProvider,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -147,12 +168,16 @@ class LeftDrawer extends StatelessWidget {
                 }
               },
             ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
+);
 }
+}
+
 
 PreferredSizeWidget appBar(BuildContext context, String title, bool hasTitle) {
   return AppBar(
@@ -174,7 +199,7 @@ PreferredSizeWidget appBar(BuildContext context, String title, bool hasTitle) {
               ),
             ],
           )
-        : SizedBox.shrink(),
+        : const SizedBox.shrink(),
     backgroundColor: Colors.white,
     leading: title == 'Detail Diskusi' 
         ? IconButton(
