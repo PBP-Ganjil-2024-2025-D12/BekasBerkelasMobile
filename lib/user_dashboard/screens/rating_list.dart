@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:bekas_berkelas_mobile/user_dashboard/models/rating.dart';
-import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart'; // Ganti dengan path yang sesuai
+import 'package:bekas_berkelas_mobile/user_dashboard/utils/constant.dart';
 
 class RatingListPage extends StatefulWidget {
   const RatingListPage({super.key});

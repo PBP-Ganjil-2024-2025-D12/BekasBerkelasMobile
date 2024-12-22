@@ -45,7 +45,7 @@ class _VerifikasiSellerDetailPageState extends State<VerifikasiSellerDetailPage>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Berhasil Verifikasi Penjual')),
       );
-      Navigator.of(context).pop(true); // Kembali ke halaman sebelumnya dengan hasil true
+      Navigator.of(context).pop(true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Gagal Verifikasi Penjual')),
